@@ -1,0 +1,14 @@
+{
+  "name": "avalon",
+  "description": "Website for facilitating playing Avalon",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "coffee app.coffee"
+  },
+  "dependencies": {
+    "coffee-script": "^1.8.0",
+    "express": "^4.10.4",
+    "jade": "^1.8.0"
+  }
+}
