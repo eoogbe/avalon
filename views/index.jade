@@ -3,7 +3,33 @@ html(lang='en')
   head
     meta(charset='utf-8')
     title Avalon
+    script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js')
+    script(src='/avalon.js')
   body
     h1 Avalon
     
-    p Welcome to Avalon
+    section(data-bind='if: $root.isCurrentPage("new_quest")')
+      h2 Choose your desired quest outcome
+      
+      button(type='button', data-bind='click: createSuccessOutcome') Success
+      button(type='button', data-bind='click: createFailOutcome') Fail
+    
+    section(data-bind='if: $root.isCurrentPage("quest")')
+      h2 The quest 
+        span(data-bind='text: questState')
+      
+      dl
+        dt Good guys
+        dd(data-bind='text: numSucceeded')
+        dt Bad guys
+        dd(data-bind='text: numFailed')
+      
+      button(type='button', data-bind='click: nextQuest') Next quest
+    
+    section(data-bind='if: $root.isCurrentPage("gameover")')
+      h2
+        span(data-bind='text: winnerType')
+        | &nbsp;guys won
+      
+      button(type='button', data-bind='click: playAgain') Play again
