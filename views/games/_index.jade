@@ -1,0 +1,22 @@
+section(data-bind='if: $root.isCurrentPage("games")')
+  h2 Join a game
+  
+  button(type='button', data-bind='click: goToNewGame') New game
+  
+  // ko if: games().length > 0
+  table
+    thead: tr
+      th(scope='col') Name
+      th(scope='col') Created at
+      th(scope='col') Players
+    tbody(data-bind='foreach: games')
+      tr
+        td
+          button(type='button', data-bind='text: name, click: function() { $root.joinGame($data._id) }')
+        td(data-bind='text: createdAt')
+        td(data-bind='text: numPlayers')
+  // /ko
+  // ko ifnot: games().length > 0
+  p No games to join
+  // /ko
+  

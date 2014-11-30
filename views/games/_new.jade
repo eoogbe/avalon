@@ -1,0 +1,19 @@
+section(data-bind='if: $root.isCurrentPage("new_game")')
+  h2 New game
+  
+  form(data-bind='submit: createGame')
+    // ko if: hasGameError
+    .error-notification Please review the problems below:
+    // /ko
+    
+    label(for='game-name')
+      abbr(title='required') *
+      | Name
+    input(type='text', name='game-name', id='game-name')
+    // ko if: hasGameError
+    span.error(data-bind='text: gameError().name.message')
+    // /ko
+    
+    button(type='submit') Create game
+  
+  button(type='button', data-bind='click: goToGames') back

@@ -1,0 +1,5 @@
+section(data-bind='if: $root.isCurrentPage("new_quest")')
+  h2 Choose your desired quest outcome
+  
+  button(type='button', data-bind='click: createSuccessOutcome') Success
+  button(type='button', data-bind='click: createFailOutcome') Fail

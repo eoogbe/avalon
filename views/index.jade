@@ -3,33 +3,30 @@ html(lang='en')
   head
     meta(charset='utf-8')
     title Avalon
+    
+    link(href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/stylesheets/avalon.css', rel='stylesheet')
+    
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js')
-    script(src='/avalon.js')
-  body
+    script(src='//cdn.socket.io/socket.io-1.2.0.js')
+    
+    script(src='/javascripts/avalon.js')
+    script(src='/javascripts/event-bindings.js')
+    script(src='/javascripts/main.js')
+  body.no-js
     h1 Avalon
     
-    section(data-bind='if: $root.isCurrentPage("new_quest")')
-      h2 Choose your desired quest outcome
-      
-      button(type='button', data-bind='click: createSuccessOutcome') Success
-      button(type='button', data-bind='click: createFailOutcome') Fail
+    noscript This website does not work without Javascript enabled. Sorry.
     
-    section(data-bind='if: $root.isCurrentPage("quest")')
-      h2 The quest 
-        span(data-bind='text: questState')
-      
-      dl
-        dt Good guys
-        dd(data-bind='text: numSucceeded')
-        dt Bad guys
-        dd(data-bind='text: numFailed')
-      
-      button(type='button', data-bind='click: nextQuest') Next quest
+    include ./games/_index.jade
+    include ./games/_new.jade
+    include ./quests/_new.jade
+    include ./quests/_show.jade
+    include ./gameover/_show.jade
     
-    section(data-bind='if: $root.isCurrentPage("gameover")')
-      h2
-        span(data-bind='text: winnerType')
-        | &nbsp;guys won
-      
-      button(type='button', data-bind='click: playAgain') Play again
+    .modal.fade#wating
+      dialog.modal-dialog
+        .modal-content
+          .modal-body
