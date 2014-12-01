@@ -17,6 +17,7 @@ GameSchema = mongoose.Schema
     required: true
 
 NUM_QUESTS_TO_WIN = 3
+NUM_PLAYERS_TO_START = 2
 
 GameSchema.path("name").validate(( (name, respond) ->
   return respond true unless @isModified "name"
@@ -27,7 +28,7 @@ GameSchema.path("name").validate(( (name, respond) ->
   ), "already taken")
 
 GameSchema.statics.unstarted = (done) ->
-  @model("Game").find { state: "unstarted" }, null, { sort: "-createdAt" }, done
+  @model("Game").find({ state: "unstarted" }).sort("-createdAt").lean().exec done
 
 GameSchema.methods.checkGameover = (done) ->
   game = this
@@ -59,5 +60,15 @@ GameSchema.methods.questStats = (done) ->
   game.model("Quest").count { game: game, state: "succeeded" }, (err, numSucceeded) ->
     game.model("Quest").count { game: game, state: "failed" }, (err, numFailed) ->
       done { numSucceeded: numSucceeded, numFailed: numFailed }
+
+GameSchema.methods.checkStartable = (done) ->
+  if @players.length >= NUM_PLAYERS_TO_START
+    @state = "playing"
+    @save (err) ->
+      return console.error err if err
+      
+      done true
+  else
+    done false
 
 mongoose.model "Game", GameSchema

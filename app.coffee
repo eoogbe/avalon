@@ -47,21 +47,30 @@ app.use errorHandler() if app.get("env") is "development"
 playerHandler = require "./app/event_handlers/player_handler"
 gameHandler = require "./app/event_handlers/game_handler"
 questHandler = require "./app/event_handlers/quest_handler"
+questOutcomeHandler = require "./app/event_handlers/quest_outcome_handler"
 
 io.on "connection", (socket) ->
   showGames = (player) ->
     models.Game.unstarted (err, games) ->
       return console.error err if err
       
-      io.emit "show_games",
+      socket.emit "show_games",
         games: games
         currentPlayer: player
   
-  socket.on "player_updated", playerHandler.updated(io, models, showGames)
-  socket.on "game_created", gameHandler.created(io, models)
-  socket.on "game_joined", gameHandler.joined(io, models)
-  socket.on "quest_created", questHandler.created(io, models)
-  socket.on "gameover", gameHandler.gameover(io, models, showGames)
+  eventCtx =
+    io: io
+    socket: socket
+    models: models
+  
+  socket.emit "show_edit_player"
+  
+  socket.on "player_updated", playerHandler.updated(eventCtx, showGames)
+  socket.on "game_created", gameHandler.created(eventCtx)
+  socket.on "game_joined", gameHandler.joined(eventCtx)
+  socket.on "quest_updated", questHandler.updated(eventCtx)
+  socket.on "quest_outcome_created", questOutcomeHandler.created(eventCtx)
+  socket.on "gameover", gameHandler.gameover(eventCtx, showGames)
 
 http.listen app.get("port"), ->
   console.log "Express server listening on port #{app.get('port')}"

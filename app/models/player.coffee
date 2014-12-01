@@ -11,7 +11,6 @@ PlayerSchema = mongoose.Schema
     required: true
 
 PlayerSchema.methods.join = (game, done) ->
-  game.state = "playing"
   game.players.push this
   game.save done
 

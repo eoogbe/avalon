@@ -1,15 +1,12 @@
-exports.updated = (io, models, showGames) ->
+exports.updated = (eventCtx, showGames) ->
+  socket = eventCtx.socket
+  Player = eventCtx.models.Player
+  
   (name) ->
-    models.Player.findOne { name: name }, (err, player) ->
-      return console.error err if err
-      
-      if player
+    Player.findOneAndUpdate({ name: name }, {}, { upsert: true }).lean().exec (err, player) ->
+      if !err
         showGames(player)
+      else if err.name is "ValidationError"
+        socket.emit "new_player_error", err.errors
       else
-        models.Player.create { name: name }, (err, player) ->
-          if !err
-            showGames(player)
-          else if err.name is "ValidationError"
-            io.emit "new_player_error", err.errors
-          else
-            console.error err
+        console.error err

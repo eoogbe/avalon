@@ -1,13 +1,14 @@
 @Avalon = (socket) ->
   self = this
   
-  self.currentPage = ko.observable("edit_player")
+  self.currentPage = ko.observable()
   self.currentGame = ko.observable({})
   self.currentPlayer = ko.observable()
   self.currentQuest = ko.observable()
   self.gameError = ko.observable()
   self.playerError = ko.observable()
   self.questStats = ko.observable()
+  self.waitingDialogMsg = ko.observable()
   self.games = ko.observableArray()
   
   self.hasGameError = ko.computed((->
@@ -31,12 +32,10 @@
   self.goToNewGame = ->
     self.gameError null
     self.currentPage "new_game"
+    $("#game-name").focus()
   
   self.goToGames = ->
     self.currentPage "games"
-  
-  self.goToNewQuest = ->
-    self.currentPage "new_quest"
   
   inputVal = (model, attr) ->
     $("input[name='#{model}-#{attr}']").val()
@@ -56,16 +55,19 @@
       gameId: gameId
       playerId: self.currentPlayer()._id
   
-  createOutcome = (state) ->
-    socket.emit "quest_created",
-      state: state
-      gameId: self.currentGame()._id
+  createOutcome = (isSuccess) ->
+    socket.emit "quest_outcome_created",
+      outcome: isSuccess
+      questId: self.currentQuest()._id
   
   self.createSuccessOutcome = ->
-    createOutcome "succeeded"
+    createOutcome true
   
   self.createFailOutcome = ->
-    createOutcome "failed"
+    createOutcome false
+  
+  self.updateQuest = ->
+    socket.emit "quest_updated", self.currentGame()._id
   
   self.playAgain = ->
     socket.emit "gameover"

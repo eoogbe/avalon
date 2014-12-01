@@ -1,15 +1,19 @@
-exports.created = (io, models) ->
-  (data) ->
-    models.Game.findById data.gameId, (err, game) ->
+exports.updated = (eventCtx) ->
+  socket = eventCtx.socket
+  Game = eventCtx.models.Game
+  Quest = eventCtx.models.Quest
+  
+  (gameId) ->
+    Game.findById gameId, (err, game) ->
       return console.error err if err
       
-      models.Quest.create { state: data.state, game: game }, (err, quest) ->
-        return console.error err if err
-        
-        game.checkGameover (data) ->
-          if data.isGameover
-            io.emit "show_gameover", data.game
-          else
-            io.emit "show_quest",
-              quest: quest
-              questStats: data.questStats
+      questData = { game: game, state: "playing" }
+      Quest.findOneAndUpdate(questData, {}, { upsert: true })
+        .lean()
+        .exec (err, quest) ->
+          return console.error err if err
+          
+          socket.emit "show_new_quest_outcome",
+            currentGame: game
+            currentQuest: quest
+  

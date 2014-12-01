@@ -26,10 +26,11 @@ html(lang='en')
     include ./games/_new.jade
     include ./games/_index.jade
     include ./games/_gameover.jade
-    include ./quests/_new.jade
     include ./quests/_show.jade
+    include ./quest_outcomes/_new.jade
     
-    .modal.fade#wating
-      dialog.modal-dialog
+    .modal.fade#waiting
+      .modal-dialog.modal-sm
         .modal-content
           .modal-body
+            p(data-bind='text: waitingDialogMsg')
