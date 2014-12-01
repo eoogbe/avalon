@@ -1,0 +1,2 @@
+mixin linkTo(text, location)
+  button(type='button', data-bind='click: goTo#{capitalize(location)}')= text

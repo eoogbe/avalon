@@ -1,7 +1,7 @@
 section(data-bind='if: $root.isCurrentPage("games")')
   h2 Join a game
   
-  button(type='button', data-bind='click: goToNewGame') New game
+  +linkTo('New game', 'newGame')
   
   // ko if: games().length > 0
   table
@@ -14,7 +14,7 @@ section(data-bind='if: $root.isCurrentPage("games")')
         td
           button(type='button', data-bind='text: name, click: function() { $root.joinGame($data._id) }')
         td(data-bind='text: createdAt')
-        td(data-bind='text: numPlayers')
+        td(data-bind='text: players.length')
   // /ko
   // ko ifnot: games().length > 0
   p No games to join

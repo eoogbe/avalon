@@ -7,85 +7,61 @@ path = require "path"
 errorHandler = require "errorhandler"
 less = require "less-middleware"
 coffeescript = require "connect-coffee-script"
-mongoose = require "mongoose"
 
 app.set "port", process.env.PORT || 3000
-app.set "views", path.join(__dirname, "views")
+app.set "views", path.join(__dirname, "app", "views")
 app.set "view engine", "jade"
 app.use logger "dev"
-app.use less path.join(__dirname, "assets", "styles"),
+app.use less path.join(__dirname, "app", "assets", "styles"),
   dest: path.join __dirname, "public"
   preprocess:
     path: (pathname) -> pathname.replace /\\stylesheets\\/, "\\"
 app.use coffeescript
-  src: path.join __dirname, "assets", "scripts"
+  src: path.join __dirname, "app", "assets", "scripts"
   dest: path.join __dirname, "public", "javascripts"
   prefix: "/javascripts"
 app.use express.static path.join(__dirname, "public")
 
-mongoose.connect "mongodb://localhost/avalon_dev"
-mongoose.connection.on "error", ->
-  console.error.bind console, "connection error:"
+transformCamel = (str, delim, clbk) ->
+  (for ch in str
+    if ch.toUpperCase() isnt ch
+      ch
+    else if clbk?
+      delim + clbk(ch)
+    else
+      delim + ch
+  ).join ""
 
-mongoose.Error.messages.general.required = "can't be blank"
+app.locals.capitalize = (str) -> str.charAt(0).toUpperCase() + str.slice(1)
+app.locals.humanize = (str) -> app.locals.capitalize transformCamel(str, " ")
+app.locals.hyphenate = (str) ->
+    transformCamel str, "-", (ch) -> ch.toLowerCase()
 
-require "./models/game"
-require "./models/quest"
-
-Game = mongoose.model "Game"
-Quest = mongoose.model "Quest"
+models = require "./config/models"
 
 app.get "/", (req, res) ->
   res.render "index"
 
 app.use errorHandler() if app.get("env") is "development"
 
+playerHandler = require "./app/event_handlers/player_handler"
+gameHandler = require "./app/event_handlers/game_handler"
+questHandler = require "./app/event_handlers/quest_handler"
+
 io.on "connection", (socket) ->
-  showGames = ->
-    Game.unstarted (err, games) ->
+  showGames = (player) ->
+    models.Game.unstarted (err, games) ->
       return console.error err if err
       
-      io.emit "show_games", games
+      io.emit "show_games",
+        games: games
+        currentPlayer: player
   
-  showGames()
-  
-  socket.on "game_created", (name) ->
-    Game.create { name: name }, (err) ->
-      if !err
-        showGames()
-      else if err.name is "ValidationError"
-        io.emit "new_game_error", err.errors
-      else
-        console.error err
-  
-  socket.on "game_joined", (gameId) ->
-    Game.findById gameId, (err, game) ->
-      return console.error err if err
-      
-      game.join (err) ->
-        return console.error err if err
-        
-        Game.unstarted (err, games) ->
-          return console.error err if err
-          
-          io.emit "show_new_quest",
-            currentGame: game
-            games: games
-  
-  socket.on "quest_created", (data) ->
-    Game.findById data.gameId, (err, game) ->
-      return console.error err if err
-      
-      Quest.create { state: data.state, game: game }, (err, quest) ->
-        return console.error err if err
-        
-        game.checkGameover (isGameover, questStats) ->
-          if isGameover
-            io.emit "show_gameover", game
-          else
-            io.emit "show_quest",
-              quest: quest
-              questStats: questStats
+  socket.on "player_updated", playerHandler.updated(io, models, showGames)
+  socket.on "game_created", gameHandler.created(io, models)
+  socket.on "game_joined", gameHandler.joined(io, models)
+  socket.on "quest_created", questHandler.created(io, models)
+  socket.on "gameover", gameHandler.gameover(io, models, showGames)
 
 http.listen app.get("port"), ->
   console.log "Express server listening on port #{app.get('port')}"
