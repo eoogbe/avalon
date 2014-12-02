@@ -1,13 +1,13 @@
 section(data-bind='if: $root.isCurrentPage("new_game")')
   h2 New game
   
-  form(data-bind='submit: createGame')
-    // ko if: hasGameError
+  form(data-bind='submit: game().create')
+    // ko if: game().hasError
     .error Name 
-      span(data-bind='text: gameError().name.message')
+      span(data-bind='text: game().error().name.message')
     // /ko
     
-    +stringField('game', 'name')
+    +stringField('game', 'name', 'Game name')
     
     button(type='submit') Create game
   

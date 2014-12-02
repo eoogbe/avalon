@@ -3,20 +3,20 @@ section(data-bind='if: $root.isCurrentPage("games")')
   
   +linkTo('New game', 'newGame')
   
-  // ko if: games().length > 0
+  // ko if: game().list().length > 0
   table
     thead: tr
       th(scope='col') Name
       th(scope='col') Created at
       th(scope='col') Players
-    tbody(data-bind='foreach: games')
+    tbody(data-bind='foreach: game().list')
       tr
         td
-          button(type='button', data-bind='text: name, click: function() { $root.joinGame($data._id) }')
+          button(type='button', data-bind='text: name, click: function() { $root.player().joinGame($data._id) }')
         td(data-bind='text: createdAt')
         td(data-bind='text: players.length')
   // /ko
-  // ko ifnot: games().length > 0
+  // ko ifnot: game().list().length > 0
   p No games to join
   // /ko
   

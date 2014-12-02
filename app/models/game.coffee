@@ -5,12 +5,16 @@ GameSchema = mongoose.Schema
     type: String
     required: true
     unique: true
+  creator:
+    type: mongoose.Schema.Types.ObjectId
+    ref: 'Player'
+    required: true
   state:
     type: String
     enum: ["unstarted", "playing", "good_won", "bad_won"]
     default: "unstarted"
     required: true
-  players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Player'}]
+  players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Player' }]
   createdAt:
     type: Date
     default: Date.now
@@ -61,14 +65,7 @@ GameSchema.methods.questStats = (done) ->
     game.model("Quest").count { game: game, state: "failed" }, (err, numFailed) ->
       done { numSucceeded: numSucceeded, numFailed: numFailed }
 
-GameSchema.methods.checkStartable = (done) ->
-  if @players.length >= NUM_PLAYERS_TO_START
-    @state = "playing"
-    @save (err) ->
-      return console.error err if err
-      
-      done true
-  else
-    done false
+GameSchema.methods.canStart = ->
+  @players.length >= NUM_PLAYERS_TO_START
 
 mongoose.model "Game", GameSchema

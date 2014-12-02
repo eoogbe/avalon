@@ -50,27 +50,29 @@ questHandler = require "./app/event_handlers/quest_handler"
 questOutcomeHandler = require "./app/event_handlers/quest_outcome_handler"
 
 io.on "connection", (socket) ->
-  showGames = (player) ->
-    models.Game.unstarted (err, games) ->
-      return console.error err if err
-      
-      socket.emit "show_games",
-        games: games
-        currentPlayer: player
-  
   eventCtx =
     io: io
     socket: socket
     models: models
+    showGames: (player) ->
+      models.Game.unstarted (err, games) ->
+        return console.error err if err
+        
+        socket.emit "show_games",
+          games: games
+          currentPlayer: player
   
   socket.emit "show_edit_player"
   
-  socket.on "player_updated", playerHandler.updated(eventCtx, showGames)
+  socket.on "player_updated", playerHandler.updated(eventCtx)
   socket.on "game_created", gameHandler.created(eventCtx)
   socket.on "game_joined", gameHandler.joined(eventCtx)
+  socket.on "game_left", gameHandler.left(eventCtx)
+  socket.on "game_started", gameHandler.started(eventCtx)
+  socket.on "game_deleted", gameHandler.deleted(eventCtx)
+  socket.on "game_reloaded", gameHandler.reloaded(eventCtx)
   socket.on "quest_updated", questHandler.updated(eventCtx)
   socket.on "quest_outcome_created", questOutcomeHandler.created(eventCtx)
-  socket.on "gameover", gameHandler.gameover(eventCtx, showGames)
 
 http.listen app.get("port"), ->
   console.log "Express server listening on port #{app.get('port')}"

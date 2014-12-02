@@ -1,6 +1,6 @@
 section(data-bind='if: $root.isCurrentPage("gameover")')
   h2
-    span(data-bind='text: winnerType')
+    span(data-bind='text: game().winnerType')
     | &nbsp;guys won
   
-  button(type='button', data-bind='click: playAgain') Play again
+  button(type='button', data-bind='click: game().reload') Play again

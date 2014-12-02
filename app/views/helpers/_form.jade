@@ -1,4 +1,5 @@
-mixin stringField(model, attr)
+mixin stringField(model, attr, labelText)
   - id = hyphenate(model) + '-' + hyphenate(attr)
-  label(for=id)= humanize(attr)
+  - labelText = labelText || humanize(attr)
+  label(for=id)= labelText
   input(type='text', name=id, id=id)

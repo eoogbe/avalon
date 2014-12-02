@@ -1,13 +1,12 @@
 section(data-bind='if: $root.isCurrentPage("edit_player")')
   h2 Welcome to Avalon
   
-  form(data-bind='submit: updatePlayer')
-    // ko if: hasPlayerError
+  form(data-bind='submit: player().update')
+    // ko if: player().hasError
     .error Name 
-      span(data-bind='text: playerError().name.message')
+      span(data-bind='text: player().error().name.message')
     // /ko
     
-    +stringField('player', 'name')
+    +stringField('player', 'name', 'Enter your name')
     
     button(type='submit') Begin
-  

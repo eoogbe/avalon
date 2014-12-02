@@ -1,5 +1,5 @@
 socket = io()
-viewModel = new Avalon socket
+viewModel = new Avalon.Main socket
 Avalon.EventBindings socket, viewModel
 
 $ ->
