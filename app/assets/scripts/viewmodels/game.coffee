@@ -17,7 +17,7 @@ Avalon.Game = (socket, root) ->
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
-  self.currentCreatorName = ko.pureComputed((->
+  self.creatorName = ko.pureComputed((->
     if self.hasCurrent() then self.current().creator.name else null
   ), self)
   

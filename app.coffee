@@ -3,15 +3,22 @@ app = express()
 http = require("http").Server app
 io = require("socket.io")(http)
 logger = require "morgan"
+session = require "express-session"
 path = require "path"
 errorHandler = require "errorhandler"
 less = require "less-middleware"
 coffeescript = require "connect-coffee-script"
 
+sessionMiddleware = session
+  secret: "placeholder secret"
+  resave: false
+  saveUninitialized: false
+
 app.set "port", process.env.PORT || 3000
 app.set "views", path.join(__dirname, "app", "views")
 app.set "view engine", "jade"
 app.use logger "dev"
+app.use sessionMiddleware
 app.use less path.join(__dirname, "app", "assets", "styles"),
   dest: path.join __dirname, "public"
   preprocess:
@@ -37,42 +44,12 @@ app.locals.humanize = (str) -> app.locals.capitalize transformCamel(str, " ")
 app.locals.hyphenate = (str) ->
     transformCamel str, "-", (ch) -> ch.toLowerCase()
 
-models = require "./config/models"
-
 app.get "/", (req, res) ->
   res.render "index"
 
 app.use errorHandler() if app.get("env") is "development"
 
-playerHandler = require "./app/event_handlers/player_handler"
-gameHandler = require "./app/event_handlers/game_handler"
-questHandler = require "./app/event_handlers/quest_handler"
-questOutcomeHandler = require "./app/event_handlers/quest_outcome_handler"
-
-io.on "connection", (socket) ->
-  eventCtx =
-    io: io
-    socket: socket
-    models: models
-    showGames: (player) ->
-      models.Game.unstarted (err, games) ->
-        return console.error err if err
-        
-        socket.emit "show_games",
-          games: games
-          currentPlayer: player
-  
-  socket.emit "show_edit_player"
-  
-  socket.on "player_updated", playerHandler.updated(eventCtx)
-  socket.on "game_created", gameHandler.created(eventCtx)
-  socket.on "game_joined", gameHandler.joined(eventCtx)
-  socket.on "game_left", gameHandler.left(eventCtx)
-  socket.on "game_started", gameHandler.started(eventCtx)
-  socket.on "game_deleted", gameHandler.deleted(eventCtx)
-  socket.on "game_reloaded", gameHandler.reloaded(eventCtx)
-  socket.on "quest_updated", questHandler.updated(eventCtx)
-  socket.on "quest_outcome_created", questOutcomeHandler.created(eventCtx)
+require("./config/socket")(io, sessionMiddleware)
 
 http.listen app.get("port"), ->
   console.log "Express server listening on port #{app.get('port')}"

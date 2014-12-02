@@ -24,11 +24,11 @@ html(lang='en')
     noscript This website does not work without Javascript enabled. Sorry.
     
     // ko if: hasAlert
-    .alert.alert-info(role='alert', data-bind='text: alert')
+    .alert(role='alert', data-bind='html: alert().message, css: alert().type')
     // /ko
     
-    include ./helpers/_form.jade
-    include ./helpers/_links.jade
+    include ./_helpers.jade
+    include ./players/_show.jade
     include ./players/_edit.jade
     include ./players/_index.jade
     include ./games/_new.jade
@@ -36,46 +36,4 @@ html(lang='en')
     include ./games/_gameover.jade
     include ./quests/_show.jade
     include ./quest_outcomes/_new.jade
-    
-    .modal.fade#confirm-dialog(
-      role='dialog'
-      aria-hidden='true'
-      aria-labelledby='confirm-dialog-heading'
-    )
-      .modal-dialog.modal-sm
-        section.modal-content.panel(data-bind='css: confirmDialog().type')
-          header.modal-header.panel-heading
-            button.close(type='button', data-dismiss='modal')
-              span(aria-hidden='true') &times;
-              span.sr-only Close
-            h4.modal-title.panel-title#confirm-dialog-heading Are you sure?
-          .modal-body.panel-body
-            p(data-bind='text: confirmDialog().message')
-          footer.modal-footer.panel-footer
-            button(
-              type='button'
-              data-dismiss='modal'
-              data-bind='text: confirmDialog().negativeBtnText'
-            )
-            button(
-              type='button'
-              data-bind='click: confirmDialog().action,\
-                text: confirmDialog().positiveBtnText'
-            )
-    
-    .modal.fade#warning-dialog(
-      role='dialog'
-      aria-hidden='true'
-      aria-labelledby='warning-dialog-heading'
-    )
-      .modal-dialog.modal-sm
-        section.modal-content.panel.panel-danger
-          header.modal-header.panel-heading
-            button.close(type='button', data-bind='click: game().reload')
-              span(aria-hidden='true') &times;
-              span.sr-only Close
-            h4.modal-title.panel-title#warning-dialog-heading Warning
-          .modal-body.panel-body
-            p This game was deleted by its owner.
-          footer.modal-footer.panel-footer
-            button(type='button', data-bind='click: game().reload') Ok, take me back
+    include ./_dialogs.jade

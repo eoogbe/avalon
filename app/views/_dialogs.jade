@@ -1,0 +1,56 @@
+.modal.fade#confirm-dialog(
+  role='dialog'
+  aria-hidden='true'
+  aria-labelledby='confirm-dialog-heading'
+)
+  .modal-dialog.modal-sm
+    .modal-content.panel(data-bind='css: confirmDialog().type')
+      .modal-header.panel-heading
+        button.close(type='button', data-dismiss='modal')
+          span(aria-hidden='true') &times;
+          span.sr-only Close
+        h4.modal-title.panel-title#confirm-dialog-heading Are you sure?
+      .modal-body.panel-body
+        p(data-bind='text: confirmDialog().message')
+      .modal-footer.panel-footer
+        button(
+          type='button'
+          data-dismiss='modal'
+          data-bind='text: confirmDialog().negativeBtnText'
+        )
+        button(
+          type='button'
+          data-bind='click: confirmDialog().action,\
+            text: confirmDialog().positiveBtnText'
+        )
+
+.modal.fade#warning-dialog(
+  role='dialog'
+  aria-hidden='true'
+  aria-labelledby='warning-dialog-heading'
+)
+  .modal-dialog.modal-sm
+    .modal-content.panel.panel-danger
+      .modal-header.panel-heading
+        button.close(type='button', data-bind='click: game().reload')
+          span(aria-hidden='true') &times;
+          span.sr-only Close
+        h4.modal-title.panel-title#warning-dialog-heading Warning
+      .modal-body.panel-body
+        p This game was deleted by its owner.
+      .modal-footer.panel-footer
+        button(type='button', data-bind='click: game().reload') Ok, take me back
+
+.modal.fade#waiting-dialog(
+  role='dialog'
+  aria-hidden='true'
+  aria-labelledby='waiting-dialog-heading'
+)
+  .modal-dialog.modal-sm
+    .modal-content.panel.panel-warning
+      .modal-header.panel-heading
+        h4.modal-title.panel-title#waiting-dialog-heading Waiting
+      .modal-body.panel-body
+        p(data-bind='text: waitingDialog().message')
+      .modal-footer.panel-footer(data-bind='if: waitingDialog().isDone')
+        button(type='button', data-dismiss='modal') See results

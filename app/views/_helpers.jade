@@ -3,3 +3,6 @@ mixin stringField(model, attr, labelText)
   - labelText = labelText || humanize(attr)
   label(for=id)= labelText
   input(type='text', name=id, id=id)
+
+mixin linkTo(text, location)
+  button(type='button', data-bind='click: goTo#{capitalize(location)}')= text

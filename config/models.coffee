@@ -6,9 +6,8 @@ mongoose.connection.on "error", ->
 
 mongoose.Error.messages.general.required = "can't be blank"
 
-require "../app/models/player"
-require "../app/models/game"
-require "../app/models/quest"
+reqModel = (filename) -> require "../app/models/#{filename}"
+reqModel model for model in ["player", "game", "quest"]
 
 module.exports =
     Player: mongoose.model "Player"

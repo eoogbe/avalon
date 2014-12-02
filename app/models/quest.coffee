@@ -18,6 +18,11 @@ QuestSchema = mongoose.Schema
 
 NUM_OUTCOMES_TO_FINISH = 2
 
+QuestSchema.statics.upsert = (conditions) ->
+  @findOneAndUpdate conditions, {
+    $setOnInsert: { createdAt: Date.now() }
+  }, { upsert: true }
+
 QuestSchema.methods.createOutcome = (outcome, done) ->
   @outcomes.push outcome
   @save done

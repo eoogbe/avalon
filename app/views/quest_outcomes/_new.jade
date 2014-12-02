@@ -2,4 +2,4 @@ section(data-bind='if: $root.isCurrentPage("new_quest_outcome")')
   h2 Choose your desired quest outcome
   
   button(type='button', data-bind='click: quest().createSuccessOutcome') Success
-  button(type='button', data-bind='click: quest().createFailOutcome') Fail
+  button(type='button', data-bind='click: quest().createFailOutcome, disable: player().isGood') Fail

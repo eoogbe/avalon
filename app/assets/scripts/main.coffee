@@ -1,4 +1,4 @@
-socket = io()
+socket = io.connect()
 viewModel = new Avalon.Main socket
 Avalon.EventBindings socket, viewModel
 

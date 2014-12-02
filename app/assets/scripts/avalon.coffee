@@ -13,8 +13,11 @@ Avalon.Main = (socket) ->
   self.currentPage = ko.observable()
   self.alert = ko.observable()
   self.confirmDialog = ko.observable({})
+  self.waitingDialog = ko.observable({})
   
-  self.hasAlert = ko.pureComputed((-> self.alert()? ), self)
+  self.hasAlert = ko.pureComputed((->
+    self.alert()? and not $.isEmptyObject self.alert()
+  ), self)
   
   self.isCurrentPage = (pageName) ->
     self.currentPage() is pageName
@@ -26,6 +29,10 @@ Avalon.Main = (socket) ->
   
   self.goToGames = ->
     self.currentPage "games"
+  
+  self.goToPlayer = ->
+    self.currentPage "player"
+    self.alert null
   
   self.inputVal = (model, attr) ->
     $("input[name='#{model}-#{attr}']").val()
