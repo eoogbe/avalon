@@ -8,4 +8,4 @@ section(data-bind='if: $root.isCurrentPage("quest")')
     dt Bad guys
     dd(data-bind='text: quest().stats().numFailed')
   
-  button(type='button', data-bind='click: quest().update') Next quest
+  button(type='button', data-bind='click: quest().nextQuest') Next quest

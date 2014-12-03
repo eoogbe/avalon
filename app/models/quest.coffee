@@ -3,13 +3,17 @@ mongoose = require "mongoose"
 QuestSchema = mongoose.Schema
   state:
     type: String
-    enum: ["playing", "succeeded", "failed"]
-    default: "playing"
+    enum: ["unstarted", "playing", "succeeded", "failed"]
+    default: "unstarted"
     required: true
   game:
     type: mongoose.Schema.Types.ObjectId
     ref: "Game"
     required: true
+  king:
+    type: mongoose.Schema.Types.ObjectId
+    ref: "Player"
+  players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }]
   outcomes: [Boolean]
   createdAt:
     type: Date
@@ -18,23 +22,28 @@ QuestSchema = mongoose.Schema
 
 NUM_OUTCOMES_TO_FINISH = 2
 
-QuestSchema.statics.upsert = (conditions) ->
-  @findOneAndUpdate conditions, {
-    $setOnInsert: { createdAt: Date.now() }
-  }, { upsert: true }
-
-QuestSchema.methods.createOutcome = (outcome, done) ->
-  @outcomes.push outcome
-  @save done
+QuestSchema.statics.upsert = (conditions, done) ->
+  changes = { $setOnInsert: { createdAt: Date.now() }}
+  @findOneAndUpdate(conditions, changes, { upsert: true })
+    .populate("game")
+    .exec (err, quest) ->
+      return done err if err
+      
+      if quest.king?
+        done null, quest
+      else
+        quest.game.nextKing (err, king) ->
+          return done err if err
+          
+          quest.king = king
+          quest.save done
 
 QuestSchema.methods.checkFinished = (done) ->
   if @outcomes.length >= NUM_OUTCOMES_TO_FINISH
-    @state = if @outcomes.indexOf(false) >= 0 then "failed" else "succeeded"
+    @state = if false in @outcomes then "failed" else "succeeded"
     @save (err) ->
-      return console.error err if err
-      
-      done true
+      done err, true
   else
-    done false
+    done null, false
 
 mongoose.model "Quest", QuestSchema

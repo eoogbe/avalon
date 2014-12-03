@@ -1,6 +1,6 @@
 socket = io.connect()
 viewModel = new Avalon.Main socket
-Avalon.EventBindings socket, viewModel
+Avalon.EventHandlers.Main socket, viewModel
 
 $ ->
   $('.no-js').removeClass 'no-js'

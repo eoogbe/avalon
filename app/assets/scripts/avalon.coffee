@@ -34,6 +34,10 @@ Avalon.Main = (socket) ->
     self.currentPage "player"
     self.alert null
   
+  self.goToNewQuestOutcome = ->
+    self.currentPage "new_quest_outcome"
+    self.alert null
+  
   self.inputVal = (model, attr) ->
     $("input[name='#{model}-#{attr}']").val()
   

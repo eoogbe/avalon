@@ -1,0 +1,24 @@
+section(data-bind='if: $root.isCurrentPage("new_questors")')
+  h2 Choose 2 players for this quest
+  
+  select#nonquestors(size='5', data-bind='foreach: game().nonquestors')
+    option(data-bind='text: name, attr: { value: _id }')
+  
+  button(
+    type='button'
+    data-bind='click: quest().addQuestors, disable: quest().hasEnoughQuestors'
+  )
+    span(aria-hidden='true') &raquo;
+    span.sr-only Add questor
+  
+  button(type='button', data-bind='click: quest().removeQuestors')
+    span(aria-hidden='true') &laquo;
+    span.sr-only Remove questor
+  
+  select#questors(size='5', data-bind='foreach: quest().current().players')
+    option(data-bind='text: name, attr: { value: _id }')
+  
+  button(
+    type='button'
+    data-bind='click: quest().confirmStart, enable: quest().hasEnoughQuestors'
+  ) Finalize

@@ -54,3 +54,20 @@
         p(data-bind='text: waitingDialog().message')
       .modal-footer.panel-footer(data-bind='if: waitingDialog().isDone')
         button(type='button', data-dismiss='modal') See results
+
+.modal.fade#info-dialog(
+  role='dialog'
+  aria-hidden='true'
+  aria-labelledby='info-dialog-heading'
+)
+  .modal-dialog.modal-sm
+    .modal-content.panel.panel-info
+      .modal-header.panel-heading
+        button.close(type='button', data-dismiss='modal')
+          span(aria-hidden='true') &times;
+          span.sr-only Close
+        h4.modal-title.panel-title#info-dialog-heading King
+      .modal-body.panel-body
+        p(data-bind='text: player().kingMessage')
+      .modal-footer.panel-footer
+        button(type='button', data-dismiss='modal') Ok

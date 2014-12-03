@@ -1,12 +1,13 @@
 models = require "./models"
 
-reqEventHandler = (handlerName) ->
-  require "../app/event_handlers/#{handlerName}_handler"
+reqController = (controllerName) ->
+  require "../app/controllers/#{controllerName}_controller"
 
-playersHandler = reqEventHandler "players"
-gamesHandler = reqEventHandler "games"
-questsHandler = reqEventHandler "quests"
-questOutcomesHandler = reqEventHandler "quest_outcomes"
+playersController = reqController "players"
+gamesController = reqController "games"
+questsController = reqController "quests"
+questOutcomesController = reqController "quest_outcomes"
+questorsController = reqController "questors"
 
 module.exports = (io, sessionMiddleware) ->
   io.use (socket, next) ->
@@ -21,7 +22,6 @@ module.exports = (io, sessionMiddleware) ->
     eventCtx =
       io: io
       socket: socket
-      session: session
       models: models
       showGames: (player) ->
         models.Game.unstarted (err, games) ->
@@ -33,12 +33,15 @@ module.exports = (io, sessionMiddleware) ->
     
     socket.emit "show_edit_player"
     
-    socket.on "player_updated", playersHandler.updated(eventCtx)
-    socket.on "game_created", gamesHandler.created(eventCtx)
-    socket.on "game_joined", gamesHandler.joined(eventCtx)
-    socket.on "game_left", gamesHandler.left(eventCtx)
-    socket.on "game_started", gamesHandler.started(eventCtx)
-    socket.on "game_deleted", gamesHandler.deleted(eventCtx)
-    socket.on "game_reloaded", gamesHandler.reloaded(eventCtx)
-    socket.on "quest_updated", questsHandler.updated(eventCtx)
-    socket.on "quest_outcome_created", questOutcomesHandler.created(eventCtx)
+    socket.on "player_updated", playersController.updated(eventCtx)
+    socket.on "game_created", gamesController.created(eventCtx)
+    socket.on "game_joined", gamesController.joined(eventCtx)
+    socket.on "game_left", gamesController.left(eventCtx)
+    socket.on "game_started", gamesController.started(eventCtx)
+    socket.on "game_deleted", gamesController.deleted(eventCtx)
+    socket.on "game_reloaded", gamesController.reloaded(eventCtx)
+    socket.on "quest_updated", questsController.updated(eventCtx)
+    socket.on "quest_started", questsController.started(eventCtx)
+    socket.on "quest_outcome_created", questOutcomesController.created(eventCtx)
+    socket.on "questors_created", questorsController.created(eventCtx)
+    socket.on "questors_deleted", questorsController.deleted(eventCtx)

@@ -3,7 +3,7 @@ Avalon.Game = (socket, root) ->
   self = this
   
   self.current = ko.observable({})
-  self.error = ko.observable({})
+  self.error = ko.observable()
   self.canStart = ko.observable()
   self.list = ko.observableArray()
   
@@ -19,6 +19,10 @@ Avalon.Game = (socket, root) ->
   
   self.creatorName = ko.pureComputed((->
     if self.hasCurrent() then self.current().creator.name else null
+  ), self)
+  
+  self.nonquestors = ko.pureComputed((->
+    _.reject self.current().players, root.quest().hasQuestor
   ), self)
   
   self.winnerType = ko.pureComputed((->
@@ -37,10 +41,10 @@ Avalon.Game = (socket, root) ->
   self.confirmDelete = ->
     root.confirmDialog
       type: "panel-danger"
-      message: "This cannot be undone. The other players will be booted out of the game. Do you want to continue?"
+      message: "This cannot be undone. The other players will be booted out of the game. Continue?"
       action: self.delete_
       positiveBtnText: "Yes, delete this game"
-      negativeBtnText: "No, I change my mind"
+      negativeBtnText: "No, keep the game"
     $("#confirm-dialog").modal "show"
   
   self.delete_ = ->
@@ -50,9 +54,9 @@ Avalon.Game = (socket, root) ->
   self.confirmStart = ->
     root.confirmDialog
       type: "panel-primary"
-      message: "No additional players will be able to join the game once started. Do you want to continue?"
+      message: "No additional players will be able to join the game. Continue?"
       action: self.start
-      positiveBtnText: "Yes, let's begin"
+      positiveBtnText: "Yes, let's start"
       negativeBtnText: "No, wait for more players"
     $("#confirm-dialog").modal "show"
   

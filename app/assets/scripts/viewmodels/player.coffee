@@ -3,7 +3,7 @@ Avalon.Player = (socket, root) ->
   self = this
   
   self.current = ko.observable({})
-  self.error = ko.observable({})
+  self.error = ko.observable()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
@@ -13,6 +13,13 @@ Avalon.Player = (socket, root) ->
     else if self.current().character is "Bad"
       "a Minon of Mordred"
     ), self)
+  
+  self.kingMessage = ko.pureComputed((->
+    if self.current().name is root.quest().kingName()
+      "You are king"
+    else
+      "The king is #{root.quest().kingName()}"
+  ), self)
   
   self.hasError = ko.pureComputed((->
     self.error()? and not $.isEmptyObject self.error()

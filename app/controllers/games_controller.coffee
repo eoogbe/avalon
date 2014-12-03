@@ -1,12 +1,3 @@
-async = require "async"
-
-MersenneTwister = require "mersennetwister"
-rng = new MersenneTwister()
-
-randChoice = (arr) ->
-  randIdx = rng.int() % arr.length
-  arr[randIdx]
-
 joinGame = (eventCtx, models) ->
   io = eventCtx.io
   socket = eventCtx.socket
@@ -29,8 +20,9 @@ exports.created = (eventCtx) ->
   
   (data) ->
     Game.create { name: data.name, creator: data.playerId }, (err, game) ->
-      if !err
-        Game.populate game, [{ path: 'players' }, { path: 'creator' }], (err, game) ->
+      if not err
+        populatedFields = [{ path: 'players' }, { path: 'creator' }]
+        Game.populate game, populatedFields, (err, game) ->
           return console.error err if err
           
           Game.unstarted (err, games) ->
@@ -51,10 +43,12 @@ exports.joined = (eventCtx) ->
     Player.findById data.playerId, (err, player) ->
       return console.error err if err
       
-      Game.findById(data.gameId).populate("players creator").exec (err, game) ->
-        return console.error err if err
-        
-        joinGame eventCtx, { player: player, game: game }
+      Game.findById(data.gameId)
+        .populate("players creator")
+        .exec (err, game) ->
+          return console.error err if err
+          
+          joinGame eventCtx, { player: player, game: game }
 
 exports.left = (eventCtx) ->
   io = eventCtx.io
@@ -80,26 +74,21 @@ exports.left = (eventCtx) ->
 exports.started = (eventCtx) ->
   io = eventCtx.io
   socket = eventCtx.socket
-  session = eventCtx.session
-  Player = eventCtx.models.Player
   Game = eventCtx.models.Game
   
   (gameId) ->
-    Game.findByIdAndUpdate(gameId, { state: "playing" }).populate("players").exec (err, game) ->
-      return console.error err if err
-      
-      async.eachLimit game.players, 1, ((player, done) ->
-        player.character = randChoice Player.CHARACTERS
-        player.save done
-      ), (err) ->
+    Game.findByIdAndUpdate(gameId, { state: "playing" })
+      .populate("players")
+      .exec (err, game) ->
         return console.error err if err
         
-        Game.findById(gameId).populate("players").exec (err, game) ->
+        game.start (err, game) ->
           return console.error err if err
           
-          for id, conn of io.of("/").connected when conn.rooms.indexOf(game.name) >= 0
+          for id, conn of io.of("/").connected when game.name in conn.rooms
             for player in game.players when player.name is conn.request.session.user
               conn.emit "set_player", player
+              break
           
           socket.emit "show_player"
           socket.to(game.name).emit "stop_waiting_on_game_start"
@@ -117,7 +106,7 @@ exports.deleted = (eventCtx) ->
       socket.leave game.name
       io.to(game.name).emit "warn_game_deleted"
       
-      for id, conn of io.of("/").connected when conn.rooms.indexOf(game.name) >= 0
+      for id, conn of io.of("/").connected when game.name in conn.rooms
         conn.leave game.name
       
       showGames()

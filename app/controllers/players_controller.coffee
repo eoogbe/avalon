@@ -1,12 +1,12 @@
 exports.updated = (eventCtx) ->
   socket = eventCtx.socket
-  session = eventCtx.session
+  session = socket.request.session
   Player = eventCtx.models.Player
   showGames = eventCtx.showGames
   
   (name) ->
     Player.upsert({ name: name }).lean().exec (err, player) ->
-      if !err
+      if not err
         session.user = name
         session.save (err) ->
           return console.error err if err

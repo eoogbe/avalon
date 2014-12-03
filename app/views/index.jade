@@ -7,16 +7,20 @@ html(lang='en')
     link(href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css', rel='stylesheet')
     link(href='/stylesheets/avalon.css', rel='stylesheet')
     
+    script(src='//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js')
     script(src='//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js')
     script(src='//cdn.socket.io/socket.io-1.2.0.js')
     
+    script(src='/javascripts/avalon.js')
     script(src='/javascripts/viewmodels/player.js')
     script(src='/javascripts/viewmodels/game.js')
     script(src='/javascripts/viewmodels/quest.js')
-    script(src='/javascripts/avalon.js')
-    script(src='/javascripts/event-bindings.js')
+    script(src='/javascripts/event-handlers.js')
+    script(src='/javascripts/event-handlers/players-handler.js')
+    script(src='/javascripts/event-handlers/games-handler.js')
+    script(src='/javascripts/event-handlers/quests-handler.js')
     script(src='/javascripts/main.js')
   body.no-js
     h1 Avalon
@@ -35,5 +39,7 @@ html(lang='en')
     include ./games/_index.jade
     include ./games/_gameover.jade
     include ./quests/_show.jade
+    include ./questors/_new.jade
+    include ./questors/_index.jade
     include ./quest_outcomes/_new.jade
     include ./_dialogs.jade
