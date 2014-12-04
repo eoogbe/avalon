@@ -5,6 +5,7 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
     viewModel.game().list data.games
     viewModel.player().current data.currentPlayer if data.currentPlayer?
     viewModel.currentPage "games"
+    viewModel.alert null
   
   socket.on "new_game_error", (gameError) ->
     viewModel.game().error gameError
@@ -13,7 +14,12 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
     viewModel.game().list games
   
   socket.on "warn_game_deleted", ->
-    $("#warning-dialog").modal "show"
+    viewModel.actionDialog
+      type: "panel-danger"
+      heading: "Warning"
+      message: "This game has been deleted by its owner"
+      action: game().reload
+    $("#action-dialog").modal "show"
   
   socket.on "stop_waiting_on_game_start", ->
     viewModel.alert

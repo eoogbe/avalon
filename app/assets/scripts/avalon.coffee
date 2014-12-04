@@ -13,11 +13,19 @@ Avalon.Main = (socket) ->
   self.currentPage = ko.observable()
   self.alert = ko.observable()
   self.confirmDialog = ko.observable({})
+  self.actionDialog = ko.observable({})
   self.waitingDialog = ko.observable({})
+  self.infoDialog = ko.observable({})
   
   self.hasAlert = ko.pureComputed((->
     self.alert()? and not $.isEmptyObject self.alert()
   ), self)
+  
+  self.alertVote = ->
+    unless $("#action-dialog").hasClass "in"
+      self.alert
+        message: "The king has made their final decision. Vote to accept or reject the proposed quest."
+        type: "alert-warning"
   
   self.isCurrentPage = (pageName) ->
     self.currentPage() is pageName
@@ -37,8 +45,5 @@ Avalon.Main = (socket) ->
   self.goToNewQuestOutcome = ->
     self.currentPage "new_quest_outcome"
     self.alert null
-  
-  self.inputVal = (model, attr) ->
-    $("input[name='#{model}-#{attr}']").val()
   
   self

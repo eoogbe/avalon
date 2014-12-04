@@ -41,8 +41,18 @@ GameSchema.path("name").validate(( (name, respond) ->
     respond numGames is 0
   ), "already taken")
 
-GameSchema.statics.unstarted = (done) ->
-  @model("Game").find({ state: "unstarted" }).sort("-createdAt").lean().exec done
+GameSchema.statics.unstarted = ->
+  @model("Game").find({ state: "unstarted" }).sort("-createdAt")
+
+GameSchema.statics.findByIdAndRemovePlayer = (id, player, done) ->
+  @findByIdAndUpdate id, { $pull: { players: player }}, done
+
+GameSchema.methods.addPlayer = (player, done) ->
+  unless @players.some((p) -> p.equals player)
+    @players.push player
+    @save done
+  else
+    done null, this
 
 GameSchema.methods.start = (done) ->
   Game = @model("Game")
@@ -56,10 +66,7 @@ GameSchema.methods.start = (done) ->
     async.eachLimit game.players, 1, ((player, eachDone) ->
       player.character = randChoice Player.CHARACTERS
       player.save eachDone
-    ), (err) ->
-      return done err if err
-      
-      Game.populate game, { path: "players" }, done
+    ), done
 
 GameSchema.methods.nextKing = (done) ->
   @kingIdx = (@kingIdx + 1) % @players.length
@@ -69,7 +76,7 @@ GameSchema.methods.nextKing = (done) ->
 GameSchema.methods.checkGameover = (done) ->
   game = this
   
-  game.questStats (err, questStats) ->
+  @model("Quest").statsFor game, (err, questStats) ->
     return done err if err
     
     gameover = (winnerType) ->
@@ -89,14 +96,6 @@ GameSchema.methods.checkGameover = (done) ->
         isGameover: false
         questStats: questStats
         game: game
-
-GameSchema.methods.questStats = (done) ->
-  game = this
-  
-  game.model("Quest").count { game: game, state: "succeeded" }, (err, numSucceeded) ->
-    return done err if err
-    game.model("Quest").count { game: game, state: "failed" }, (err, numFailed) ->
-      done err, { numSucceeded: numSucceeded, numFailed: numFailed }
 
 GameSchema.methods.canStart = ->
   @players.length >= NUM_PLAYERS_TO_START

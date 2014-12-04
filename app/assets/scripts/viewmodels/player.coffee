@@ -34,7 +34,7 @@ Avalon.Player = (socket, root) ->
   ), self)
   
   self.update = ->
-    name = root.inputVal "player", "name"
+    name = $("#player-name").val()
     socket.emit "player_updated", name
   
   self.joinGame = (gameId) ->

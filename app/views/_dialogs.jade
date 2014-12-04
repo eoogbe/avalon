@@ -24,22 +24,22 @@
             text: confirmDialog().positiveBtnText'
         )
 
-.modal.fade#warning-dialog(
+.modal.fade#action-dialog(
   role='dialog'
   aria-hidden='true'
-  aria-labelledby='warning-dialog-heading'
+  aria-labelledby='action-dialog-heading'
 )
   .modal-dialog.modal-sm
-    .modal-content.panel.panel-danger
+    .modal-content.panel(data-bind='css: actionDialog().type')
       .modal-header.panel-heading
-        button.close(type='button', data-bind='click: game().reload')
+        button.close(type='button', data-bind='click: actionDialog().action')
           span(aria-hidden='true') &times;
           span.sr-only Close
-        h4.modal-title.panel-title#warning-dialog-heading Warning
+        h4.modal-title.panel-title#action-dialog-heading(data-bind='text: actionDialog().heading')
       .modal-body.panel-body
-        p This game was deleted by its owner.
+        p(data-bind='text: actionDialog().message')
       .modal-footer.panel-footer
-        button(type='button', data-bind='click: game().reload') Ok, take me back
+        button(type='button', data-bind='click: actionDialog().action') Ok
 
 .modal.fade#waiting-dialog(
   role='dialog'
@@ -66,8 +66,10 @@
         button.close(type='button', data-dismiss='modal')
           span(aria-hidden='true') &times;
           span.sr-only Close
-        h4.modal-title.panel-title#info-dialog-heading King
+        h4.modal-title.panel-title#info-dialog-heading(
+          data-bind='text: infoDialog().heading'
+        )
       .modal-body.panel-body
-        p(data-bind='text: player().kingMessage')
+        p(data-bind='text: infoDialog().message')
       .modal-footer.panel-footer
         button(type='button', data-dismiss='modal') Ok

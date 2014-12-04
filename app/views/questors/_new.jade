@@ -18,7 +18,22 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
   select#questors(size='5', data-bind='foreach: quest().current().players')
     option(data-bind='text: name, attr: { value: _id }')
   
-  button(
-    type='button'
-    data-bind='click: quest().confirmStart, enable: quest().hasEnoughQuestors'
-  ) Finalize
+  input.quest-vote#king-quest-accept(
+    type='radio'
+    name='king-quest-vote'
+    value='accept'
+  )
+  label(for='king-quest-accept') Accept
+  
+  input.quest-vote#king-quest-reject(
+    type='radio'
+    name='king-quest-vote'
+    value='reject'
+  )
+  label(for='king-quest-reject') Reject
+  
+  // ko if: quest().hasError
+  .error(data-bind='text: quest().error')
+  // /ko
+  
+  button(type='button', data-bind='click: quest().confirmStart') Finalize

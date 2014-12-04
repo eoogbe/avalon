@@ -3,3 +3,17 @@ section(data-bind='if: $root.isCurrentPage("questors")')
   
   ul(data-bind='foreach: quest().current().players')
     li(data-bind='text: name')
+  
+  input.quest-vote#nonking-quest-accept(
+    type='radio'
+    name='nonking-quest-vote'
+    value='accept'
+  )
+  label(for='nonking-quest-accept') Accept
+  
+  input.quest-vote#nonking-quest-reject(
+    type='radio'
+    name='nonking-quest-vote'
+    value='reject'
+  )
+  label(for='nonking-quest-reject') Reject

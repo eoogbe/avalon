@@ -24,7 +24,7 @@ module.exports = (io, sessionMiddleware) ->
       socket: socket
       models: models
       showGames: (player) ->
-        models.Game.unstarted (err, games) ->
+        models.Game.unstarted().lean().exec (err, games) ->
           return console.error err if err
           
           socket.emit "show_games",
@@ -41,6 +41,7 @@ module.exports = (io, sessionMiddleware) ->
     socket.on "game_deleted", gamesController.deleted(eventCtx)
     socket.on "game_reloaded", gamesController.reloaded(eventCtx)
     socket.on "quest_updated", questsController.updated(eventCtx)
+    socket.on "quest_voted_on", questsController.votedOn(eventCtx)
     socket.on "quest_started", questsController.started(eventCtx)
     socket.on "quest_outcome_created", questOutcomesController.created(eventCtx)
     socket.on "questors_created", questorsController.created(eventCtx)

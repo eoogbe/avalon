@@ -1,7 +1,7 @@
 section(data-bind='if: $root.isCurrentPage("games")')
   h2 Join a game
   
-  +linkTo('New game', 'newGame')
+  button(type='button', data-bind='click: goToNewGame') New game
   
   // ko if: game().list().length > 0
   table

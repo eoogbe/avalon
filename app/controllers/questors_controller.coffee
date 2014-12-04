@@ -3,10 +3,7 @@ handler = (eventCtx, changeType) ->
   Quest = eventCtx.models.Quest
   
   (data) ->
-    changes = {}
-    changes[changeType] = { players: data.questorId }
-    
-    Quest.findByIdAndUpdate(data.questId, changes)
+    Quest.findByIdAndUpdateQuestors(data.questId, data.questorId, changeType)
       .populate("game players")
       .lean()
       .exec (err, quest) ->
@@ -15,7 +12,7 @@ handler = (eventCtx, changeType) ->
         io.to(quest.game.name).emit "set_quest", quest
 
 exports.created = (eventCtx) ->
-  handler eventCtx, "$push"
+  handler eventCtx, "add"
 
 exports.deleted = (eventCtx) ->
-  handler eventCtx, "$pull"
+  handler eventCtx, "remove"

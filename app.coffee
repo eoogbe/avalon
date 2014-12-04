@@ -29,21 +29,6 @@ app.use coffeescript
   prefix: "/javascripts"
 app.use express.static path.join(__dirname, "public")
 
-transformCamel = (str, delim, clbk) ->
-  (for ch in str
-    if ch.toUpperCase() isnt ch
-      ch
-    else if clbk?
-      delim + clbk(ch)
-    else
-      delim + ch
-  ).join ""
-
-app.locals.capitalize = (str) -> str.charAt(0).toUpperCase() + str.slice(1)
-app.locals.humanize = (str) -> app.locals.capitalize transformCamel(str, " ")
-app.locals.hyphenate = (str) ->
-    transformCamel str, "-", (ch) -> ch.toLowerCase()
-
 app.get "/", (req, res) ->
   res.render "index"
 

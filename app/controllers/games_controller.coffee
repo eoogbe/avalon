@@ -1,17 +1,22 @@
 joinGame = (eventCtx, models) ->
   io = eventCtx.io
   socket = eventCtx.socket
+  Game = eventCtx.models.Game
   player = models.player
   game = models.game
   
-  player.join game, (err, game) ->
+  game.addPlayer player, (err, game) ->
     return console.error err if err
     
-    socket.join game.name
-    
-    io.to(game.name).emit "show_players",
-      currentGame: game
-      canStartGame: game.canStart()
+    populatedFields = [{ path: "creator" }, { path: "players" }]
+    Game.populate game, populatedFields, (err, game) ->
+      return console.error err if err
+      
+      socket.join game.name
+      
+      io.to(game.name).emit "show_players",
+        currentGame: game
+        canStartGame: game.canStart()
 
 exports.created = (eventCtx) ->
   io = eventCtx.io
@@ -21,34 +26,24 @@ exports.created = (eventCtx) ->
   (data) ->
     Game.create { name: data.name, creator: data.playerId }, (err, game) ->
       if not err
-        populatedFields = [{ path: 'players' }, { path: 'creator' }]
-        Game.populate game, populatedFields, (err, game) ->
+        Game.unstarted().lean().exec (err, games) ->
           return console.error err if err
           
-          Game.unstarted (err, games) ->
-            return console.error err if err
-            
-            io.emit "refresh_games", games
-            joinGame eventCtx, { player: game.creator, game: game }
+          io.emit "refresh_games", games
+          joinGame eventCtx, { player: game.creator, game: game }
       else if err.name is "ValidationError"
         socket.emit "new_game_error", err.errors
       else
         console.error err
 
 exports.joined = (eventCtx) ->
-  Player = eventCtx.models.Player
   Game = eventCtx.models.Game
   
   (data) ->
-    Player.findById data.playerId, (err, player) ->
+    Game.findById data.gameId, (err, game) ->
       return console.error err if err
       
-      Game.findById(data.gameId)
-        .populate("players creator")
-        .exec (err, game) ->
-          return console.error err if err
-          
-          joinGame eventCtx, { player: player, game: game }
+      joinGame eventCtx, { player: data.playerId, game: game }
 
 exports.left = (eventCtx) ->
   io = eventCtx.io
@@ -57,12 +52,10 @@ exports.left = (eventCtx) ->
   showGames = eventCtx.showGames
   
   (data) ->
-    Player.findById data.playerId, (err, player) ->
+    Game.findByIdAndRemovePlayer data.gameId, data.playerId, (err, game) ->
       return console.error err if err
       
-      player.leave data.gameId, (err, game) ->
-        return console.error err if err
-        
+      Game.populate game, { path: "players" }, (err, game) ->
         socket.leave game.name
         
         io.to(game.name).emit "show_players",
@@ -82,11 +75,12 @@ exports.started = (eventCtx) ->
       .exec (err, game) ->
         return console.error err if err
         
-        game.start (err, game) ->
+        game.start (err) ->
           return console.error err if err
           
           for id, conn of io.of("/").connected when game.name in conn.rooms
-            for player in game.players when player.name is conn.request.session.user
+            currentPlayer = conn.request.session.user
+            for player in game.players when player.name is currentPlayer
               conn.emit "set_player", player
               break
           

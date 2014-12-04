@@ -1,11 +1,11 @@
 exports.created = (eventCtx) ->
   io = eventCtx.io
   socket = eventCtx.socket
+  Game = eventCtx.models.Game
   Quest = eventCtx.models.Quest
   
   (data) ->
-    changes = { $push: { outcomes: data.outcome }}
-    Quest.findByIdAndUpdate data.questId, changes, (err, quest) ->
+    Quest.findByIdAndCreateOutcome data.questId, data.outcome, (err, quest) ->
       return console.error err if err
       
       quest.checkFinished (err, isFinished) ->
@@ -21,7 +21,8 @@ exports.created = (eventCtx) ->
               return console.error err if err
               
               if data.isGameover
-                io.to(game.name).emit "show_gameover", data.game
+                Game.populate game, { path: "players" }, (err, game) ->
+                  io.to(game.name).emit "show_gameover", data.game
               else
                 io.to(game.name).emit "show_quest",
                   quest: quest

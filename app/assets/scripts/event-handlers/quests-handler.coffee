@@ -1,54 +1,53 @@
 @Avalon ?= {}
 Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.Quests = (socket, viewModel) ->
+  registerRadioListener = ->
+    $(".quest-vote").change ->
+      socket.emit "quest_voted_on",
+        playerId: viewModel.player().currentId()
+        questId: viewModel.quest().currentId()
+        vote: @value
+  
   socket.on "show_new_questors", (currentQuest) ->
     viewModel.quest().current currentQuest
     viewModel.currentPage "new_questors"
+    registerRadioListener()
+    viewModel.infoDialog
+      heading: "King"
+      message: "You are king"
     $("#info-dialog").modal "show"
   
   socket.on "show_questors", (currentQuest) ->
     viewModel.quest().current currentQuest
     viewModel.currentPage "questors"
-    viewModel.alert
-      message: "Waiting on king..."
-      type: "alert-warning"
+    registerRadioListener()
+    viewModel.alertVote() if currentQuest.state is "voting"
+    viewModel.infoDialog
+      heading: "King"
+      message: "#{viewModel.quest().kingName()} is king"
     $("#info-dialog").modal "show"
   
   socket.on "set_quest", (currentQuest) ->
-    viewModel.quest().current currentQuest
-  
-  showWaitOnQuestorsDialog = ->
-    viewModel.waitingDialog
-      message: "Waiting on questors..."
-      isDone: false
-    $("#waiting-dialog").modal "show"
-    viewModel.alert null
-  
-  socket.on "stop_waiting_on_king", (currentQuest) ->
-    viewModel.quest().current currentQuest
-    if viewModel.quest().hasQuestor viewModel.player().current()
-      viewModel.alert
-        message: 'The quest can
-          <button
-              id="start-quest-btn"
-              type="button"
-              data-bind="click: goToNewQuestOutcome"
-          >
-            start
-          </button>!'
-        type: "alert-success"
-      ko.applyBindings viewModel, $("#start-quest-btn")[0]
-    else
-      showWaitOnQuestorsDialog()
+    unless viewModel.isCurrentPage "quest"
+      viewModel.quest().current currentQuest
   
   socket.on "show_new_quest_outcome", (currentQuest) ->
     viewModel.quest().current currentQuest
     viewModel.currentPage "new_quest_outcome"
     viewModel.alert null
+    viewModel.infoDialog
+      heading: "Quest"
+      message: "You are on the quest"
+    $(".modal").modal "hide"
+    $("#info-dialog").modal "show"
   
   socket.on "wait_on_questors", (currentQuest) ->
     viewModel.quest().current currentQuest
-    showWaitOnQuestorsDialog()
+    viewModel.alert null
+    viewModel.waitingDialog
+      message: "Waiting on questors..."
+      isDone: false
+    $("#waiting-dialog").modal "show"
   
   socket.on "show_quest", (data) ->
     viewModel.quest().current data.quest

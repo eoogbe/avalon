@@ -33,7 +33,7 @@ Avalon.Game = (socket, root) ->
   ), self)
   
   self.create = ->
-    name = root.inputVal "game", "name"
+    name = $("#game-name").val()
     socket.emit "game_created",
       name: name
       playerId: root.player().currentId()
@@ -65,7 +65,7 @@ Avalon.Game = (socket, root) ->
     socket.emit "game_started", self.currentId()
   
   self.reload = ->
-    $("#warning-dialog").modal "hide"
+    $("#action-dialog").modal "hide"
     root.alert null
     socket.emit "game_reloaded"
   

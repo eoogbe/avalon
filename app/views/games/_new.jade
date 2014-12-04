@@ -7,8 +7,9 @@ section(data-bind='if: $root.isCurrentPage("new_game")')
       span(data-bind='text: game().error().name.message')
     // /ko
     
-    +stringField('game', 'name', 'Game name')
+    label(for='game-name') Game name
+    input#game-name(type='text')
     
     button(type='submit') Create game
   
-  +linkTo('back', 'games')
+  button(type='button', data-bind='click: goToGames') back
