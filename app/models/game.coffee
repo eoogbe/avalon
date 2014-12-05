@@ -31,7 +31,7 @@ GameSchema = mongoose.Schema
     required: true
 
 NUM_QUESTS_TO_WIN = 3
-NUM_PLAYERS_TO_START = 3
+NUM_PLAYERS_TO_START = 5
 
 GameSchema.path("name").validate(( (name, respond) ->
   return respond true unless @isModified "name"
@@ -59,12 +59,18 @@ GameSchema.methods.start = (done) ->
   Player = @model("Player")
   game = this
   
+  characters = ["Good", "Good", "Good", "Bad", "Bad"]
   game.kingIdx = randIdx(game.players)
   game.save (err, game) ->
     return done err if err
     
     async.eachLimit game.players, 1, ((player, eachDone) ->
-      player.character = randChoice Player.CHARACTERS
+      if characters.length > 0
+        player.character = randChoice characters
+        removeIdx = characters.indexOf player.character
+        characters.splice removeIdx, 1
+      else
+        player.character = randChoice ["Good", "Bad"]
       player.save eachDone
     ), done
 

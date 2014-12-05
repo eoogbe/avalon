@@ -1,5 +1,7 @@
 section(data-bind='if: $root.isCurrentPage("questors")')
-  h2 This quest has 2 players
+  h2 This quest has 
+    span(data-bind='text: quest().current().numPlayersNeeded')
+    | &nbsp;players
   
   ul(data-bind='foreach: quest().current().players')
     li(data-bind='text: name')

@@ -6,6 +6,10 @@ QuestSchema = mongoose.Schema
     enum: ["unstarted", "voting", "rejected", "playing", "succeeded", "failed"]
     default: "unstarted"
     required: true
+  numPlayersNeeded:
+    type: Number
+    min: 2
+    required: true
   game:
     type: mongoose.Schema.Types.ObjectId
     ref: "Game"
@@ -13,6 +17,7 @@ QuestSchema = mongoose.Schema
   king:
     type: mongoose.Schema.Types.ObjectId
     ref: "Player"
+    required: true
   players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }]
   votes: [{ type: mongoose.Schema.Types.ObjectId, ref: "QuestVote" }]
   outcomes: [Boolean]
@@ -21,24 +26,32 @@ QuestSchema = mongoose.Schema
     default: Date.now
     required: true
 
-NUM_OUTCOMES_TO_FINISH = 2
+NEW_QUEST_STATES = ["unstarted", "voting"]
+NUM_PLAYERS_NEEDED_PER_QUEST = [2, 3, 2, 3, 3]
 
-QuestSchema.statics.upsert = (game, done) ->
-  conditions = { game: game, state: { $in: ["unstarted", "voting"] }}
-  changes = { $setOnInsert: { createdAt: Date.now(), state: "unstarted" }}
-  @findOneAndUpdate(conditions, changes, { upsert: true })
-    .populate("game")
-    .exec (err, quest) ->
+QuestSchema.statics.upsert = (gameId, done) ->
+  Quest = this
+  Game = @model("Game")
+  
+  Quest.find { game: gameId }, (err, quests) ->
+    return done err if err
+    
+    newQuests = quests.filter (quest) ->
+      NEW_QUEST_STATES.indexOf(quest.state) >= 0
+    return done null, newQuests[0] if newQuests.length > 0
+    
+    Game.findById gameId, (err, game) ->
       return done err if err
       
-      if quest.king?
-        done null, quest
-      else
-        quest.game.nextKing (err, king) ->
-          return done err if err
-          
-          quest.king = king
-          quest.save done
+      game.nextKing (err, king) ->
+        return done err if err
+        
+        questData =
+          game: game
+          numPlayersNeeded: NUM_PLAYERS_NEEDED_PER_QUEST[Math.min(quests.length, 4)]
+          king: king
+        
+        Quest.create questData, done
 
 QuestSchema.statics.statsFor = (game, done) ->
   Quest = this
@@ -109,7 +122,7 @@ QuestSchema.methods.checkAccepted = (done) ->
       quest.save done
 
 QuestSchema.methods.checkFinished = (done) ->
-  if @outcomes.length >= NUM_OUTCOMES_TO_FINISH
+  if @outcomes.length >= @numPlayersNeeded
     @state = if false in @outcomes then "failed" else "succeeded"
     @save (err) ->
       done err, true

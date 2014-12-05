@@ -1,7 +1,5 @@
 mongoose = require "mongoose"
 
-CHARACTERS = ["Good", "Bad"]
-
 PlayerSchema = mongoose.Schema
   name:
     type: String
@@ -9,13 +7,11 @@ PlayerSchema = mongoose.Schema
     unique: true
   character:
     type: String
-    enum: CHARACTERS
+    enum: ["Good", "Bad"]
   createdAt:
     type: Date
     default: Date.now
     required: true
-
-PlayerSchema.statics.CHARACTERS = CHARACTERS
 
 PlayerSchema.statics.upsert = (conditions) ->
   @findOneAndUpdate conditions, {

@@ -17,7 +17,7 @@ Avalon.Quest = (socket, root) ->
   ), self)
   
   self.hasEnoughQuestors = ko.pureComputed((->
-    self.current()?.players?.length >= 2
+    self.current()?.players?.length >= self.current()?.numPlayersNeeded
   ), self)
   
   createOutcome = (isSuccess) ->
@@ -50,7 +50,9 @@ Avalon.Quest = (socket, root) ->
   
   self.confirmStart = ->
     if not self.hasEnoughQuestors()
-      self.error "You must select 2 players to go on the quest"
+      additionalQuestorsNeeded =
+        self.current().numPlayersNeeded - self.current().players.length
+      self.error "You must select #{additionalQuestorsNeeded} more players to go on the quest. (You can select yourself.)"
     else if $("input[name='king-quest-vote']:checked").length is 0
       self.error "You must accept or reject your own quest"
     else

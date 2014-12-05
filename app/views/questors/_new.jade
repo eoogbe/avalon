@@ -1,5 +1,7 @@
 section(data-bind='if: $root.isCurrentPage("new_questors")')
-  h2 Choose 2 players for this quest
+  h2 Choose 
+    span(data-bind='text: quest().current().numPlayersNeeded')
+    | &nbsp;players for this quest
   
   select#nonquestors(size='5', data-bind='foreach: game().nonquestors')
     option(data-bind='text: name, attr: { value: _id }')
