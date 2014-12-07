@@ -12,13 +12,6 @@ Avalon.Player = (socket, root) ->
     self.characterFor self.current().character
   ), self)
   
-  self.kingMessage = ko.pureComputed((->
-    if self.current().name is root.quest().kingName()
-      "You are king"
-    else
-      "The king is #{root.quest().kingName()}"
-  ), self)
-  
   self.hasError = ko.pureComputed((->
     self.error()? and not $.isEmptyObject self.error()
   ), self)
@@ -38,6 +31,14 @@ Avalon.Player = (socket, root) ->
   self.isQuestor = ko.pureComputed((->
     root.quest().isPlaying() and root.quest().hasQuestor self.current()
   ), self)
+  
+  self.characterImg = ->
+    if self.current().character is "Good"
+      num = Math.floor Math.random() * 5 + 1
+      "/images/good#{num}_small.jpg"
+    else if self.current().character is "Bad"
+      num = Math.floor Math.random() * 3 + 1
+      "/images/bad#{num}_small.jpg"
   
   self.characterFor = (character) ->
     if character is "Good"

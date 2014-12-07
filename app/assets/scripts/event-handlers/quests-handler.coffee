@@ -19,7 +19,13 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
     registerRadioListener()
     viewModel.infoDialog
       heading: "King"
-      message: "You are king"
+      message: 'You are king 
+        <img
+            src="/images/crown.jpg"
+            width="54"
+            height="30"
+            aria-hidden="true"
+        >'
     $("#info-dialog").modal "show"
   
   socket.on "show_questors", (currentQuest) ->

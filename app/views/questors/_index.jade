@@ -4,18 +4,14 @@ section(data-bind='if: $root.isCurrentPage("questors")')
     | &nbsp;players
   
   ul.list-group(data-bind='foreach: quest().current().players')
-    li.list-group-item(data-bind='text: name')
+    li.list-group-item
+      img(
+        src='/images/crown.jpg'
+        width='54'
+        height='30'
+        alt='King'
+        data-bind='visible: $root.quest.isKing($data)'
+      )
+      span(data-bind='text: name')
   
-  input.quest-vote#nonking-quest-approve(
-    type='radio'
-    name='nonking-quest-vote'
-    value='approve'
-  )
-  label(for='nonking-quest-approve') Approve
-  
-  input.quest-vote#nonking-quest-reject(
-    type='radio'
-    name='nonking-quest-vote'
-    value='reject'
-  )
-  label(for='nonking-quest-reject') Reject
+  +voteRadioGroup('nonking')

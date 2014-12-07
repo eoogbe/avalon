@@ -38,24 +38,14 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
           optionsValue: "_id"'
       )
   
-  input.quest-vote#king-quest-approve(
-    type='radio'
-    name='king-quest-vote'
-    value='approve'
-  )
-  label(for='king-quest-approve') Approve
-  
-  input.quest-vote#king-quest-reject(
-    type='radio'
-    name='king-quest-vote'
-    value='reject'
-  )
-  label(for='king-quest-reject') Reject
+  .center-block.text-center
+    +voteRadioGroup('king')
   
   .has-error(data-bind='if: quest().hasError')
     .help-block(data-bind='text: quest().error')
   
-  button.btn.btn-default(
-    type='button'
-    data-bind='click: quest().confirmStart'
-  ) Finalize
+  .center-block.text-center
+    button.btn.btn-default(
+      type='button'
+      data-bind='click: quest().confirmStart'
+    ) Finalize

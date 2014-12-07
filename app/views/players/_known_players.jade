@@ -1,0 +1,17 @@
+section
+  h3 You know
+  // ko if: player().knowsPlayers
+  dl.dl-horizontal(data-bind='foreach: player().knownPlayers')
+    dt(data-bind='text: $root.player().characterFor($data.character)')
+    dd(data-bind='text: name')
+  // /ko
+  // ko ifnot: player().knowsPlayers
+  p No one 
+    img(
+      src='/images/frowny_small.jpg'
+      alt=':('
+      width='20'
+      height='20'
+      aria-hidden='true'
+    )
+  // /ko

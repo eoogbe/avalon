@@ -2,10 +2,21 @@ section(data-bind='if: $root.isCurrentPage("quest")')
   h2 The quest 
     span(data-bind='text: quest().current().state')
   
-  dl.dl-horizontal
-    dt Good guys
-    dd(data-bind='text: quest().stats().numSucceeded')
-    dt Bad guys
-    dd(data-bind='text: quest().stats().numFailed')
+  section
+    h3.sr-only Outcomes
+    ul.list-inline(data-bind='foreach: quest().outcomes')
+      li: img(
+          width='187'
+          height='289'
+          data-bind='attr: $root.quest().outcomeImgAttrs($data)'
+        )
+  
+  section
+    h3.sr-only Score
+    dl.dl-horizontal
+      dt Good guys
+      dd(data-bind='text: quest().stats().numSucceeded')
+      dt Bad guys
+      dd(data-bind='text: quest().stats().numFailed')
   
   button.btn-link(type='button', data-bind='click: quest().update') Next quest

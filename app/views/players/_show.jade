@@ -2,15 +2,13 @@ section(data-bind='if: $root.isCurrentPage("player")')
   h2 You are 
     span(data-bind='text: player().character')
   
-  section
-    h3 You know
-    // ko if: player().knowsPlayers
-    dl.dl-horizontal(data-bind='foreach: player().knownPlayers')
-      dt(data-bind='text: $root.player().characterFor($data.character)')
-      dd(data-bind='text: name')
-    // /ko
-    // ko ifnot: player().knowsPlayers
-    p No one :(
-    // /ko
+  img.img-responsive(
+    width='125'
+    height='200'
+    aria-hidden='true'
+    data-bind='attr: { src: $root.player().characterImg() }'
+  )
+  
+  include ./_known_players.jade
   
   button.btn.btn-default(type='button', data-bind='click: quest().update') Ready

@@ -1,0 +1,18 @@
+mixin voteRadioGroup(kingStatus)
+  input.quest-vote(
+    type='radio'
+    name='#{kingStatus}-quest-vote'
+    value='approve'
+    id='#{kingStatus}-quest-approve'
+  )
+  label.approve-label(for='#{kingStatus}-quest-approve')
+    span.sr-only Approve
+  
+  input.quest-vote(
+    type='radio'
+    name='#{kingStatus}-quest-vote'
+    value='reject'
+    id='#{kingStatus}-quest-reject'
+  )
+  label.reject-label(for='#{kingStatus}-quest-reject')
+    span.sr-only Reject

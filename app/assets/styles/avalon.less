@@ -133,3 +133,30 @@ select {
         margin-left: 220px;
     }
 }
+
+.quest-vote {
+    display: none;
+    &:checked + label {
+        border: 3px solid #7d54a6;
+        border-radius: 12px;
+    }
+    + label {
+        margin-right: 20px;
+        width: 121px;
+        height: 153px;
+        background-repeat: no-repeat;
+    }
+}
+
+.approve-label {
+    background-image: url("../images/approve_rounded.png");
+}
+
+.reject-label {
+    background-image: url("../images/reject_rounded.png");
+}
+
+.quest-outcome-btn {
+    padding: 0;
+    border: 0;
+}

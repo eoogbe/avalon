@@ -1,14 +1,6 @@
 aside.col-sm-3(data-bind='if: game().shouldShowStats')
-  section
-    h3 You know
-    // ko if: player().knowsPlayers
-    dl.dl-horizontal(data-bind='foreach: player().knownPlayers')
-      dt(data-bind='text: $root.player().characterFor($data.character)')
-      dd(data-bind='text: name')
-    // /ko
-    // ko ifnot: player().knowsPlayers
-    p No one :(
-    // /ko
+  include ./players/_known_players.jade
+  
   section
     h3 Questors
     // ko if: quest().hasCurrent

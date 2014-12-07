@@ -77,6 +77,6 @@
           data-bind='text: infoDialog().heading'
         )
       .modal-body.panel-body
-        p(data-bind='text: infoDialog().message')
+        p(data-bind='html: infoDialog().message')
       .modal-footer.panel-footer
         button.btn.btn-default(type='button', data-dismiss='modal') Ok

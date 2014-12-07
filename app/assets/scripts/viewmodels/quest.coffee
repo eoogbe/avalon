@@ -54,6 +54,22 @@ Avalon.Quest = (socket, root) ->
     _.map _.reject(self.votes(), "isApprove"), "player"
   ), self)
   
+  self.outcomes = ko.pureComputed((->
+    self.current().outcomes.sort()
+  ), self)
+  
+  self.failOutcomeImg = ->
+    if root.player().isGood() then "/images/fail_disabled.jpg" else "/images/fail.jpg"
+  
+  self.outcomeImgAttrs = (isSuccess) ->
+    if isSuccess
+      { src: "/images/success.jpg", alt: "Success" }
+    else
+      { src: "/images/fail.jpg", alt: "Fail" }
+  
+  self.isKing = (player) ->
+    self.kingName() is player.name
+  
   createOutcome = (isSuccess) ->
     socket.emit "quest_outcome_created",
       outcome: isSuccess
