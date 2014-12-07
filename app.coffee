@@ -24,9 +24,8 @@ app.use logger "dev"
 app.use sessionMiddleware
 app.use less path.join(__dirname, "app", "assets", "styles"),
   dest: path.join __dirname, "public"
-  debug: true
   preprocess:
-    path: (pathname) -> pathname.replace /\\stylesheets\\/, "\\"
+    path: (pathname) -> pathname.replace /stylesheets/, ""
 app.use coffeescript
   src: path.join __dirname, "app", "assets", "scripts"
   dest: path.join __dirname, "public", "javascripts"
