@@ -3,7 +3,7 @@ mongoose = require "mongoose"
 module.exports = (app) ->
     config = require("./environment")[app.get("env")]
     
-    mongoose.connect config.databaseUri
+    mongoose.connect config.databaseUrl
     mongoose.connection.on "error", ->
       console.error.bind console, "connection error:"
     

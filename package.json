@@ -3,6 +3,10 @@
   "description": "Website for facilitating playing Avalon",
   "version": "0.0.1",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eoogbe/avalon.git"
+  },
   "scripts": {
     "start": "coffee app.coffee"
   },

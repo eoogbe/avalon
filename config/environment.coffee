@@ -1,13 +1,13 @@
 module.exports =
   production:
     redisClient: ->
-      rtg = require("url").parse process.env.REDISTOGO_URL
-      redis = require("redis").createClient rtg.port, rtg.hostname
-      redis.auth rtg.auth.split(":")[1]
+      redisUrl = require("url").parse process.env.REDIS_URL
+      redis = require("redis").createClient redisUrl.port, redisUrl.hostname
+      redis.auth process.env.REDIS_PASSWORD
       redis
     sessionSecret: process.env.SESSION_SECRET
-    databaseUri: process.env.MONGOLAB_URI
+    databaseUrl: process.env.OPENSHIFT_MONGODB_DB_URL
   development:
     redisClient: require("redis").createClient
     sessionSecret: "9289kv(@&v_yh5q-psx%ay6x6xv6u#ob(&h&k*mf3(nemcg+!$"
-    databaseUri: "mongodb://localhost/avalon_dev"
+    databaseUrl: "mongodb://localhost/avalon_dev"
