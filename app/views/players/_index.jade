@@ -10,7 +10,7 @@ section(data-bind='if: $root.isCurrentPage("players")')
   // ko ifnot: player().isGameCreator
   button.btn-link(
     type='button'
-    data-bind='click: player().leaveGame'
+    data-bind='click: player().leaveGame, visible: !$root.game().isPlaying()'
   ) Leave game
   // /ko
   
