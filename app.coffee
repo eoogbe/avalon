@@ -26,7 +26,8 @@ app.use less path.join(__dirname, "app", "assets", "styles"),
   dest: path.join __dirname, "public"
   preprocess:
     path: (pathname) ->
-      console.log "less-middleware"
+      console.log pathname
+      console.log pathname.replace /\\stylesheets\\/, "\\"
       pathname.replace /\\stylesheets\\/, "\\"
 app.use coffeescript
   src: path.join __dirname, "app", "assets", "scripts"
