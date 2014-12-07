@@ -22,10 +22,17 @@ exports.created = (eventCtx) ->
               
               if data.isGameover
                 Game.populate game, { path: "players" }, (err, game) ->
+                  return console.error err if err
+                  
                   io.to(game.name).emit "show_gameover", data.game
               else
                 io.to(game.name).emit "show_quest",
                   quest: quest
                   questStats: data.questStats
         else
-          socket.emit "wait_on_questors", quest
+          Game.findById(quest.game).populate("players").exec (err, game) ->
+            return console.error err if err
+            
+            socket.emit "wait_on_questors",
+              currentGame: game
+              currentQuest: quest

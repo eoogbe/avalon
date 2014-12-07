@@ -1,15 +1,17 @@
 section(data-bind='if: $root.isCurrentPage("new_game")')
   h2 New game
   
-  form(data-bind='submit: game().create')
-    // ko if: game().hasError
-    .error Name 
-      span(data-bind='text: game().error().name.message')
-    // /ko
+  form.new-game(data-bind='submit: game().create')
+    .form-group(data-bind='css: { "has-error": game().hasError }')
+      label.control-label(for='game-name') Game name
+      input.form-control#game-name(
+        type='text'
+        data-bind='hasFocus: $root.isCurrentPage("new_game")'
+      )
+      // ko if: game().hasError
+      .help-block(data-bind='text: game().error().name.message')
+      // /ko
     
-    label(for='game-name') Game name
-    input#game-name(type='text')
-    
-    button(type='submit') Create game
+    button.btn.btn-default(type='submit') Create game
   
-  button(type='button', data-bind='click: goToGames') back
+  button.pull-right.btn-link(type='button', data-bind='click: goToGames') back

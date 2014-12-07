@@ -11,13 +11,21 @@ Avalon.EventHandlers.QuestVotes = (socket, viewModel) ->
       isDone: false
     $("#waiting-dialog").modal "show"
   
-  socket.on "reject_quest", (currentQuest) ->
-    viewModel.quest().current currentQuest
-    viewModel.actionDialog
-      type: "panel-default"
-      heading: "Quest Rejected"
-      message: "The quest was rejected"
-      action: viewModel.quest().update
-    viewModel.alert null
-    $(".modal").modal "hide"
-    $("#action-dialog").modal "show"
+  socket.on "show_quest_votes", (data) ->
+    viewModel.game().current data.currentGame
+    viewModel.quest().current data.currentQuest
+    viewModel.quest().isLastRejectableQuest = data.isLastRejectableQuest
+    viewModel.quest().votes data.votes
+    
+    viewModel.currentPage "quest_votes"
+    
+    if viewModel.quest().isPlaying() and not viewModel.player().isQuestor()
+      viewModel.alert
+        message: "Waiting on questors..."
+        type: "alert-warning"
+    else
+      viewModel.alert null
+    
+    viewModel.waitingDialog
+      message: "All votes have been counted"
+      isDone: true

@@ -56,6 +56,8 @@ exports.left = (eventCtx) ->
       return console.error err if err
       
       Game.populate game, { path: "players" }, (err, game) ->
+        return console.error err if err
+        
         socket.leave game.name
         
         io.to(game.name).emit "show_players",
@@ -70,22 +72,20 @@ exports.started = (eventCtx) ->
   Game = eventCtx.models.Game
   
   (gameId) ->
-    Game.findByIdAndUpdate(gameId, { state: "playing" })
-      .populate("players")
-      .exec (err, game) ->
+    Game.findById(gameId).populate("players").exec (err, game) ->
+      return console.error err if err
+      
+      game.start (err) ->
         return console.error err if err
         
-        game.start (err) ->
-          return console.error err if err
-          
-          for id, conn of io.of("/").connected when game.name in conn.rooms
-            currentPlayer = conn.request.session.user
-            for player in game.players when player.name is currentPlayer
-              conn.emit "set_player", player
-              break
-          
-          socket.emit "show_player"
-          socket.to(game.name).emit "stop_waiting_on_game_start"
+        for id, conn of io.of("/").connected when game.name in conn.rooms
+          currentPlayer = conn.request.session.user
+          for player in game.players when player.name is currentPlayer
+            conn.emit "set_player", player
+            break
+        
+        socket.emit "show_player", game
+        socket.to(game.name).emit "stop_waiting_on_game_start", game
 
 exports.deleted = (eventCtx) ->
   io = eventCtx.io

@@ -24,16 +24,19 @@ Avalon.Main = (socket) ->
   self.alertVote = ->
     unless $("#action-dialog").hasClass "in"
       self.alert
-        message: "The king has made their final decision. Vote to accept or reject the proposed quest."
+        message: "The king has made their final decision. Vote to approve or reject the proposed quest."
         type: "alert-warning"
   
   self.isCurrentPage = (pageName) ->
     self.currentPage() is pageName
   
+  self.formatDate = (dateStr) ->
+    date = new Date dateStr
+    "#{date.getFullYear()}-#{date.getMonth()}-#{date.getDate()} #{date.getHours()}:#{date.getMinutes()}:#{date.getSeconds()}"
+  
   self.goToNewGame = ->
     self.game().error null
     self.currentPage "new_game"
-    $("#game-name").focus()
   
   self.goToGames = ->
     self.currentPage "games"
@@ -44,6 +47,10 @@ Avalon.Main = (socket) ->
   
   self.goToNewQuestOutcome = ->
     self.currentPage "new_quest_outcome"
+    self.alert null
+  
+  self.goToQuest = ->
+    self.currentPage "quest"
     self.alert null
   
   self

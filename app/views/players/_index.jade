@@ -2,19 +2,25 @@ section(data-bind='if: $root.isCurrentPage("players")')
   h2(data-bind='text: game().current().name')
   
   // ko if: player().isGameCreator
-  button(type='button', data-bind='click: game().confirmDelete') Delete game
+  button.btn.btn-danger(
+    type='button'
+    data-bind='click: game().confirmDelete'
+  ) Delete game
   // /ko
   // ko ifnot: player().isGameCreator
-  button(type='button', data-bind='click: player().leaveGame') Leave game
+  button.btn-link(
+    type='button'
+    data-bind='click: player().leaveGame'
+  ) Leave game
   // /ko
   
   section
     h3 Players
-    ul(data-bind='foreach: game().current().players')
-      li(data-bind='text: name')
+    ul.list-group(data-bind='foreach: game().current().players')
+      li.list-group-item(data-bind='text: name')
   
   // ko if: player().isGameCreator
-  button(
+  button.btn.btn-default(
     type='button',
     data-bind='click: game().confirmStart, enable: game().canStart'
   ) Start

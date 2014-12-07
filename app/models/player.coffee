@@ -13,9 +13,15 @@ PlayerSchema = mongoose.Schema
     default: Date.now
     required: true
 
-PlayerSchema.statics.upsert = (conditions) ->
-  @findOneAndUpdate conditions, {
-    $setOnInsert: { createdAt: Date.now() }
-  }, { upsert: true }
+PlayerSchema.statics.upsert = (conditions, done) ->
+  Player = this
+  
+  Player.findOne conditions, (err, player) ->
+    if err
+      done err
+    else if player
+      done null, player
+    else
+      Player.create conditions, done
 
 mongoose.model "Player", PlayerSchema

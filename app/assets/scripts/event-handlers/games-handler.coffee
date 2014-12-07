@@ -21,12 +21,14 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
       action: game().reload
     $("#action-dialog").modal "show"
   
-  socket.on "stop_waiting_on_game_start", ->
+  socket.on "stop_waiting_on_game_start", (currentGame) ->
+    viewModel.game().current currentGame
     viewModel.alert
       message: 'The game can
         <button
             id="start-game-btn"
             type="button"
+            class="btn-link alert-link"
             data-bind="click: goToPlayer"
         >
           start
@@ -37,6 +39,7 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
   socket.on "show_gameover", (game) ->
     viewModel.game().current game
     viewModel.currentPage "gameover"
+    viewModel.alert null
     viewModel.waitingDialog
       message: "All questors have finished"
       isDone: true

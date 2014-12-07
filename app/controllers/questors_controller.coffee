@@ -3,8 +3,8 @@ handler = (eventCtx, changeType) ->
   Quest = eventCtx.models.Quest
   
   (data) ->
-    Quest.findByIdAndUpdateQuestors(data.questId, data.questorId, changeType)
-      .populate("game players")
+    Quest.findByIdAndUpdateQuestors data.questId, data.questorId, changeType
+      .populate "game players"
       .lean()
       .exec (err, quest) ->
         return console.error err if err

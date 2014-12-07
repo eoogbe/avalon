@@ -1,24 +1,31 @@
 handleStateChange = (eventCtx, quest, nonvoters, noChangeFn) ->
   io = eventCtx.io
+  Game = eventCtx.models.Game
   Quest = eventCtx.models.Quest
+  QuestVote = eventCtx.models.QuestVote
   
   populatedFields = [{ path: "game" }, { path: "players" }]
   Quest.populate quest, populatedFields, (err, quest) ->
     return console.error err if err
     
-    game = quest.game
-    
     switch quest.state
       when "unstarted", "voting"
         noChangeFn quest
-      when "rejected"
-        io.to(game.name).emit "reject_quest", quest
-      when "playing"
-        for id, conn of io.of("/").connected when game.name in conn.rooms
-          if quest.hasQuestor conn.request.session.user
-            conn.emit "show_new_quest_outcome", quest
-          else
-            conn.emit "wait_on_questors", quest
+      when "rejected", "playing"
+        QuestVote.find({ quest: quest }).populate("player").exec (err, votes) ->
+          return console.error err if err
+          
+          Game.populate quest.game, { path: "players" }, (err, game) ->
+            return console.error err if err
+            
+            io.to(game.name).emit "show_quest_votes",
+              currentGame: game
+              currentQuest: quest
+              isLastRejectableQuest: game.isOnLastRejectableQuest()
+              votes: votes
+            
+            if game.state is "bad_won"
+              io.to(game.name).emit "show_gameover", game
 
 exports.updated = (eventCtx) ->
   socket = eventCtx.socket
@@ -54,12 +61,12 @@ exports.started = (eventCtx) ->
   Quest = eventCtx.models.Quest
   
   (questId) ->
-    Quest.findByIdAndUpdate(questId, { state: "voting" })
-      .populate("votes")
+    Quest.findByIdAndUpdate questId, state: "voting"
+      .populate "votes"
       .exec (err, quest) ->
         return console.error err if err
         
-        quest.checkAccepted (err, quest, nonvoters) ->
+        quest.checkApproved (err, quest, nonvoters) ->
           return console.error err if err
           
           handleStateChange eventCtx, quest, nonvoters, (quest) ->

@@ -1,12 +1,17 @@
 @Avalon ?= {}
 Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.Quests = (socket, viewModel) ->
+  sendQuestVotedOn = ->
+    socket.emit "quest_voted_on",
+      playerId: viewModel.player().currentId()
+      questId: viewModel.quest().currentId()
+      vote: @value
+  
   registerRadioListener = ->
-    $(".quest-vote").change ->
-      socket.emit "quest_voted_on",
-        playerId: viewModel.player().currentId()
-        questId: viewModel.quest().currentId()
-        vote: @value
+    $(".quest-vote")
+      .prop "checked", false
+      .off "change", sendQuestVotedOn
+      .on "change", sendQuestVotedOn
   
   socket.on "show_new_questors", (currentQuest) ->
     viewModel.quest().current currentQuest
@@ -28,21 +33,12 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
     $("#info-dialog").modal "show"
   
   socket.on "set_quest", (currentQuest) ->
-    unless viewModel.isCurrentPage "quest"
+    if viewModel.currentPage() in ["questors", "new_questors"]
       viewModel.quest().current currentQuest
   
-  socket.on "show_new_quest_outcome", (currentQuest) ->
-    viewModel.quest().current currentQuest
-    viewModel.currentPage "new_quest_outcome"
-    viewModel.alert null
-    viewModel.infoDialog
-      heading: "Quest"
-      message: "You are on the quest"
-    $(".modal").modal "hide"
-    $("#info-dialog").modal "show"
-  
-  socket.on "wait_on_questors", (currentQuest) ->
-    viewModel.quest().current currentQuest
+  socket.on "wait_on_questors", (data) ->
+    viewModel.game().current data.currentGame
+    viewModel.quest().current data.currentQuest
     viewModel.alert null
     viewModel.waitingDialog
       message: "Waiting on questors..."
@@ -52,7 +48,21 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
   socket.on "show_quest", (data) ->
     viewModel.quest().current data.quest
     viewModel.quest().stats data.questStats
-    viewModel.currentPage "quest"
-    viewModel.waitingDialog
-      message: "All questors have finished"
-      isDone: true
+    if viewModel.hasAlert()
+      viewModel.alert
+        message: 'All questors have finished.
+          <button
+              id="show-quest-btn"
+              type="button"
+              class="btn-link alert-link"
+              data-bind="click: goToQuest"
+          >
+            See results.
+          </button>'
+        type: "alert-info"
+      ko.applyBindings viewModel, $("#show-quest-btn")[0]
+    else
+      viewModel.currentPage "quest"
+      viewModel.waitingDialog
+        message: "All questors have finished"
+        isDone: true

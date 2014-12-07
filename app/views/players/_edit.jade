@@ -1,13 +1,15 @@
-section(data-bind='if: $root.isCurrentPage("edit_player")')
-  h2 Welcome to Avalon
+section.center-block(data-bind='if: $root.isCurrentPage("edit_player")')
+  h2.font-effect-outline.text-center Avalon
   
-  form(data-bind='submit: player().update')
-    // ko if: player().hasError
-    .error Name 
-      span(data-bind='text: player().error().name.message')
-    // /ko
+  form.center-block.edit-player(data-bind='submit: player().update')
+    .form-group(data-bind='css: { "has-error": player().hasError }')
+      label(for='player-name') Enter your name
+      input.form-control#player-name(
+        type='text'
+        data-bind='hasFocus: $root.isCurrentPage("edit_player")'
+      )
+      // ko if: player().hasError
+      .help-block(data-bind='text: player().error().name.message')
+      // /ko
     
-    label(for='player-name') Enter your name
-    input#player-name(type='text')
-    
-    button(type='submit') Begin
+    .text-center: button.btn.btn-default(type='submit') Start

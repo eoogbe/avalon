@@ -1,20 +1,29 @@
 section(data-bind='if: $root.isCurrentPage("games")')
   h2 Join a game
   
-  button(type='button', data-bind='click: goToNewGame') New game
+  .clearfix
+    button.btn-link.pull-right(
+      type='button'
+      data-bind='click: goToNewGame'
+    ) New game
   
   // ko if: game().list().length > 0
-  table
-    thead: tr
-      th(scope='col') Name
-      th(scope='col') Created at
-      th(scope='col') Players
-    tbody(data-bind='foreach: game().list')
-      tr
-        td
-          button(type='button', data-bind='text: name, click: function() { $root.player().joinGame($data._id) }')
-        td(data-bind='text: createdAt')
-        td(data-bind='text: players.length')
+  .table-responsive
+    table.table
+      thead: tr
+        th(scope='col') Name
+        th(scope='col') Created at
+        th(scope='col') Players
+      tbody(data-bind='foreach: game().list')
+        tr
+          td
+            button.btn-link(
+              type='button'
+              data-bind='text: name,\
+                click: function() { $root.player().joinGame($data._id) }'
+            )
+          td(data-bind='text: $root.formatDate($data.createdAt)')
+          td(data-bind='text: players.length')
   // /ko
   // ko ifnot: game().list().length > 0
   p No games to join

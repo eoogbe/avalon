@@ -3,15 +3,15 @@ section(data-bind='if: $root.isCurrentPage("questors")')
     span(data-bind='text: quest().current().numPlayersNeeded')
     | &nbsp;players
   
-  ul(data-bind='foreach: quest().current().players')
-    li(data-bind='text: name')
+  ul.list-group(data-bind='foreach: quest().current().players')
+    li.list-group-item(data-bind='text: name')
   
-  input.quest-vote#nonking-quest-accept(
+  input.quest-vote#nonking-quest-approve(
     type='radio'
     name='nonking-quest-vote'
-    value='accept'
+    value='approve'
   )
-  label(for='nonking-quest-accept') Accept
+  label(for='nonking-quest-approve') Approve
   
   input.quest-vote#nonking-quest-reject(
     type='radio'

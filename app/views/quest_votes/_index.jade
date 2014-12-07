@@ -1,0 +1,38 @@
+section(data-bind='if: $root.isCurrentPage("quest_votes")')
+  h2 The quest was 
+    span(data-bind='text: quest().voteResult')
+  
+  section
+    h3 Approvers
+    // ko if: quest().hasApprovers
+    ul.list-group(data-bind='foreach: quest().approvers')
+      li.list-group-item(data-bind='text: name')
+    // /ko
+    // ko ifnot: quest().hasApprovers
+    p No one approved this quest
+    // /ko
+  
+  section
+    h3 Rejectors
+    // ko if: quest().hasRejectors
+    ul.list-group(data-bind='foreach: quest().rejectors')
+      li.list-group-item(data-bind='text: name')
+    // /ko
+    // ko ifnot: quest().hasRejectors
+    p No one rejected this quest
+    // /ko
+  
+  // ko if: quest().isLastRejectableQuest
+  p.bg-danger.text-danger
+    | This is the 4th rejected quest. If the next quest is rejected, the bad guys will win.
+  // /ko
+  // ko if: quest().isRejected
+  button.btn-link(type='button', data-bind='click: quest().update') Next quest
+  // /ko
+  // ko if: player().isQuestor
+  p You are on the quest 
+    button.btn.btn-default(
+      type='button'
+      data-bind='click: goToNewQuestOutcome'
+    ) Go
+  // /ko

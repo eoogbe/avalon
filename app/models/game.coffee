@@ -25,6 +25,12 @@ GameSchema = mongoose.Schema
   kingIdx:
     type: Number
     min: 0
+  numRejectedQuests:
+    type: Number
+    min: 0
+    max: 5
+    default: 0
+    required: true
   createdAt:
     type: Date
     default: Date.now
@@ -41,6 +47,8 @@ GameSchema.path("name").validate(( (name, respond) ->
     respond numGames is 0
   ), "already taken")
 
+GameSchema.statics.MAX_REJECTED_QUESTS = 5
+
 GameSchema.statics.unstarted = ->
   @model("Game").find({ state: "unstarted" }).sort("-createdAt")
 
@@ -55,12 +63,13 @@ GameSchema.methods.addPlayer = (player, done) ->
     done null, this
 
 GameSchema.methods.start = (done) ->
-  Game = @model("Game")
-  Player = @model("Player")
+  Game = @model "Game"
+  Player = @model "Player"
   game = this
   
   characters = ["Good", "Good", "Good", "Bad", "Bad"]
   game.kingIdx = randIdx(game.players)
+  game.state = "playing"
   game.save (err, game) ->
     return done err if err
     
@@ -105,5 +114,8 @@ GameSchema.methods.checkGameover = (done) ->
 
 GameSchema.methods.canStart = ->
   @players.length >= NUM_PLAYERS_TO_START
+
+GameSchema.methods.isOnLastRejectableQuest = ->
+  @numRejectedQuests is @model("Game").MAX_REJECTED_QUESTS - 1
 
 mongoose.model "Game", GameSchema

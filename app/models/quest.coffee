@@ -31,9 +31,9 @@ NUM_PLAYERS_NEEDED_PER_QUEST = [2, 3, 2, 3, 3]
 
 QuestSchema.statics.upsert = (gameId, done) ->
   Quest = this
-  Game = @model("Game")
+  Game = @model "Game"
   
-  Quest.find { game: gameId }, (err, quests) ->
+  Quest.find { game: gameId, state: { $ne: "rejected" }}, (err, quests) ->
     return done err if err
     
     newQuests = quests.filter (quest) ->
@@ -76,12 +76,12 @@ QuestSchema.statics.findByIdAndUpdateQuestors = (questId, questorId, changeType)
   @findByIdAndUpdate questId, changes
 
 QuestSchema.statics.findByIdAndCreateVote = (questId, playerId, vote, done) ->
-  Quest = @model("Quest")
-  QuestVote = @model("QuestVote")
+  Quest = @model "Quest"
+  QuestVote = @model "QuestVote"
   
   voteConditions = { quest: questId, player: playerId }
   voteChanges =
-    isAccept: vote is "accept"
+    isApprove: vote is "approve"
     $setOnInsert: { createdAt: Date.now() }
   
   QuestVote.findOneAndUpdate voteConditions, voteChanges, { upsert: true },
@@ -89,12 +89,12 @@ QuestSchema.statics.findByIdAndCreateVote = (questId, playerId, vote, done) ->
       return done err if err
       
       questChanges = { $addToSet: { votes: vote._id }}
-      Quest.findByIdAndUpdate(questId, questChanges)
-        .populate("votes")
+      Quest.findByIdAndUpdate questId, questChanges
+        .populate "votes"
         .exec (err, quest) ->
           return done err if err
           
-          quest.checkAccepted done
+          quest.checkApproved done
 
 QuestSchema.methods.hasVoter = (player) ->
   @votes.some (vote) -> vote.player.equals player._id
@@ -102,14 +102,15 @@ QuestSchema.methods.hasVoter = (player) ->
 QuestSchema.methods.hasQuestor = (playerName) ->
   @players.some (player) -> player.name is playerName
 
-QuestSchema.methods.isAccepted = ->
-  accepts = @votes.filter (vote) -> vote.isAccept
-  accepts.length > @votes.length / 2
+QuestSchema.methods.isApproved = ->
+  approves = @votes.filter (vote) -> vote.isApprove
+  approves.length > @votes.length / 2
 
-QuestSchema.methods.checkAccepted = (done) ->
+QuestSchema.methods.checkApproved = (done) ->
   quest = this
+  Game = @model "Game"
   
-  @model("Game").findById(quest.game).populate("players").exec (err, game) ->
+  Game.findById(quest.game).populate("players").exec (err, game) ->
     return done err if err
     
     players = game.players
@@ -118,8 +119,21 @@ QuestSchema.methods.checkAccepted = (done) ->
     if nonvoters.length > 0
       done null, quest, nonvoters
     else if quest.state is "voting"
-      quest.state = if quest.isAccepted() then "playing" else "rejected"
-      quest.save done
+      if quest.isApproved()
+        game.numRejectedQuests = 0
+        quest.state = "playing"
+      else
+        ++game.numRejectedQuests
+        quest.state = "rejected"
+        if game.numRejectedQuests >= Game.MAX_REJECTED_QUESTS
+          game.state = "bad_won"
+      
+      game.save (err) ->
+        return done err if err
+        
+        quest.save done
+    else
+      done null, quest, nonvoters
 
 QuestSchema.methods.checkFinished = (done) ->
   if @outcomes.length >= @numPlayersNeeded

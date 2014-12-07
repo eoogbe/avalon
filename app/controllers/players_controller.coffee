@@ -5,7 +5,7 @@ exports.updated = (eventCtx) ->
   showGames = eventCtx.showGames
   
   (name) ->
-    Player.upsert({ name: name }).lean().exec (err, player) ->
+    Player.upsert { name: name }, (err, player) ->
       if not err
         session.user = name
         session.save (err) ->

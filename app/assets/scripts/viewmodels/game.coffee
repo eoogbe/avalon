@@ -15,6 +15,16 @@ Avalon.Game = (socket, root) ->
     self.error()? and not $.isEmptyObject self.error()
   ), self)
   
+  self.isPlaying = ko.pureComputed((->
+    self.current().state is "playing"
+  ), self)
+  
+  self.shouldShowStats = ko.pureComputed((->
+    self.hasCurrent() and
+      self.current().state isnt "unstarted" and
+      not root.isCurrentPage "players"
+  ), self)
+  
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
   self.creatorName = ko.pureComputed((->
@@ -23,6 +33,10 @@ Avalon.Game = (socket, root) ->
   
   self.nonquestors = ko.pureComputed((->
     _.reject self.current().players, root.quest().hasQuestor
+  ), self)
+  
+  self.numRejectedQuests = ko.pureComputed((->
+    self.current().numRejectedQuests
   ), self)
   
   self.winnerType = ko.pureComputed((->
@@ -53,7 +67,7 @@ Avalon.Game = (socket, root) ->
   
   self.confirmStart = ->
     root.confirmDialog
-      type: "panel-primary"
+      type: "panel-warning"
       message: "No additional players will be able to join the game. Continue?"
       action: self.start
       positiveBtnText: "Yes, let's start"
@@ -67,6 +81,7 @@ Avalon.Game = (socket, root) ->
   self.reload = ->
     $("#action-dialog").modal "hide"
     root.alert null
+    self.current {}
     socket.emit "game_reloaded"
   
   self

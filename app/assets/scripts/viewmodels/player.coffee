@@ -7,12 +7,9 @@ Avalon.Player = (socket, root) ->
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
-  self.currentCharacter = ko.pureComputed((->
-    if self.current().character is "Good"
-      "a Loyal Servant of Arthur"
-    else if self.current().character is "Bad"
-      "a Minon of Mordred"
-    ), self)
+  self.character = ko.pureComputed((->
+    self.characterFor self.current().character
+  ), self)
   
   self.kingMessage = ko.pureComputed((->
     if self.current().name is root.quest().kingName()
@@ -32,6 +29,16 @@ Avalon.Player = (socket, root) ->
   self.isGood = ko.pureComputed((->
     self.current().character is "Good"
   ), self)
+  
+  self.isQuestor = ko.pureComputed((->
+    root.quest().isPlaying() and root.quest().hasQuestor self.current()
+  ), self)
+  
+  self.characterFor = (character) ->
+    if character is "Good"
+      "a Loyal Servant of Arthur"
+    else if character is "Bad"
+      "a Minon of Mordred"
   
   self.update = ->
     name = $("#player-name").val()

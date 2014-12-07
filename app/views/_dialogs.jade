@@ -3,7 +3,7 @@
   aria-hidden='true'
   aria-labelledby='confirm-dialog-heading'
 )
-  .modal-dialog.modal-sm
+  .modal-dialog
     .modal-content.panel(data-bind='css: confirmDialog().type')
       .modal-header.panel-heading
         button.close(type='button', data-dismiss='modal')
@@ -13,12 +13,12 @@
       .modal-body.panel-body
         p(data-bind='text: confirmDialog().message')
       .modal-footer.panel-footer
-        button(
+        button.btn.btn-default(
           type='button'
           data-dismiss='modal'
           data-bind='text: confirmDialog().negativeBtnText'
         )
-        button(
+        button.btn.btn-primary(
           type='button'
           data-bind='click: confirmDialog().action,\
             text: confirmDialog().positiveBtnText'
@@ -26,6 +26,7 @@
 
 .modal.fade#action-dialog(
   role='dialog'
+  data-backdrop='static'
   aria-hidden='true'
   aria-labelledby='action-dialog-heading'
 )
@@ -35,14 +36,20 @@
         button.close(type='button', data-bind='click: actionDialog().action')
           span(aria-hidden='true') &times;
           span.sr-only Close
-        h4.modal-title.panel-title#action-dialog-heading(data-bind='text: actionDialog().heading')
+        h4.modal-title.panel-title#action-dialog-heading(
+          data-bind='text: actionDialog().heading'
+        )
       .modal-body.panel-body
         p(data-bind='text: actionDialog().message')
       .modal-footer.panel-footer
-        button(type='button', data-bind='click: actionDialog().action') Ok
+        button.btn.btn-default(
+          type='button'
+          data-bind='click: actionDialog().action'
+        ) Ok
 
 .modal.fade#waiting-dialog(
   role='dialog'
+  data-backdrop='static'
   aria-hidden='true'
   aria-labelledby='waiting-dialog-heading'
 )
@@ -53,7 +60,7 @@
       .modal-body.panel-body
         p(data-bind='text: waitingDialog().message')
       .modal-footer.panel-footer(data-bind='if: waitingDialog().isDone')
-        button(type='button', data-dismiss='modal') See results
+        button.btn.btn-default(type='button', data-dismiss='modal') See results
 
 .modal.fade#info-dialog(
   role='dialog'
@@ -72,4 +79,4 @@
       .modal-body.panel-body
         p(data-bind='text: infoDialog().message')
       .modal-footer.panel-footer
-        button(type='button', data-dismiss='modal') Ok
+        button.btn.btn-default(type='button', data-dismiss='modal') Ok

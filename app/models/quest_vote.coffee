@@ -1,7 +1,7 @@
 mongoose = require "mongoose"
 
 QuestVoteSchema = mongoose.Schema
-  isAccept:
+  isApprove:
     type: Boolean
     required: true
   player:

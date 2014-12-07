@@ -3,7 +3,6 @@ Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.Players = (socket, viewModel) ->
   socket.on "show_edit_player", ->
     viewModel.currentPage "edit_player"
-    $("#player-name").focus()
   
   socket.on "edit_player_error", (playerError) ->
     viewModel.player().error playerError
@@ -27,5 +26,6 @@ Avalon.EventHandlers.Players = (socket, viewModel) ->
   socket.on "set_player", (player) ->
     viewModel.player().current player
   
-  socket.on "show_player", ->
+  socket.on "show_player", (currentGame) ->
+    viewModel.game().current currentGame
     viewModel.goToPlayer()

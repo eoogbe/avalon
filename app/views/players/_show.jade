@@ -1,5 +1,5 @@
 section(data-bind='if: $root.isCurrentPage("player")')
   h2 You are 
-    span(data-bind='text: player().currentCharacter')
+    span(data-bind='text: player().character')
   
-  button(type='button', data-bind='click: quest().update') Ready
+  button.btn.btn-default(type='button', data-bind='click: quest().update') Ready

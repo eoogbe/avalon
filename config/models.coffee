@@ -13,3 +13,4 @@ module.exports =
     Player: mongoose.model "Player"
     Game: mongoose.model "Game"
     Quest: mongoose.model "Quest"
+    QuestVote: mongoose.model "QuestVote"

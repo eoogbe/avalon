@@ -1,3 +1,132 @@
-.no-js section {
+@primary-color: #d9a245;
+
+.no-js {
     display: none;
+}
+
+html,
+body,
+main {
+    height: 100%;
+}
+
+body {
+    font-size: 16px;
+    font-family: "Noto Serif";
+    background-color: #6a6158;
+    color: #fff;
+}
+
+h1 {
+    margin: 0;
+    font: 32px "Cinzel Decorative";
+    color: @primary-color;
+}
+
+dt:after {
+    content: ":";
+}
+
+h2 {
+    font: 54px "Pathway Gothic One";
+}
+
+select,
+.navbar-default,
+.list-group,
+.panel-body,
+.btn-move,
+.modal .btn-default {
+    color: #333;
+}
+
+.navbar {
+    dl,
+    dt,
+    dd {
+        display: inline;
+    }
+    dl {
+        margin-bottom: 0;
+    }
+    dt {
+        margin-right: 5px;
+    }
+    dd {
+        margin-right: 10px;
+    }
+}
+
+.alert-warning {
+    background-color: #ffb;
+}
+
+.btn-link {
+    font-size: 15px;
+    text-transform: lowercase;
+    color: lighten(#337ab7, 7%);
+    padding: 0;
+    &:hover, &:focus {
+        color: lighten(#23527c, 10%);
+    }
+}
+
+.btn-default {
+    font-weight: bold;
+    color: darken(@primary-color, 7%);
+}
+
+.modal .btn-default {
+    font-weight: normal;
+}
+
+.help-block {
+    border-radius: 3px;
+    padding: 3px;
+    font-size: 15px;
+    background-color: darken(#f2dede, 5%);
+}
+
+select {
+    min-width: 100px;
+}
+
+.splash-screen {
+    background: url("../images/stone.jpg");
+    section {
+        width: 45%;
+    }
+    h2 {
+        margin-bottom: 20px;
+        font: 144px "Cinzel Decorative";
+        color: @primary-color;
+    }
+}
+
+.edit-player {
+    width: 60%;
+}
+
+.new-game {
+    width: 40%;
+}
+
+.move-btns {
+    padding-top: 150px;
+}
+
+.btn-move {
+    font-size: 18px;
+    display: block;
+    margin-bottom: 3px;
+    width: 100%;
+}
+
+#characters {
+    dt {
+        width: 200px;
+    }
+    dd {
+        margin-left: 220px;
+    }
 }

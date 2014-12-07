@@ -3,29 +3,47 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
     span(data-bind='text: quest().current().numPlayersNeeded')
     | &nbsp;players for this quest
   
-  select#nonquestors(size='5', data-bind='foreach: game().nonquestors')
-    option(data-bind='text: name, attr: { value: _id }')
+  .row
+    section.col-sm-4
+      h3 Not going
+      select#nonquestors(
+        size='10'
+        data-bind='options: game().nonquestors,\
+          optionsText: "name",\
+          optionsValue: "_id"'
+      )
+    
+    .move-btns.col-sm-1
+      button.btn.btn-move(
+        type='button'
+        data-bind='click: quest().addQuestors,\
+          disable: quest().hasEnoughQuestors'
+      )
+        span(aria-hidden='true') &raquo;
+        span.sr-only Add questor
+      
+      button.btn.btn-move(
+        type='button'
+        data-bind='click: quest().removeQuestors'
+      )
+        span(aria-hidden='true') &laquo;
+        span.sr-only Remove questor
+    
+    section.col-sm-offset-3.col-sm-4
+      h3 Going
+      select#questors(
+        size='10'
+        data-bind='options: quest().current().players,\
+          optionsText: "name",\
+          optionsValue: "_id"'
+      )
   
-  button(
-    type='button'
-    data-bind='click: quest().addQuestors, disable: quest().hasEnoughQuestors'
-  )
-    span(aria-hidden='true') &raquo;
-    span.sr-only Add questor
-  
-  button(type='button', data-bind='click: quest().removeQuestors')
-    span(aria-hidden='true') &laquo;
-    span.sr-only Remove questor
-  
-  select#questors(size='5', data-bind='foreach: quest().current().players')
-    option(data-bind='text: name, attr: { value: _id }')
-  
-  input.quest-vote#king-quest-accept(
+  input.quest-vote#king-quest-approve(
     type='radio'
     name='king-quest-vote'
-    value='accept'
+    value='approve'
   )
-  label(for='king-quest-accept') Accept
+  label(for='king-quest-approve') Approve
   
   input.quest-vote#king-quest-reject(
     type='radio'
@@ -34,8 +52,10 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
   )
   label(for='king-quest-reject') Reject
   
-  // ko if: quest().hasError
-  .error(data-bind='text: quest().error')
-  // /ko
+  .has-error(data-bind='if: quest().hasError')
+    .help-block(data-bind='text: quest().error')
   
-  button(type='button', data-bind='click: quest().confirmStart') Finalize
+  button.btn.btn-default(
+    type='button'
+    data-bind='click: quest().confirmStart'
+  ) Finalize

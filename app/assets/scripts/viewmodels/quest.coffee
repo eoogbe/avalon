@@ -4,7 +4,9 @@ Avalon.Quest = (socket, root) ->
   
   self.current = ko.observable()
   self.error = ko.observable()
+  self.isLastRejectableQuest = ko.observable()
   self.stats = ko.observable()
+  self.votes = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()?._id ), self)
   
@@ -18,6 +20,34 @@ Avalon.Quest = (socket, root) ->
   
   self.hasEnoughQuestors = ko.pureComputed((->
     self.current()?.players?.length >= self.current()?.numPlayersNeeded
+  ), self)
+  
+  self.isRejected = ko.pureComputed((->
+    self.current()?.state is "rejected"
+  ), self)
+  
+  self.isPlaying = ko.pureComputed((->
+    self.current()?.state is "playing"
+  ), self)
+  
+  self.hasApprovers = ko.pureComputed((->
+    _.any self.votes(), "isApprove"
+  ), self)
+  
+  self.hasRejectors = ko.pureComputed((->
+    _.any self.votes(), isApprove: false
+  ), self)
+  
+  self.voteResult = ko.pureComputed((->
+    if self.isRejected() then "rejected" else "approved"
+  ), self)
+  
+  self.approvers = ko.pureComputed((->
+    _.map _.filter(self.votes(), "isApprove"), "player"
+  ), self)
+  
+  self.rejectors = ko.pureComputed((->
+    _.map _.reject(self.votes(), "isApprove"), "player"
   ), self)
   
   createOutcome = (isSuccess) ->
@@ -52,9 +82,10 @@ Avalon.Quest = (socket, root) ->
     if not self.hasEnoughQuestors()
       additionalQuestorsNeeded =
         self.current().numPlayersNeeded - self.current().players.length
-      self.error "You must select #{additionalQuestorsNeeded} more players to go on the quest. (You can select yourself.)"
+      pluralizePlayers = if additionalQuestorsNeeded is 1 then "player" else "players"
+      self.error "You must select #{additionalQuestorsNeeded} more #{pluralizePlayers} to go on the quest. (You can select yourself.)"
     else if $("input[name='king-quest-vote']:checked").length is 0
-      self.error "You must accept or reject your own quest"
+      self.error "You must approve or reject your own quest"
     else
       root.confirmDialog
         type: "panel-warning"
