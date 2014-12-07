@@ -43,3 +43,4 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
     viewModel.waitingDialog
       message: "All questors have finished"
       isDone: true
+    viewModel.unsetWaitingSignal()

@@ -47,8 +47,9 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
     viewModel.quest().current data.currentQuest
     viewModel.alert null
     viewModel.waitingDialog
-      message: "Waiting on questors..."
+      message: "Waiting on questors"
       isDone: false
+    viewModel.setWaitingSignal()
     $("#waiting-dialog").modal "show"
   
   socket.on "show_quest", (data) ->
@@ -72,3 +73,4 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
       viewModel.waitingDialog
         message: "All questors have finished"
         isDone: true
+      viewModel.unsetWaitingSignal()

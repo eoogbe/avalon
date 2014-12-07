@@ -5,13 +5,13 @@ section(data-bind='if: $root.isCurrentPage("questors")')
   
   ul.list-group(data-bind='foreach: quest().current().players')
     li.list-group-item
+      span(data-bind='text: name') 
       img(
         src='/images/crown.jpg'
         width='54'
         height='30'
         alt='King'
-        data-bind='visible: $root.quest.isKing($data)'
+        data-bind='visible: $root.quest().isKing($data)'
       )
-      span(data-bind='text: name')
   
   +voteRadioGroup('nonking')

@@ -1,5 +1,8 @@
 @Avalon ?= {}
 Avalon.Player = (socket, root) ->
+  NUM_GOOD_IMGS = 5
+  NUM_BAD_IMGS = 3
+  
   self = this
   
   self.current = ko.observable({})
@@ -34,10 +37,10 @@ Avalon.Player = (socket, root) ->
   
   self.characterImg = ->
     if self.current().character is "Good"
-      num = Math.floor Math.random() * 5 + 1
+      num = Math.floor Math.random() * NUM_GOOD_IMGS + 1
       "/images/good#{num}_small.jpg"
     else if self.current().character is "Bad"
-      num = Math.floor Math.random() * 3 + 1
+      num = Math.floor Math.random() * NUM_BAD_IMGS + 1
       "/images/bad#{num}_small.jpg"
   
   self.characterFor = (character) ->

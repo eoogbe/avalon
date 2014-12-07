@@ -1,5 +1,12 @@
 @Avalon ?= {}
 Avalon.Main = (socket) ->
+  WAITING_SIGNAL_DELAY = 5000
+  WAITING_SIGNALS = [
+    "twiddling thumbs", "counting ceiling tiles", "fiddling with clothes",
+    "falling asleep", "checking email", "checking texts", "browsing Facebook",
+    "browsing Yik Yak", "taking a smoke break", "having a quickie"
+  ]
+  
   self = this
   
   player = null
@@ -20,6 +27,8 @@ Avalon.Main = (socket) ->
   self.hasAlert = ko.pureComputed((->
     self.alert()? and not $.isEmptyObject self.alert()
   ), self)
+  
+  self.waitingSignalId = null
   
   self.alertVote = ->
     unless $("#action-dialog").hasClass "in"
@@ -52,5 +61,17 @@ Avalon.Main = (socket) ->
   self.goToQuest = ->
     self.currentPage "quest"
     self.alert null
+  
+  changeWaitingSignal = ->
+    idx = Math.floor Math.random() * WAITING_SIGNALS.length
+    $("#waiting-signal").text "#{WAITING_SIGNALS[idx]}..."
+  
+  self.setWaitingSignal = ->
+    changeWaitingSignal()
+    self.waitingSignalId = setInterval changeWaitingSignal, WAITING_SIGNAL_DELAY
+  
+  self.unsetWaitingSignal = ->
+    clearInterval self.waitingSignalId
+    $("#waiting-signal").text ""
   
   self
