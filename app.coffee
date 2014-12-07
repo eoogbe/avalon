@@ -37,7 +37,7 @@ app.get "/", (req, res) ->
 
 app.use errorHandler() if app.get("env") is "development"
 
-models = require "./config/models"
+models = require("./config/models")(app)
 require("./config/socket")(io, sessionMiddleware, models)
 
 http.listen app.get("port"), ->

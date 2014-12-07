@@ -12,7 +12,9 @@ module.exports = (app) ->
     reqModel = (filename) -> require "../app/models/#{filename}"
     reqModel model for model in ["player", "game", "quest", "quest_vote"]
 
-    Player: mongoose.model "Player"
-    Game: mongoose.model "Game"
-    Quest: mongoose.model "Quest"
-    QuestVote: mongoose.model "QuestVote"
+    {
+        Player: mongoose.model "Player"
+        Game: mongoose.model "Game"
+        Quest: mongoose.model "Quest"
+        QuestVote: mongoose.model "QuestVote"
+    }
