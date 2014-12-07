@@ -1,5 +1,3 @@
-models = require "./models"
-
 reqController = (controllerName) ->
   require "../app/controllers/#{controllerName}_controller"
 
@@ -9,7 +7,7 @@ questsController = reqController "quests"
 questOutcomesController = reqController "quest_outcomes"
 questorsController = reqController "questors"
 
-module.exports = (io, sessionMiddleware) ->
+module.exports = (io, sessionMiddleware, models) ->
   io.use (socket, next) ->
     sessionMiddleware socket.request, socket.request.res, next
   

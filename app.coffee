@@ -9,9 +9,10 @@ favicon = require "serve-favicon"
 errorHandler = require "errorhandler"
 less = require "less-middleware"
 coffeescript = require "connect-coffee-script"
+config = require("./config/environment")[app.get("env")]
 
 sessionMiddleware = session
-  secret: "placeholder secret"
+  secret: config.sessionSecret
   resave: false
   saveUninitialized: false
 
@@ -36,7 +37,8 @@ app.get "/", (req, res) ->
 
 app.use errorHandler() if app.get("env") is "development"
 
-require("./config/socket")(io, sessionMiddleware)
+models = require "./config/models"
+require("./config/socket")(io, sessionMiddleware, models)
 
 http.listen app.get("port"), ->
   console.log "Express server listening on port #{app.get('port')}"
