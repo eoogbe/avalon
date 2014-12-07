@@ -10,6 +10,7 @@
   "scripts": {
     "start": "coffee app.coffee"
   },
+  "main": "app.coffee",
   "dependencies": {
     "async": "^0.9.0",
     "coffee-script": "^1.8.0",
