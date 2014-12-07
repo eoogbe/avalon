@@ -4,7 +4,7 @@ handler = (eventCtx, changeType) ->
   
   (data) ->
     Quest.findByIdAndUpdateQuestors data.questId, data.questorId, changeType
-      .populate "game players"
+      .populate "game players king"
       .lean()
       .exec (err, quest) ->
         return console.error err if err

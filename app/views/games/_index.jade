@@ -7,7 +7,7 @@ section(data-bind='if: $root.isCurrentPage("games")')
       data-bind='click: goToNewGame'
     ) New game
   
-  // ko if: game().list().length > 0
+  // ko if: game().hasGames
   .table-responsive
     table.table
       thead: tr
@@ -25,7 +25,7 @@ section(data-bind='if: $root.isCurrentPage("games")')
           td(data-bind='text: $root.formatDate($data.createdAt)')
           td(data-bind='text: players.length')
   // /ko
-  // ko ifnot: game().list().length > 0
+  // ko ifnot: game().hasGames
   p No games to join
   // /ko
   

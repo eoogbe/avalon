@@ -57,7 +57,7 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
               class="btn-link alert-link"
               data-bind="click: goToQuest"
           >
-            See results.
+            See results
           </button>'
         type: "alert-info"
       ko.applyBindings viewModel, $("#show-quest-btn")[0]

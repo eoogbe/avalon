@@ -14,6 +14,10 @@ Avalon.Quest = (socket, root) ->
     self.current()?.king?.name
   ), self)
   
+  self.hasCurrent = ko.pureComputed((->
+    self.current()? and not $.isEmptyObject self.current()
+  ), self)
+  
   self.hasError = ko.pureComputed((->
     self.error()? and not $.isEmptyObject self.error()
   ), self)

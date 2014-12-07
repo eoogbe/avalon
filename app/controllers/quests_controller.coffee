@@ -4,7 +4,7 @@ handleStateChange = (eventCtx, quest, nonvoters, noChangeFn) ->
   Quest = eventCtx.models.Quest
   QuestVote = eventCtx.models.QuestVote
   
-  populatedFields = [{ path: "game" }, { path: "players" }]
+  populatedFields = [{ path: "game" }, { path: "players" }, { path: "king" }]
   Quest.populate quest, populatedFields, (err, quest) ->
     return console.error err if err
     

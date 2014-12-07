@@ -11,11 +11,11 @@ exports.created = (eventCtx) ->
       quest.checkFinished (err, isFinished) ->
         return console.error err if err
         
-        if isFinished
-          populatedFields = [{ path: "game" }, { path: "players" }]
-          Quest.populate quest, populatedFields, (err, quest) ->
-            return console.error err if err
-            
+        populatedFields = [{ path: "game" }, { path: "players" }, { path: "king" }]
+        Quest.populate quest, populatedFields, (err, quest) ->
+          return console.error err if err
+          
+          if isFinished
             game = quest.game
             game.checkGameover (err, data) ->
               return console.error err if err
@@ -29,10 +29,10 @@ exports.created = (eventCtx) ->
                 io.to(game.name).emit "show_quest",
                   quest: quest
                   questStats: data.questStats
-        else
-          Game.findById(quest.game).populate("players").exec (err, game) ->
-            return console.error err if err
-            
-            socket.emit "wait_on_questors",
-              currentGame: game
-              currentQuest: quest
+          else
+            Game.findById(quest.game).populate("players").exec (err, game) ->
+              return console.error err if err
+              
+              socket.emit "wait_on_questors",
+                currentGame: game
+                currentQuest: quest

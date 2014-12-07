@@ -23,8 +23,9 @@ Avalon.EventHandlers.Players = (socket, viewModel) ->
     else
       viewModel.alert null
   
-  socket.on "set_player", (player) ->
-    viewModel.player().current player
+  socket.on "set_player", (data) ->
+    viewModel.player().current data.currentPlayer
+    viewModel.player().knownPlayers data.knownPlayers
   
   socket.on "show_player", (currentGame) ->
     viewModel.game().current currentGame

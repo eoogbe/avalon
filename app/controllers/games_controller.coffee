@@ -81,7 +81,9 @@ exports.started = (eventCtx) ->
         for id, conn of io.of("/").connected when game.name in conn.rooms
           currentPlayer = conn.request.session.user
           for player in game.players when player.name is currentPlayer
-            conn.emit "set_player", player
+            conn.emit "set_player",
+              currentPlayer: player
+              knownPlayers: game.playersKnownTo player
             break
         
         socket.emit "show_player", game

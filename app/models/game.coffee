@@ -115,6 +115,11 @@ GameSchema.methods.checkGameover = (done) ->
 GameSchema.methods.canStart = ->
   @players.length >= NUM_PLAYERS_TO_START
 
+GameSchema.methods.playersKnownTo = (player) ->
+  return [] if player.character is "Good"
+  if player.character is "Bad"
+    @players.filter (p) -> p.character is "Bad" and not p.equals player
+
 GameSchema.methods.isOnLastRejectableQuest = ->
   @numRejectedQuests is @model("Game").MAX_REJECTED_QUESTS - 1
 

@@ -15,6 +15,10 @@ Avalon.Game = (socket, root) ->
     self.error()? and not $.isEmptyObject self.error()
   ), self)
   
+  self.hasGames = ko.pureComputed((->
+    self.list().length > 0
+  ), self)
+  
   self.isPlaying = ko.pureComputed((->
     self.current().state is "playing"
   ), self)

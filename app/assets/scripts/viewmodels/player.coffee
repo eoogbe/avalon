@@ -4,6 +4,7 @@ Avalon.Player = (socket, root) ->
   
   self.current = ko.observable({})
   self.error = ko.observable()
+  self.knownPlayers = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
@@ -20,6 +21,10 @@ Avalon.Player = (socket, root) ->
   
   self.hasError = ko.pureComputed((->
     self.error()? and not $.isEmptyObject self.error()
+  ), self)
+  
+  self.knowsPlayers = ko.pureComputed((->
+    self.knownPlayers().length > 0
   ), self)
   
   self.isGameCreator = ko.pureComputed((->
