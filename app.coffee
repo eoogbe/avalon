@@ -22,6 +22,7 @@ sessionMiddleware = session
 app.set "port", config.port
 app.set "views", path.join(__dirname, "app", "views")
 app.set "view engine", "jade"
+app.use express.query()
 app.use cookieParser()
 app.use sessionMiddleware
 app.use favicon path.join(__dirname, "public", "images", "favicon.ico")
