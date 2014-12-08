@@ -13,8 +13,10 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
       .off "change", sendQuestVotedOn
       .on "change", sendQuestVotedOn
   
-  socket.on "show_new_questors", (currentQuest) ->
-    viewModel.quest().current currentQuest
+  socket.on "show_new_questors", (data) ->
+    viewModel.game().current data.currentGame
+    viewModel.quest().current data.currentQuest
+    viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     viewModel.currentPage "new_questors"
     registerRadioListener()
     viewModel.infoDialog
@@ -28,11 +30,13 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
         >'
     $("#info-dialog").modal "show"
   
-  socket.on "show_questors", (currentQuest) ->
-    viewModel.quest().current currentQuest
+  socket.on "show_questors", (data) ->
+    viewModel.game().current data.currentGame
+    viewModel.quest().current data.currentQuest
+    viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     viewModel.currentPage "questors"
     registerRadioListener()
-    viewModel.alertVote() if currentQuest.state is "voting"
+    viewModel.alertVote() if data.currentQuest.state is "voting"
     viewModel.infoDialog
       heading: "King"
       message: "#{viewModel.quest().kingName()} is king"
@@ -49,8 +53,13 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
     viewModel.waitingDialog
       message: "Waiting on questors"
       isDone: false
-    viewModel.setWaitingSignal()
     $("#waiting-dialog").modal "show"
+  
+  socket.on "show_new_quest_outcome", (data) ->
+    viewModel.game().current data.currentGame
+    viewModel.quest().current data.currentQuest
+    viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
+    viewModel.currentPage "new_quest_outcome"
   
   socket.on "show_quest", (data) ->
     viewModel.quest().current data.quest
@@ -73,4 +82,3 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
       viewModel.waitingDialog
         message: "All questors have finished"
         isDone: true
-      viewModel.unsetWaitingSignal()

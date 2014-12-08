@@ -4,7 +4,7 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
     | &nbsp;players for this quest
   
   .row
-    section.col-sm-4
+    section.col-sm-3
       h3 Not going
       select#nonquestors(
         size='10'
@@ -13,7 +13,7 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
           optionsValue: "_id"'
       )
     
-    .move-btns.col-sm-1
+    .move-btns.col-sm-2
       button.btn.btn-move(
         type='button'
         data-bind='click: quest().addQuestors,\
@@ -29,7 +29,7 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
         span(aria-hidden='true') &laquo;
         span.sr-only Remove questor
     
-    section.col-sm-offset-3.col-sm-4
+    section.col-sm-offset-1.col-sm-3
       h3 Going
       select#questors(
         size='10'
@@ -38,14 +38,16 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
           optionsValue: "_id"'
       )
   
-  .center-block.text-center
-    +voteRadioGroup('king')
+  .row
+    .col-sm-offset-2.col-sm-9
+      +voteRadioGroup('king')
   
   .has-error(data-bind='if: quest().hasError')
     .help-block(data-bind='text: quest().error')
   
-  .center-block.text-center
-    button.btn.btn-default(
-      type='button'
-      data-bind='click: quest().confirmStart'
-    ) Finalize
+  .row
+    .col-sm-offset-3.col-sm-9
+      button.btn.btn-default(
+        type='button'
+        data-bind='click: quest().confirmStart'
+      ) Finalize

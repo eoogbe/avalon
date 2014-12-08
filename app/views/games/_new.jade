@@ -1,7 +1,7 @@
 section(data-bind='if: $root.isCurrentPage("new_game")')
   h2 New game
   
-  form.new-game(data-bind='submit: game().create')
+  form.new-game(data-bind='submit: game().confirmCreate')
     .form-group(data-bind='css: { "has-error": game().hasError }')
       label.control-label(for='game-name') Game name
       input.form-control#game-name(

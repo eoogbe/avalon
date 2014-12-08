@@ -21,14 +21,32 @@ Avalon.Main = (socket) ->
   self.alert = ko.observable()
   self.confirmDialog = ko.observable({})
   self.actionDialog = ko.observable({})
-  self.waitingDialog = ko.observable({})
   self.infoDialog = ko.observable({})
+  self._waitingDialog = ko.observable({})
   
   self.hasAlert = ko.pureComputed((->
     self.alert()? and not $.isEmptyObject self.alert()
   ), self)
   
   self.waitingSignalId = null
+  
+  changeWaitingSignal = ->
+    idx = Math.floor Math.random() * WAITING_SIGNALS.length
+    $("#waiting-signal").text "#{WAITING_SIGNALS[idx]}..."
+  
+  self.waitingDialog = ko.pureComputed
+    read: self._waitingDialog
+    write: (value) ->
+      self._waitingDialog value
+      
+      unless value.isDone
+        changeWaitingSignal()
+        self.waitingSignalId =
+          setInterval changeWaitingSignal, WAITING_SIGNAL_DELAY
+      else
+        clearInterval self.waitingSignalId
+        $("#waiting-signal").text ""
+    owner: self
   
   self.alertVote = ->
     unless $("#action-dialog").hasClass "in"
@@ -61,17 +79,5 @@ Avalon.Main = (socket) ->
   self.goToQuest = ->
     self.currentPage "quest"
     self.alert null
-  
-  changeWaitingSignal = ->
-    idx = Math.floor Math.random() * WAITING_SIGNALS.length
-    $("#waiting-signal").text "#{WAITING_SIGNALS[idx]}..."
-  
-  self.setWaitingSignal = ->
-    changeWaitingSignal()
-    self.waitingSignalId = setInterval changeWaitingSignal, WAITING_SIGNAL_DELAY
-  
-  self.unsetWaitingSignal = ->
-    clearInterval self.waitingSignalId
-    $("#waiting-signal").text ""
   
   self

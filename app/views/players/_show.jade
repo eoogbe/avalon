@@ -1,6 +1,6 @@
 section(data-bind='if: $root.isCurrentPage("player")')
-  h2 You are 
-    span(data-bind='text: player().character')
+  h2 You are
+    strong(data-bind='text: player().character')
   
   img.img-responsive(
     width='125'
@@ -9,6 +9,6 @@ section(data-bind='if: $root.isCurrentPage("player")')
     data-bind='attr: { src: $root.player().characterImg() }'
   )
   
-  include ./_known_players.jade
+  +knownPlayers('dl-horizontal')
   
   button.btn.btn-default(type='button', data-bind='click: quest().update') Ready

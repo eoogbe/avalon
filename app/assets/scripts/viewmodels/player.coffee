@@ -53,7 +53,20 @@ Avalon.Player = (socket, root) ->
     name = $("#player-name").val()
     socket.emit "player_updated", name
   
+  self.confirmJoinGame = (gameId) ->
+    return self.joinGame gameId unless root.game().isPlaying()
+    
+    root.confirmDialog
+      type: "panel-danger"
+      message: "You have a game in progress. The game will be discontinued for all players. Continue?"
+      action: -> self.joinGame gameId
+      positiveBtnText: "Yes, join a new game"
+      negativeBtnText: "No, go back to the old game"
+      negativeBtnAction: root.game().continue
+    $("#confirm-dialog").modal "show"
+  
   self.joinGame = (gameId) ->
+    $("#confirm-dialog").modal "hide"
     socket.emit "game_joined",
       gameId: gameId
       playerId: self.currentId()

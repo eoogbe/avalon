@@ -14,11 +14,11 @@ GameSchema = mongoose.Schema
     unique: true
   creator:
     type: mongoose.Schema.Types.ObjectId
-    ref: 'Player'
+    ref: "Player"
     required: true
   state:
     type: String
-    enum: ["unstarted", "playing", "good_won", "bad_won"]
+    enum: ["unstarted", "playing", "good_won", "bad_won", "discontinued"]
     default: "unstarted"
     required: true
   players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Player' }]
@@ -45,12 +45,12 @@ GameSchema.path("name").validate(( (name, respond) ->
   @model("Game").count { name: name }, (err, numGames) ->
     return respond false if err
     respond numGames is 0
-  ), "already taken")
+  ), "already exists")
 
 GameSchema.statics.MAX_REJECTED_QUESTS = 5
 
 GameSchema.statics.unstarted = ->
-  @model("Game").find({ state: "unstarted" }).sort("-createdAt")
+  @find({ state: "unstarted" }).sort("-createdAt")
 
 GameSchema.statics.findByIdAndRemovePlayer = (id, player, done) ->
   @findByIdAndUpdate id, { $pull: { players: player }}, done

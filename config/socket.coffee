@@ -21,13 +21,34 @@ module.exports = (io, sessionMiddleware, models) ->
       io: io
       socket: socket
       models: models
-      showGames: (player) ->
+      showGames: (data) ->
         models.Game.unstarted().lean().exec (err, games) ->
           return console.error err if err
           
-          socket.emit "show_games",
-            games: games
-            currentPlayer: player
+          data ?= {}
+          data.games = games
+          
+          socket.emit "show_games", data
+      upsertQuest: (gameId, player) ->
+        models.Quest.upsert gameId, (err, quest) ->
+          return console.error err if err
+          
+          populatedFields = [{ path: "king" }, { path: "players" }]
+          models.Quest.populate quest, populatedFields, (err, quest) ->
+            return console.error err if err
+            
+            models.Game.findById(gameId).populate("players").exec (err, game) ->
+              return console.error err if err
+              
+              isKing = quest.king.name is session.user
+              page = if isKing then "new_questors" else "questors"
+              data = { currentQuest: quest, currentGame: game }
+              
+              if player?
+                data.knownPlayers = game.playersKnownTo player
+                socket.join game.name
+              
+              socket.emit "show_#{page}", data
     
     socket.emit "show_edit_player"
     
@@ -35,6 +56,7 @@ module.exports = (io, sessionMiddleware, models) ->
     socket.on "game_created", gamesController.created(eventCtx)
     socket.on "game_joined", gamesController.joined(eventCtx)
     socket.on "game_left", gamesController.left(eventCtx)
+    socket.on "game_continued", gamesController.continued(eventCtx)
     socket.on "game_started", gamesController.started(eventCtx)
     socket.on "game_deleted", gamesController.deleted(eventCtx)
     socket.on "game_reloaded", gamesController.reloaded(eventCtx)

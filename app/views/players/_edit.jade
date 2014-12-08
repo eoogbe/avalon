@@ -1,8 +1,8 @@
 section.center-block(data-bind='if: $root.isCurrentPage("edit_player")')
   h2.font-effect-outline.text-center Avalon
   
-  form.center-block.edit-player(data-bind='submit: player().update')
-    .form-group(data-bind='css: { "has-error": player().hasError }')
+  form.row(data-bind='submit: player().update')
+    .form-group.col-sm-11(data-bind='css: { "has-error": player().hasError }')
       label(for='player-name') Enter your name
       input.form-control#player-name(
         type='text'
@@ -12,4 +12,4 @@ section.center-block(data-bind='if: $root.isCurrentPage("edit_player")')
       .help-block(data-bind='text: player().error().name.message')
       // /ko
     
-    .text-center: button.btn.btn-default(type='submit') Start
+    .col-sm-1: button.btn.btn-default.spacer-top(type='submit') Start

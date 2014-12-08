@@ -3,7 +3,7 @@ section(data-bind='if: $root.isCurrentPage("gameover")')
     span(data-bind='text: game().winnerType')
     | &nbsp;guys won
   
-  dl.dl-horizontal#characters(data-bind='foreach: game().current().players')
+  dl.dl-horizontal(data-bind='foreach: game().current().players')
     dt(data-bind='text: $root.player().characterFor($data.character)')
     dd(data-bind='text: name')
   

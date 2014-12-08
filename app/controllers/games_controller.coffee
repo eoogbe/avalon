@@ -5,18 +5,28 @@ joinGame = (eventCtx, models) ->
   player = models.player
   game = models.game
   
-  game.addPlayer player, (err, game) ->
-    return console.error err if err
-    
-    populatedFields = [{ path: "creator" }, { path: "players" }]
-    Game.populate game, populatedFields, (err, game) ->
+  Game.findOneAndUpdate { players: player, state: "playing" },
+    { state: "discontinued" }, (err, oldGame) ->
       return console.error err if err
       
-      socket.join game.name
+      if oldGame
+        socket.broadcast.to(oldGame.name).emit "warn_game_discontinued"
+        
+        for id, conn of io.of("/").connected when oldGame.name in conn.rooms
+          conn.leave oldGame.name
       
-      io.to(game.name).emit "show_players",
-        currentGame: game
-        canStartGame: game.canStart()
+      game.addPlayer player, (err, game) ->
+        return console.error err if err
+        
+        populatedFields = [{ path: "creator" }, { path: "players" }]
+        Game.populate game, populatedFields, (err, game) ->
+          return console.error err if err
+          
+          socket.join game.name
+          
+          io.to(game.name).emit "show_players",
+            currentGame: game
+            canStartGame: game.canStart()
 
 exports.created = (eventCtx) ->
   io = eventCtx.io
@@ -87,7 +97,7 @@ exports.started = (eventCtx) ->
             break
         
         socket.emit "show_player", game
-        socket.to(game.name).emit "stop_waiting_on_game_start", game
+        socket.broadcast.to(game.name).emit "stop_waiting_on_game_start", game
 
 exports.deleted = (eventCtx) ->
   io = eventCtx.io
@@ -99,13 +109,59 @@ exports.deleted = (eventCtx) ->
     Game.findByIdAndRemove gameId, (err, game) ->
       return console.error err if err
       
-      socket.leave game.name
-      io.to(game.name).emit "warn_game_deleted"
+      socket.broadcast.to(game.name).emit "warn_game_deleted"
       
       for id, conn of io.of("/").connected when game.name in conn.rooms
         conn.leave game.name
       
       showGames()
+
+exports.continued = (eventCtx) ->
+  socket = eventCtx.socket
+  Player = eventCtx.models.Player
+  Game = eventCtx.models.Game
+  Quest = eventCtx.models.Quest
+  QuestVote = eventCtx.models.QuestVote
+  upsertQuest = eventCtx.upsertQuest
+  
+  (data) ->
+    Quest.findOne({ game: data.gameId, state: "playing" })
+      .populate("game players king")
+      .exec (err, quest) ->
+        return console.error err if err
+        
+        Player.findById data.playerId, (err, player) ->
+          return console.error err if err
+          
+          if not quest
+            upsertQuest data.gameId, player
+          else if quest.players.some((p) -> p.equals data.playerId)
+            Game.findById(data.gameId).populate("players").exec (err, game) ->
+              return console.error err if err
+              
+              socket.join game.name
+              
+              socket.emit "show_new_quest_outcome",
+                currentGame: game
+                currentQuest: quest
+                knownPlayers: game.playersKnownTo player
+          else
+            QuestVote.find({ quest: quest })
+              .populate("player")
+              .exec (err, votes) ->
+                return console.error err if err
+                
+                Game.populate quest.game, { path: "players" }, (err, game) ->
+                  return console.error err if err
+                  
+                  socket.join game.name
+                  
+                  socket.emit "show_quest_votes",
+                    currentGame: game
+                    currentQuest: quest
+                    isLastRejectableQuest: game.isOnLastRejectableQuest()
+                    votes: votes
+                    knownPlayers: game.playersKnownTo player
 
 exports.reloaded = (eventCtx) ->
   eventCtx.showGames

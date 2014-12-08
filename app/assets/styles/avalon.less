@@ -11,7 +11,7 @@ main {
 }
 
 body {
-    font-size: 16px;
+    font-size: 26px;
     font-family: "Noto Serif";
     background-color: #6a6158;
     color: #fff;
@@ -19,7 +19,7 @@ body {
 
 h1 {
     margin: 0;
-    font: 32px "Cinzel Decorative";
+    font: 42px "Cinzel Decorative";
     color: @primary-color;
 }
 
@@ -28,7 +28,15 @@ dt:after {
 }
 
 h2 {
-    font: 54px "Pathway Gothic One";
+    font: 72px "Pathway Gothic One";
+    strong {
+        display: block;
+        font-size: 90px;
+    }
+}
+
+h3 {
+    font-size: 36px;
 }
 
 select,
@@ -60,8 +68,22 @@ select,
     background-color: #ffb;
 }
 
+.panel-title {
+    font-size: 24px;
+}
+
+.panel-body {
+    font-size: 21px;
+}
+
+dl,
+.btn,
+.btn-link,
+.help-block {
+    font-size: 24px;
+}
+
 .btn-link {
-    font-size: 15px;
     text-transform: lowercase;
     color: lighten(#337ab7, 7%);
     padding: 0;
@@ -79,10 +101,13 @@ select,
     font-weight: normal;
 }
 
+.modal-footer .btn {
+    font-size: 20px;
+}
+
 .help-block {
     border-radius: 3px;
-    padding: 3px;
-    font-size: 15px;
+    padding: 5px;
     background-color: darken(#f2dede, 5%);
 }
 
@@ -90,8 +115,22 @@ select {
     min-width: 100px;
 }
 
+.form-control {
+    font-size: 24px;
+    height: 44px;
+}
+
+.dl-horizontal {
+    dt {
+        width: 300px;
+    }
+    dd {
+        margin-left: 320px;
+    }
+}
+
 .spacer-top {
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
 .splash-screen {
@@ -106,12 +145,8 @@ select {
     }
 }
 
-.edit-player {
-    width: 60%;
-}
-
 .new-game {
-    width: 40%;
+    width: 50%;
 }
 
 .move-btns {
@@ -119,25 +154,16 @@ select {
 }
 
 .btn-move {
-    font-size: 18px;
+    font-size: 32px;
     display: block;
     margin-bottom: 3px;
     width: 100%;
 }
 
-#characters {
-    dt {
-        width: 200px;
-    }
-    dd {
-        margin-left: 220px;
-    }
-}
-
 .quest-vote {
     display: none;
     &:checked + label {
-        border: 3px solid #7d54a6;
+        border: 5px solid #7d54a6;
         border-radius: 12px;
     }
     + label {

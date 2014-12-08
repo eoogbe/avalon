@@ -2,6 +2,7 @@ exports.updated = (eventCtx) ->
   socket = eventCtx.socket
   session = socket.request.session
   Player = eventCtx.models.Player
+  Game = eventCtx.models.Game
   showGames = eventCtx.showGames
   
   (name) ->
@@ -11,7 +12,13 @@ exports.updated = (eventCtx) ->
         session.save (err) ->
           return console.error err if err
           
-          showGames(player)
+          conditions = { players: player, state: "playing" }
+          Game.findOne(conditions).populate("players").exec (err, game) ->
+            return console.error err if err
+            
+            showGames
+              currentPlayer: player
+              currentGame: game
       else if err.name is "ValidationError"
         socket.emit "edit_player_error", err.errors
       else

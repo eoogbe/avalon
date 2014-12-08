@@ -6,6 +6,13 @@ section(data-bind='if: $root.isCurrentPage("games")')
       type='button'
       data-bind='click: goToNewGame'
     ) New game
+  // ko if: game().isPlaying
+  .clearfix
+    button.btn-link.pull-right(
+      type='button'
+      data-bind='click: game().continue'
+    ) Continue existing game
+  // /ko
   
   // ko if: game().hasGames
   .table-responsive
@@ -20,7 +27,7 @@ section(data-bind='if: $root.isCurrentPage("games")')
             button.btn-link(
               type='button'
               data-bind='text: name,\
-                click: function() { $root.player().joinGame($data._id) }'
+                click: function() { $root.player().confirmJoinGame($data._id) }'
             )
           td(data-bind='text: $root.formatDate($data.createdAt)')
           td(data-bind='text: players.length')

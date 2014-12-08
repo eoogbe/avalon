@@ -9,7 +9,6 @@ Avalon.EventHandlers.QuestVotes = (socket, viewModel) ->
     viewModel.waitingDialog
       message: "Waiting on voters"
       isDone: false
-    viewModel.setWaitingSignal()
     $("#waiting-dialog").modal "show"
   
   socket.on "show_quest_votes", (data) ->
@@ -17,6 +16,7 @@ Avalon.EventHandlers.QuestVotes = (socket, viewModel) ->
     viewModel.quest().current data.currentQuest
     viewModel.quest().isLastRejectableQuest = data.isLastRejectableQuest
     viewModel.quest().votes data.votes
+    viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     
     viewModel.currentPage "quest_votes"
     
@@ -30,4 +30,3 @@ Avalon.EventHandlers.QuestVotes = (socket, viewModel) ->
     viewModel.waitingDialog
       message: "All votes have been counted"
       isDone: true
-    viewModel.unsetWaitingSignal()

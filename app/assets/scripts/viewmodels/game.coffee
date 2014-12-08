@@ -26,7 +26,7 @@ Avalon.Game = (socket, root) ->
   self.shouldShowStats = ko.pureComputed((->
     self.hasCurrent() and
       self.current().state isnt "unstarted" and
-      not root.isCurrentPage "players"
+      not (root.currentPage() in ["players", "games"])
   ), self)
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
@@ -50,7 +50,20 @@ Avalon.Game = (socket, root) ->
       "Bad"
   ), self)
   
+  self.confirmCreate = ->
+    return self.create() unless self.isPlaying()
+    
+    root.confirmDialog
+      type: "panel-danger"
+      message: "You have a game in progress. The game will be discontinued for all players. Continue?"
+      action: self.create
+      positiveBtnText: "Yes, create a new game"
+      negativeBtnText: "No, go back to the old game"
+      negativeBtnAction: self.continue
+    $("#confirm-dialog").modal "show"
+  
   self.create = ->
+    $("#confirm-dialog").modal "hide"
     name = $("#game-name").val()
     socket.emit "game_created",
       name: name
@@ -68,6 +81,12 @@ Avalon.Game = (socket, root) ->
   self.delete_ = ->
     $("#confirm-dialog").modal "hide"
     socket.emit "game_deleted", self.currentId()
+  
+  self.continue = ->
+    $("#confirm-dialog").modal "hide"
+    socket.emit "game_continued",
+      playerId: root.player().currentId()
+      gameId: self.currentId()
   
   self.confirmStart = ->
     root.confirmDialog

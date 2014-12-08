@@ -2,13 +2,13 @@ section(data-bind='if: $root.isCurrentPage("players")')
   h2(data-bind='text: game().current().name')
   
   // ko if: player().isGameCreator
-  button.btn.btn-danger(
+  button.btn.btn-danger.pull-right(
     type='button'
     data-bind='click: game().confirmDelete'
   ) Delete game
   // /ko
   // ko ifnot: player().isGameCreator
-  button.btn-link(
+  button.btn-link.pull-right(
     type='button'
     data-bind='click: player().leaveGame, visible: !$root.game().isPlaying()'
   ) Leave game

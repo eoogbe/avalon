@@ -13,11 +13,20 @@
       .modal-body.panel-body
         p(data-bind='text: confirmDialog().message')
       .modal-footer.panel-footer
+        // ko if: confirmDialog().negativeBtnAction
+        button.btn.btn-default(
+          type='button'
+          data-bind='click: confirmDialog().negativeBtnAction,\
+            text: confirmDialog().negativeBtnText'
+        )
+        // /ko
+        // ko ifnot: confirmDialog().negativeBtnAction
         button.btn.btn-default(
           type='button'
           data-dismiss='modal'
           data-bind='text: confirmDialog().negativeBtnText'
         )
+        // /ko
         button.btn.btn-primary(
           type='button'
           data-bind='click: confirmDialog().action,\
