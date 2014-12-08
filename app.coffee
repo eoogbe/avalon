@@ -14,7 +14,7 @@ coffeescript = require "connect-coffee-script"
 config = require("./config/environment")[app.get("env")]
 
 sessionMiddleware = session
-  store: new MongoStore url: config.databaseUrl
+  store: new MongoStore { db: config.database.name, url: config.database.url }
   secret: config.sessionSecret
   resave: false
   saveUninitialized: false
