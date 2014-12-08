@@ -3,6 +3,7 @@ app = express()
 http = require("http").Server app
 io = require("socket.io")(http)
 logger = require "morgan"
+cookieParser = require "cookie-parser"
 session = require "express-session"
 RedisStore = require("connect-redis")(session)
 path = require "path"
@@ -23,6 +24,7 @@ app.set "views", path.join(__dirname, "app", "views")
 app.set "view engine", "jade"
 app.use favicon path.join(__dirname, "public", "images", "favicon.ico")
 app.use logger "dev"
+app.use cookieParser()
 app.use sessionMiddleware
 app.use less path.join(__dirname, "app", "assets", "styles"),
   dest: path.join __dirname, "public"
