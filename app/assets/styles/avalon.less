@@ -1,6 +1,7 @@
 @primary-color: #d9a245;
 
-.no-js {
+.no-js,
+.navbar .no-js {
     display: none;
 }
 
@@ -21,10 +22,6 @@ h1 {
     margin: 0;
     font: 42px "Cinzel Decorative";
     color: @primary-color;
-}
-
-dt:after {
-    content: ":";
 }
 
 h2 {
@@ -76,7 +73,6 @@ select,
     font-size: 21px;
 }
 
-dl,
 .btn,
 .btn-link,
 .help-block {
@@ -105,6 +101,22 @@ dl,
     font-size: 20px;
 }
 
+dl {
+    font-size: 22px;
+    dt:after {
+        content: ":";
+    }
+}
+
+.dl-horizontal {
+    dt {
+        width: 330px;
+    }
+    dd {
+        margin-left: 350px;
+    }
+}
+
 .help-block {
     border-radius: 3px;
     padding: 5px;
@@ -118,15 +130,6 @@ select {
 .form-control {
     font-size: 24px;
     height: 44px;
-}
-
-.dl-horizontal {
-    dt {
-        width: 300px;
-    }
-    dd {
-        margin-left: 320px;
-    }
 }
 
 .spacer-top {

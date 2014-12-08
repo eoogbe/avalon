@@ -32,7 +32,7 @@ html(lang='en')
       .container-fluid
         .navbar-header
           h1 Avalon
-        dl.navbar-right(data-bind='if: game().shouldShowStats')
+        dl.no-js.navbar-right(data-bind='if: game().shouldShowStats')
           dt Character
           dd(data-bind='text: player().character')
           dt Rejected Quests
@@ -40,7 +40,8 @@ html(lang='en')
           dt King
           dd(data-bind='text: quest().kingName')
     
-    noscript This website does not work without Javascript enabled. Sorry.
+    .container-fluid
+      noscript This website does not work without Javascript enabled. Sorry.
     
     main.no-js.container-fluid(
       role='main'
