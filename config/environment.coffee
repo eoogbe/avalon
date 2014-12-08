@@ -2,7 +2,9 @@ module.exports =
   production:
     redisClient: ->
       redisUrl = require("url").parse process.env.REDIS_URL
-      console.log "\\e[0;31m#{redisUrl}\\e[0m"
+      console.log "\\e[0;31m"
+      console.log redisUrl
+      console.log "\\e[0m"
       redis = require("redis").createClient redisUrl.port, redisUrl.hostname
       redis.auth process.env.REDIS_PASSWORD
       redis
