@@ -3,7 +3,6 @@ app = express()
 http = require("http").Server app
 io = require("socket.io")(http)
 logger = require "morgan"
-cookieParser = require "cookie-parser"
 session = require "express-session"
 MongoStore = require("connect-mongo")(session)
 path = require "path"
@@ -22,8 +21,6 @@ sessionMiddleware = session
 app.set "port", config.port
 app.set "views", path.join(__dirname, "app", "views")
 app.set "view engine", "jade"
-app.use express.query()
-app.use cookieParser()
 app.use sessionMiddleware
 app.use favicon path.join(__dirname, "public", "images", "favicon.ico")
 app.use logger "dev"
