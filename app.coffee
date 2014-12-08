@@ -5,7 +5,7 @@ io = require("socket.io")(http)
 logger = require "morgan"
 cookieParser = require "cookie-parser"
 session = require "express-session"
-RedisStore = require("connect-redis")(session)
+MongoStore = require("connect-mongo")(session)
 path = require "path"
 favicon = require "serve-favicon"
 errorHandler = require "errorhandler"
@@ -14,7 +14,7 @@ coffeescript = require "connect-coffee-script"
 config = require("./config/environment")[app.get("env")]
 
 sessionMiddleware = session
-  store: new RedisStore client: config.redisClient()
+  store: new MongoStore url: config.databaseUrl
   secret: config.sessionSecret
   resave: false
   saveUninitialized: false
