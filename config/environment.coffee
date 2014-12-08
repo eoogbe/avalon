@@ -4,9 +4,8 @@ module.exports =
     ip: process.env.OPENSHIFT_NODEJS_IP
     redisClient: ->
       redisUrl = require("url").parse process.env.REDIS_URL
-      redis = require("redis").createClient redisUrl.port, redisUrl.hostname
-      redis.auth process.env.REDIS_PASSWORD
-      redis
+      require("redis").createClient redisUrl.port, redisUrl.hostname,
+        auth: process.env.REDIS_PASSWORD
     sessionSecret: process.env.SESSION_SECRET
     databaseUrl: process.env.OPENSHIFT_MONGODB_DB_URL
   development:

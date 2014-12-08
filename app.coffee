@@ -22,10 +22,10 @@ sessionMiddleware = session
 app.set "port", config.port
 app.set "views", path.join(__dirname, "app", "views")
 app.set "view engine", "jade"
-app.use favicon path.join(__dirname, "public", "images", "favicon.ico")
-app.use logger "dev"
 app.use cookieParser()
 app.use sessionMiddleware
+app.use favicon path.join(__dirname, "public", "images", "favicon.ico")
+app.use logger "dev"
 app.use less path.join(__dirname, "app", "assets", "styles"),
   dest: path.join __dirname, "public"
   preprocess:
