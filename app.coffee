@@ -18,7 +18,7 @@ sessionMiddleware = session
   resave: false
   saveUninitialized: false
 
-app.set "port", process.env.PORT || 3000
+app.set "port", config.port
 app.set "views", path.join(__dirname, "app", "views")
 app.set "view engine", "jade"
 app.use favicon path.join(__dirname, "public", "images", "favicon.ico")
