@@ -5,7 +5,7 @@ module.exports =
     redisClient: ->
       redisUrl = require("url").parse process.env.REDIS_URL
       require("redis").createClient redisUrl.port, redisUrl.hostname,
-        auth: process.env.REDIS_PASSWORD
+        auth_pass: process.env.REDIS_PASSWORD
     sessionSecret: process.env.SESSION_SECRET
     databaseUrl: process.env.OPENSHIFT_MONGODB_DB_URL
   development:
