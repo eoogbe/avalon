@@ -58,7 +58,7 @@ exports.joined = (eventCtx) ->
 exports.left = (eventCtx) ->
   io = eventCtx.io
   socket = eventCtx.socket
-  Player = eventCtx.models.Player
+  Game = eventCtx.models.Game
   showGames = eventCtx.showGames
   
   (data) ->
