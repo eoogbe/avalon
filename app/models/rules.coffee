@@ -3,7 +3,10 @@ Random = require "./random"
 NUM_PLAYERS_NEEDED = [
   [2, 3, 2, 3, 3],
   [2, 3, 3, 3, 4],
-  [2, 3, 3, 4, 4]
+  [2, 3, 3, 4, 4],
+  [3, 4, 4, 5, 5],
+  [3, 4, 4, 5, 5],
+  [3, 4, 4, 5, 5]
 ]
 
 MIN_PLAYERS = 5
@@ -19,7 +22,10 @@ class CharacterSelection
   CHARACTERS_PER_PLAYERS = [
     ["Good", "Good", "Good", "Bad", "Bad"],
     ["Good", "Good", "Good", "Good", "Bad", "Bad"],
-    ["Good", "Good", "Good", "Good", "Bad", "Bad", "Bad"]
+    ["Good", "Good", "Good", "Good", "Bad", "Bad", "Bad"],
+    ["Good", "Good", "Good", "Good", "Good", "Bad", "Bad", "Bad"],
+    ["Good", "Good", "Good", "Good", "Good", "Good", "Bad", "Bad", "Bad"],
+    ["Good", "Good", "Good", "Good", "Good", "Good", "Bad", "Bad", "Bad", "Bad"]
   ]
   
   constructor: (numPlayers) ->
