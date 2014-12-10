@@ -1,4 +1,5 @@
 mongoose = require "mongoose"
+getNumPlayersNeeded = require("./rules").getNumPlayersNeeded
 
 QuestSchema = mongoose.Schema
   state:
@@ -27,7 +28,6 @@ QuestSchema = mongoose.Schema
     required: true
 
 NEW_QUEST_STATES = ["unstarted", "voting"]
-NUM_PLAYERS_NEEDED_PER_QUEST = [2, 3, 2, 3, 3]
 
 QuestSchema.statics.upsert = (gameId, done) ->
   Quest = this
@@ -40,15 +40,18 @@ QuestSchema.statics.upsert = (gameId, done) ->
       NEW_QUEST_STATES.indexOf(quest.state) >= 0
     return done null, newQuests[0] if newQuests.length > 0
     
-    Game.findById gameId, (err, game) ->
+    Game.findById(gameId).populate("players").exec (err, game) ->
       return done err if err
       
       game.nextKing (err, king) ->
         return done err if err
         
+        numPlayersNeeded =
+          getNumPlayersNeeded game.players.length, quests.length
+        
         questData =
           game: game
-          numPlayersNeeded: NUM_PLAYERS_NEEDED_PER_QUEST[Math.min(quests.length, 4)]
+          numPlayersNeeded: numPlayersNeeded
           king: king
         
         Quest.create questData, done

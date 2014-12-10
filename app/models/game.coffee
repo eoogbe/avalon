@@ -1,11 +1,8 @@
 mongoose = require "mongoose"
 async = require "async"
-
-MersenneTwister = require "mersennetwister"
-rng = new MersenneTwister()
-
-randIdx = (arr) -> rng.int() % arr.length
-randChoice = (arr) -> arr[randIdx(arr)]
+Random = require "./random"
+Rules = require "./rules"
+CharacterSelection = Rules.CharacterSelection
 
 GameSchema = mongoose.Schema
   name:
@@ -37,7 +34,6 @@ GameSchema = mongoose.Schema
     required: true
 
 NUM_QUESTS_TO_WIN = 3
-NUM_PLAYERS_TO_START = 5
 
 GameSchema.path("name").validate(( (name, respond) ->
   return respond true unless @isModified "name"
@@ -63,23 +59,17 @@ GameSchema.methods.addPlayer = (player, done) ->
     done null, this
 
 GameSchema.methods.start = (done) ->
-  Game = @model "Game"
-  Player = @model "Player"
   game = this
   
-  characters = ["Good", "Good", "Good", "Bad", "Bad"]
-  game.kingIdx = randIdx(game.players)
+  game.kingIdx = Random.nextIdx(game.players)
   game.state = "playing"
   game.save (err, game) ->
     return done err if err
     
+    characterSelection = new CharacterSelection game.players.length
+    
     async.eachLimit game.players, 1, ((player, eachDone) ->
-      if characters.length > 0
-        player.character = randChoice characters
-        removeIdx = characters.indexOf player.character
-        characters.splice removeIdx, 1
-      else
-        player.character = randChoice ["Good", "Bad"]
+      player.character = characterSelection.assignCharacter()
       player.save eachDone
     ), done
 
@@ -113,7 +103,7 @@ GameSchema.methods.checkGameover = (done) ->
         game: game
 
 GameSchema.methods.canStart = ->
-  @players.length >= NUM_PLAYERS_TO_START
+  @players.length >= Rules.MIN_PLAYERS
 
 GameSchema.methods.playersKnownTo = (player) ->
   return [] if player.character is "Good"
