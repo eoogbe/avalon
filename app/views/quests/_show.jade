@@ -1,4 +1,4 @@
-section(data-bind='if: $root.isCurrentPage("quest")')
+section(data-bind='visible: $root.isCurrentPage("quest")')
   h2 The quest 
     span(data-bind='text: quest().current().state')
   

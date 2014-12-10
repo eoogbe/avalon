@@ -5,7 +5,7 @@ mixin characterCheckbox(id, name)
     span.media-body
       span.media-heading= name
 
-section(data-bind='if: $root.isCurrentPage("new_characters")')
+section(data-bind='visible: $root.isCurrentPage("new_characters")')
   h2 Choose characters
   
   .row

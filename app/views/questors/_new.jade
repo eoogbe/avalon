@@ -1,4 +1,4 @@
-section(data-bind='if: $root.isCurrentPage("new_questors")')
+section(data-bind='visible: $root.isCurrentPage("new_questors")')
   h2 Choose 
     span(data-bind='text: quest().current().numPlayersNeeded')
     | &nbsp;players for this quest
@@ -46,7 +46,7 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
     .col-sm-offset-2.col-sm-9
       +voteRadioGroup('king')
   
-  .has-error(data-bind='if: quest().hasError')
+  .has-error(data-bind='visible: quest().hasError')
     .help-block(data-bind='text: quest().error')
   
   .row

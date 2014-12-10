@@ -1,4 +1,4 @@
-section(data-bind='if: $root.isCurrentPage("gameover")')
+section(data-bind='visible: $root.isCurrentPage("gameover")')
   h2
     span(data-bind='text: game().winnerType')
     | &nbsp;guys won

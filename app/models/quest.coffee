@@ -66,6 +66,7 @@ QuestSchema.statics.statsFor = (game, done) ->
   
   Quest.count { game: game, state: "succeeded" }, (err, numSucceeded) ->
     return done err if err
+    
     Quest.count { game: game, state: "failed" }, (err, numFailed) ->
       done err, { numSucceeded: numSucceeded, numFailed: numFailed }
 

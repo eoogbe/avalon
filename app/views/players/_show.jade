@@ -1,4 +1,4 @@
-section(data-bind='if: $root.isCurrentPage("player")')
+section(data-bind='visible: $root.isCurrentPage("player")')
   h2 You are
     strong(data-bind='text: player().character')
   
@@ -6,7 +6,7 @@ section(data-bind='if: $root.isCurrentPage("player")')
     width='125'
     height='200'
     aria-hidden='true'
-    data-bind='attr: { src: $root.player().characterImg() }'
+    data-bind='attr: { src: $root.player().characterImg(), alt: player().character }'
   )
   
   +knownPlayers('dl-horizontal wide-dl')

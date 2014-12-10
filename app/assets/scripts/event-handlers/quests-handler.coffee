@@ -17,6 +17,7 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
     viewModel.game().current data.currentGame
     viewModel.quest().current data.currentQuest
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
+    viewModel.quest().stats data.questStats if data.questStats?
     viewModel.currentPage "new_questors"
     registerRadioListener()
     viewModel.infoDialog
@@ -24,6 +25,7 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
       message: 'You are king 
         <img
             src="/images/crown.jpg"
+            alt=""
             width="54"
             height="30"
             aria-hidden="true"
@@ -34,6 +36,7 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
     viewModel.game().current data.currentGame
     viewModel.quest().current data.currentQuest
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
+    viewModel.quest().stats data.questStats if data.questStats?
     viewModel.currentPage "questors"
     registerRadioListener()
     viewModel.alertVote() if data.currentQuest.state is "voting"
@@ -59,6 +62,7 @@ Avalon.EventHandlers.Quests = (socket, viewModel) ->
     viewModel.game().current data.currentGame
     viewModel.quest().current data.currentQuest
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
+    viewModel.quest().stats data.questStats if data.questStats?
     viewModel.currentPage "new_quest_outcome"
   
   socket.on "show_quest", (data) ->

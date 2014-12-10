@@ -5,9 +5,7 @@ Avalon.Quest = (socket, root) ->
   self.current = ko.observable({})
   self.error = ko.observable()
   self.isLastRejectableQuest = ko.observable()
-  self.stats = ko.observable
-    numSucceeded: 0
-    numFailed: 0
+  self.stats = ko.observable { numSucceeded: 0, numFailed: 0 }
   self.votes = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
@@ -76,13 +74,18 @@ Avalon.Quest = (socket, root) ->
   self.isKing = (player) ->
     self.kingName() is player.name
   
+  self.hasQuestor = (player) ->
+    _.any self.current().players, name: player.name
+  
+  self.reset = ->
+    self.current {}
+    self.stats { numSucceeded: 0, numFailed: 0 }
+    self.isLastRejectableQuest false
+  
   createOutcome = (isSuccess) ->
     socket.emit "quest_outcome_created",
       outcome: isSuccess
       questId: self.currentId()
-  
-  self.hasQuestor = (player) ->
-    _.any self.current().players, name: player.name
   
   self.createSuccessOutcome = ->
     createOutcome true

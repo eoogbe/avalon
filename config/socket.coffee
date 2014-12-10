@@ -29,26 +29,6 @@ module.exports = (io, sessionMiddleware, models) ->
           data.games = games
           
           socket.emit "show_games", data
-      upsertQuest: (gameId, player) ->
-        models.Quest.upsert gameId, (err, quest) ->
-          return console.error err if err
-          
-          populatedFields = [{ path: "king" }, { path: "players" }]
-          models.Quest.populate quest, populatedFields, (err, quest) ->
-            return console.error err if err
-            
-            models.Game.findById(gameId).populate("players").exec (err, game) ->
-              return console.error err if err
-              
-              isKing = quest.king.name is session.user
-              page = if isKing then "new_questors" else "questors"
-              data = { currentQuest: quest, currentGame: game }
-              
-              if player?
-                data.knownPlayers = game.playersKnownTo player
-                socket.join game.name
-              
-              socket.emit "show_#{page}", data
     
     socket.emit "show_edit_player"
     

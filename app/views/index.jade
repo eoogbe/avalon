@@ -7,8 +7,10 @@ html(lang='en')
     meta(charset='utf-8')
     title Avalon
     
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    
     link(href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css', rel='stylesheet')
-    link(href='//fonts.googleapis.com/css?family=Noto+Serif|Cinzel+Decorative:700|Pathway+Gothic+One&effect=outline', rel='stylesheet')
+    link(href='//fonts.googleapis.com/css?family=Noto+Serif%7CCinzel+Decorative:700%7CPathway+Gothic+One&effect=outline', rel='stylesheet')
     link(href='/stylesheets/avalon.css', rel='stylesheet')
     
     script(src='//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js')
@@ -28,11 +30,13 @@ html(lang='en')
     script(src='/javascripts/event-handlers/quest-votes-handler.js')
     script(src='/javascripts/main.js')
   body
-    header.navbar.navbar-inverse(data-bind='visible: !$root.isCurrentPage("edit_player")')
+    header.navbar.navbar-inverse(
+      data-bind='visible: !$root.isCurrentPage("edit_player")'
+    )
       .container-fluid
         .navbar-header
           h1 Avalon
-        dl.no-js.navbar-right(data-bind='if: game().shouldShowStats')
+        dl.no-js.navbar-right(data-bind='visible: game().shouldShowStats')
           dt Character
           dd(data-bind='text: player().character')
           dt Rejected Quests

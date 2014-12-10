@@ -28,7 +28,28 @@ handleStateChange = (eventCtx, quest, nonvoters, noChangeFn) ->
               io.to(game.name).emit "show_gameover", game
 
 exports.updated = (eventCtx) ->
-  eventCtx.upsertQuest
+  socket = eventCtx.socket
+  session = socket.request.session
+  Game = eventCtx.models.Game
+  Quest = eventCtx.models.Quest
+  
+  (gameId) ->
+    Quest.upsert gameId, (err, quest) ->
+      return console.error err if err
+      
+      populatedFields = [{ path: "king" }, { path: "players" }]
+      Quest.populate quest, populatedFields, (err, quest) ->
+        return console.error err if err
+        
+        Game.findById(gameId).populate("players").exec (err, game) ->
+          return console.error err if err
+          
+          isKing = quest.king.name is session.user
+          page = if isKing then "new_questors" else "questors"
+          
+          socket.emit "show_#{page}",
+            currentQuest: quest
+            currentGame: game
 
 exports.votedOn = (eventCtx) ->
   socket = eventCtx.socket

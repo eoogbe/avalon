@@ -1,4 +1,4 @@
-section(data-bind='if: $root.isCurrentPage("quest_votes")')
+section(data-bind='visible: $root.isCurrentPage("quest_votes")')
   h2 The quest was 
     span(data-bind='text: quest().voteResult')
   

@@ -118,50 +118,67 @@ exports.deleted = (eventCtx) ->
 
 exports.continued = (eventCtx) ->
   socket = eventCtx.socket
+  session = socket.request.session
   Player = eventCtx.models.Player
   Game = eventCtx.models.Game
   Quest = eventCtx.models.Quest
   QuestVote = eventCtx.models.QuestVote
-  upsertQuest = eventCtx.upsertQuest
   
   (data) ->
-    Quest.findOne({ game: data.gameId, state: "playing" })
-      .populate("game players king")
-      .exec (err, quest) ->
+    Player.findById data.playerId, (err, player) ->
+      return console.error err if err
+      
+      Game.findById(data.gameId).populate("players").exec (err, game) ->
         return console.error err if err
         
-        Player.findById data.playerId, (err, player) ->
+        Quest.statsFor game, (err, questStats) ->
           return console.error err if err
           
-          if not quest
-            upsertQuest data.gameId, player
-          else if quest.players.some((p) -> p.equals data.playerId)
-            Game.findById(data.gameId).populate("players").exec (err, game) ->
+          Quest.findOne({ game: data.gameId, state: "playing" })
+            .populate("players king")
+            .exec (err, quest) ->
               return console.error err if err
               
-              socket.join game.name
-              
-              socket.emit "show_new_quest_outcome",
-                currentGame: game
-                currentQuest: quest
-                knownPlayers: game.playersKnownTo player
-          else
-            QuestVote.find({ quest: quest })
-              .populate("player")
-              .exec (err, votes) ->
-                return console.error err if err
-                
-                Game.populate quest.game, { path: "players" }, (err, game) ->
+              if not quest
+                Quest.upsert data.gameId, (err, quest) ->
                   return console.error err if err
                   
-                  socket.join game.name
-                  
-                  socket.emit "show_quest_votes",
-                    currentGame: game
-                    currentQuest: quest
-                    isLastRejectableQuest: game.isOnLastRejectableQuest()
-                    votes: votes
-                    knownPlayers: game.playersKnownTo player
+                  populatedFields = [{ path: "king" }, { path: "players" }]
+                  Quest.populate quest, populatedFields, (err, quest) ->
+                    return console.error err if err
+                    
+                    socket.join game.name
+                    
+                    isKing = quest.king.name is session.user
+                    page = if isKing then "new_questors" else "questors"
+                    socket.emit "show_#{page}",
+                      currentQuest: quest
+                      currentGame: game
+                      knownPlayers: game.playersKnownTo player
+                      questStats: questStats
+              else if quest.players.some((p) -> p.equals data.playerId)
+                socket.join game.name
+                
+                socket.emit "show_new_quest_outcome",
+                  currentGame: game
+                  currentQuest: quest
+                  knownPlayers: game.playersKnownTo player
+                  questStats: questStats
+              else
+                QuestVote.find({ quest: quest })
+                  .populate("player")
+                  .exec (err, votes) ->
+                    return console.error err if err
+                    
+                    socket.join game.name
+                    
+                    socket.emit "show_quest_votes",
+                      currentGame: game
+                      currentQuest: quest
+                      isLastRejectableQuest: game.isOnLastRejectableQuest()
+                      knownPlayers: game.playersKnownTo player
+                      questStats: questStats
+                      votes: votes
 
 exports.reloaded = (eventCtx) ->
   eventCtx.showGames

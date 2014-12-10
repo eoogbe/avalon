@@ -1,4 +1,4 @@
-section(data-bind='if: $root.isCurrentPage("players")')
+section(data-bind='visible: $root.isCurrentPage("players")')
   h2(data-bind='text: game().current().name')
   
   // ko if: player().isGameCreator
