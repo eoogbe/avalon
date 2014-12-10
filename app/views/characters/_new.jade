@@ -1,0 +1,38 @@
+mixin characterCheckbox(id, name)
+  input(type='checkbox', id='character-#{id}')
+  label.media(for=id)
+    img.media-left(src='#{id}_thumb.jpg', alt=name, aria-hidden='true')
+    span.media-body
+      span.media-heading= name
+
+section(data-bind='if: $root.isCurrentPage("new_characters")')
+  h2 Choose characters
+  
+  .row
+    section.col-sm-6
+      h3
+        span(data-bind='text: game().numBad')
+        | &nbsp;bad guys
+      
+      +characterCheckbox('bad1', 'a Minion of Mordred')
+      +characterCheckbox('bad2', 'a Minion of Mordred')
+      +characterCheckbox('bad3', 'a Minion of Mordred')
+      +characterCheckbox('assassin', 'Assassin')
+    
+    section.col-sm-6
+      h3
+        span(data-bind='text: game().numGood')
+        | &nbsp;good guys
+      
+      +characterCheckbox('good1', 'a Loyal Servant of Arthur')
+      +characterCheckbox('good2', 'a Loyal Servant of Arthur')
+      +characterCheckbox('good3', 'a Loyal Servant of Arthur')
+      +characterCheckbox('good4', 'a Loyal Servant of Arthur')
+      +characterCheckbox('good5', 'a Loyal Servant of Arthur')
+      +characterCheckbox('merlin', 'Merlin')
+  
+  button.btn.btn-default(
+    type='button'
+    data-bind='click: game().createCharacters,\
+    enable: game().hasEnoughCharactersSelected'
+  )

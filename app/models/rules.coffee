@@ -29,7 +29,8 @@ class CharacterSelection
   ]
   
   constructor: (numPlayers) ->
-    @characters = getValueAt(numPlayers, CHARACTERS_PER_PLAYERS).slice 0
+    @characters =
+      getValueAt(numPlayers - MIN_PLAYERS, CHARACTERS_PER_PLAYERS).slice 0
   
   assignCharacter: ->
     if @characters.length > 0

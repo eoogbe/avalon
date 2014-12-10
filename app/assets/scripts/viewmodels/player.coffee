@@ -47,7 +47,7 @@ Avalon.Player = (socket, root) ->
     if character is "Good"
       "a Loyal Servant of Arthur"
     else if character is "Bad"
-      "a Minon of Mordred"
+      "a Minion of Mordred"
   
   self.update = ->
     name = $("#player-name").val()
