@@ -1,5 +1,5 @@
 mongoose = require "mongoose"
-getNumPlayersNeeded = require("./rules").getNumPlayersNeeded
+Rules = require "./rules"
 
 QuestSchema = mongoose.Schema
   state:
@@ -10,6 +10,11 @@ QuestSchema = mongoose.Schema
   numPlayersNeeded:
     type: Number
     min: 2
+    required: true
+  numFailsRequired:
+    type: Number
+    min: 1
+    max: 2
     required: true
   game:
     type: mongoose.Schema.Types.ObjectId
@@ -46,12 +51,12 @@ QuestSchema.statics.upsert = (gameId, done) ->
       game.nextKing (err, king) ->
         return done err if err
         
-        numPlayersNeeded =
-          getNumPlayersNeeded game.players.length, quests.length
-        
         questData =
           game: game
-          numPlayersNeeded: numPlayersNeeded
+          numPlayersNeeded:
+            Rules.getNumPlayersNeeded game.players.length, quests.length
+          numFailsRequired:
+            Rules.getNumFailsRequired game.players.length, quests.length
           king: king
         
         Quest.create questData, done
@@ -140,9 +145,9 @@ QuestSchema.methods.checkApproved = (done) ->
 
 QuestSchema.methods.checkFinished = (done) ->
   if @outcomes.length >= @numPlayersNeeded
-    @state = if false in @outcomes then "failed" else "succeeded"
-    @save (err) ->
-      done err, true
+    numFails = (outcome for outcome in @outcomes when outcome is false).length
+    @state = if numFails >= @numFailsRequired then "failed" else "succeeded"
+    @save (err) -> done err, true
   else
     done null, false
 

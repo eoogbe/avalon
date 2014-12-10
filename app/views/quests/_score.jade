@@ -1,0 +1,23 @@
+section
+  h3 Score
+  dl.dl-horizontal.thin-dl
+    dt Good guys
+    dd
+      span.sr-only(data-bind='text: quest().stats().numSucceeded')
+      div(data-bind='foreach: new Array(quest().stats().numSucceeded)')
+        img(
+          src='/images/good_token_small.jpg'
+          width='25'
+          height='25'
+          aria-hidden='true'
+        )
+    dt Bad guys
+    dd
+      span.sr-only(data-bind='text: quest().stats().numFailed')
+      div(data-bind='foreach: new Array(quest().stats().numFailed)')
+        img(
+          src='/images/bad_token_small.jpg'
+          width='25'
+          height='25'
+          aria-hidden='true'
+        )

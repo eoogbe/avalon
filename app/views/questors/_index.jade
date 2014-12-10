@@ -3,6 +3,10 @@ section(data-bind='if: $root.isCurrentPage("questors")')
     span(data-bind='text: quest().current().numPlayersNeeded')
     | &nbsp;players
   
+  // ko if: quest().needsTwoFails()
+  p Note: Two fails are required to fail this quest
+  // /ko
+  
   ul.list-group(data-bind='foreach: quest().current().players')
     li.list-group-item
       span(data-bind='text: name') 

@@ -1,6 +1,8 @@
 aside.col-sm-3(data-bind='if: game().shouldShowStats')
   +knownPlayers('')
   
+  include ./quests/_score.jade
+  
   section
     h3 Questors
     // ko if: quest().hasCurrent

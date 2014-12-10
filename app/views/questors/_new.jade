@@ -3,6 +3,10 @@ section(data-bind='if: $root.isCurrentPage("new_questors")')
     span(data-bind='text: quest().current().numPlayersNeeded')
     | &nbsp;players for this quest
   
+  // ko if: quest().needsTwoFails()
+  p Note: Two fails are required to fail this quest
+  // /ko
+  
   .row
     section.col-sm-3
       h3 Not going

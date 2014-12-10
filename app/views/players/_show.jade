@@ -9,6 +9,6 @@ section(data-bind='if: $root.isCurrentPage("player")')
     data-bind='attr: { src: $root.player().characterImg() }'
   )
   
-  +knownPlayers('dl-horizontal')
+  +knownPlayers('dl-horizontal wide-dl')
   
   button.btn.btn-default(type='button', data-bind='click: quest().update') Ready

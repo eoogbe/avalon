@@ -45,8 +45,9 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
       type: "alert-success"
     ko.applyBindings viewModel, $("#start-game-btn")[0]
   
-  socket.on "show_gameover", (game) ->
-    viewModel.game().current game
+  socket.on "show_gameover", (data) ->
+    viewModel.game().current data.currentGame
+    viewModel.quest().stats data.questStats
     viewModel.currentPage "gameover"
     viewModel.alert null
     viewModel.waitingDialog

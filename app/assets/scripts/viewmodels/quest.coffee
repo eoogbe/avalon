@@ -5,7 +5,9 @@ Avalon.Quest = (socket, root) ->
   self.current = ko.observable({})
   self.error = ko.observable()
   self.isLastRejectableQuest = ko.observable()
-  self.stats = ko.observable()
+  self.stats = ko.observable
+    numSucceeded: 0
+    numFailed: 0
   self.votes = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
@@ -42,6 +44,10 @@ Avalon.Quest = (socket, root) ->
     _.any self.votes(), isApprove: false
   ), self)
   
+  self.needsTwoFails = ko.pureComputed((->
+    self.current().numFailsRequired is 2
+  ), self)
+  
   self.voteResult = ko.pureComputed((->
     if self.isRejected() then "rejected" else "approved"
   ), self)
@@ -55,7 +61,7 @@ Avalon.Quest = (socket, root) ->
   ), self)
   
   self.outcomes = ko.pureComputed((->
-    self.current().outcomes?.sort()
+    _.shuffle(self.current().outcomes ? [])
   ), self)
   
   self.failOutcomeImg = ->

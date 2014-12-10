@@ -24,7 +24,9 @@ exports.created = (eventCtx) ->
                 Game.populate game, { path: "players" }, (err, game) ->
                   return console.error err if err
                   
-                  io.to(game.name).emit "show_gameover", data.game
+                  io.to(game.name).emit "show_gameover",
+                    currentGame: data.game
+                    questStats: data.questStats
               else
                 io.to(game.name).emit "show_quest",
                   quest: quest
