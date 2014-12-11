@@ -16,20 +16,13 @@ exports.created = (eventCtx) ->
           return console.error err if err
           
           if isFinished
-            game = quest.game
-            game.checkGameover (err, data) ->
+            quest.game.checkGameover (err, data) ->
               return console.error err if err
               
-              if data.isGameover
-                Game.populate game, { path: "players" }, (err, game) ->
-                  return console.error err if err
-                  
-                  io.to(game.name).emit "show_gameover",
-                    currentGame: data.game
-                    questStats: data.questStats
-              else
+              Game.populate data.game, { path: "players" }, (err, game) ->
                 io.to(game.name).emit "show_quest",
-                  quest: quest
+                  currentGame: game
+                  currentQuest: quest
                   questStats: data.questStats
           else
             Game.findById(quest.game).populate("players").exec (err, game) ->

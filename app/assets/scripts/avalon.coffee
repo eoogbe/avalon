@@ -10,20 +10,24 @@ Avalon.Main = (socket) ->
   self = this
   
   player = null
+  character = null
   game = null
   quest = null
   questVote = null
   questOutcome = null
+  nav = null
   
   self.player = -> player = player or new Avalon.Player socket, self
+  self.character = ->
+    character = character or new Avalon.Character socket, self
   self.game = -> game = game or new Avalon.Game socket, self
   self.quest = -> quest = quest or new Avalon.Quest socket, self
   self.questVote = ->
     questVote = questVote or new Avalon.QuestVote socket, self
   self.questOutcome = ->
     questOutcome = questOutcome or new Avalon.QuestOutcome socket, self
+  self.nav = -> nav = nav or new Avalon.Navigation socket, self
   
-  self.currentPage = ko.observable()
   self.alert = ko.observable()
   self.confirmDialog = ko.observable({})
   self.actionDialog = ko.observable({})
@@ -37,8 +41,7 @@ Avalon.Main = (socket) ->
   self.waitingSignalId = null
   
   changeWaitingSignal = ->
-    idx = Math.floor Math.random() * WAITING_SIGNALS.length
-    $("#waiting-signal").text "#{WAITING_SIGNALS[idx]}..."
+    $("#waiting-signal").text "#{_.sample WAITING_SIGNALS}..."
   
   self.waitingDialog = ko.pureComputed
     read: self._waitingDialog
@@ -60,31 +63,8 @@ Avalon.Main = (socket) ->
         message: "The king has made their final decision. Vote to approve or reject the proposed quest."
         type: "alert-warning"
   
-  self.isCurrentPage = (pageName) ->
-    self.currentPage() is pageName
-  
   self.formatDate = (dateStr) ->
     date = new Date dateStr
     "#{date.getFullYear()}-#{date.getMonth()}-#{date.getDate()} #{date.getHours()}:#{date.getMinutes()}:#{date.getSeconds()}"
-  
-  self.goToNewGame = ->
-    self.game().error null
-    self.currentPage "new_game"
-  
-  self.goToGames = ->
-    self.currentPage "games"
-  
-  self.goToPlayer = ->
-    self.quest().reset()
-    self.currentPage "player"
-    self.alert null
-  
-  self.goToNewQuestOutcome = ->
-    self.currentPage "new_quest_outcome"
-    self.alert null
-  
-  self.goToQuest = ->
-    self.currentPage "quest"
-    self.alert null
   
   self

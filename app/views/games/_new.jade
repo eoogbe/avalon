@@ -1,4 +1,4 @@
-section(data-bind='visible: $root.isCurrentPage("new_game")')
+section(data-bind='visible: $root.nav().isCurrentPage("new_game")')
   h2 New game
   
   form.new-game(data-bind='submit: game().confirmCreate')
@@ -6,7 +6,7 @@ section(data-bind='visible: $root.isCurrentPage("new_game")')
       label.control-label(for='game-name') Game name
       input.form-control#game-name(
         type='text'
-        data-bind='hasFocus: $root.isCurrentPage("new_game")'
+        data-bind='hasFocus: $root.nav().isCurrentPage("new_game")'
       )
       // ko if: game().hasError
       .help-block(data-bind='text: game().error().name.message')
@@ -14,4 +14,4 @@ section(data-bind='visible: $root.isCurrentPage("new_game")')
     
     button.btn.btn-default(type='submit') Create game
   
-  button.pull-right.btn-link(type='button', data-bind='click: goToGames') back
+  button.pull-right.btn-link(type='button', data-bind='click: nav().goToGames') back

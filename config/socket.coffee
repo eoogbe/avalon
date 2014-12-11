@@ -1,8 +1,8 @@
 reqController = (controllerName) ->
   require "../app/controllers/#{controllerName}_controller"
 
-[playersController, gamesController, questsController, questOutcomesController, questorsController] =
-  (reqController c for c in ["players", "games", "quests", "quest_outcomes", "questors"])
+[playersController, charactersController, gamesController, questsController, questOutcomesController, questorsController] =
+  (reqController c for c in ["players", "characters", "games", "quests", "quest_outcomes", "questors"])
 
 module.exports = (io, sessionMiddleware, models) ->
   io.use (socket, next) ->
@@ -30,6 +30,7 @@ module.exports = (io, sessionMiddleware, models) ->
     socket.emit "show_edit_player"
     
     socket.on "player_updated", playersController.updated(eventCtx)
+    socket.on "characters_created", charactersController.created(eventCtx)
     socket.on "game_created", gamesController.created(eventCtx)
     socket.on "game_joined", gamesController.joined(eventCtx)
     socket.on "game_left", gamesController.left(eventCtx)
@@ -37,6 +38,7 @@ module.exports = (io, sessionMiddleware, models) ->
     socket.on "game_started", gamesController.started(eventCtx)
     socket.on "game_deleted", gamesController.deleted(eventCtx)
     socket.on "game_reloaded", gamesController.reloaded(eventCtx)
+    socket.on "merlin_selected", gamesController.merlinSelected(eventCtx)
     socket.on "quest_updated", questsController.updated(eventCtx)
     socket.on "quest_voted_on", questsController.votedOn(eventCtx)
     socket.on "quest_started", questsController.started(eventCtx)

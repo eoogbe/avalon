@@ -1,4 +1,4 @@
-section(data-bind='visible: $root.isCurrentPage("questors")')
+section(data-bind='visible: $root.nav().isCurrentPage("questors")')
   h2 This quest has 
     span(data-bind='text: quest().current().numPlayersNeeded')
     | &nbsp;players

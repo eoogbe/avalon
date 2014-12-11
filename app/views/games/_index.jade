@@ -1,10 +1,10 @@
-section(data-bind='visible: $root.isCurrentPage("games")')
+section(data-bind='visible: $root.nav().isCurrentPage("games")')
   h2 Join a game
   
   .clearfix
     button.btn-link.pull-right(
       type='button'
-      data-bind='click: goToNewGame'
+      data-bind='click: nav().goToNewGame'
     ) New game
   // ko if: game().isPlaying
   .clearfix

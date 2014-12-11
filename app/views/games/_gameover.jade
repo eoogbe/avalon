@@ -1,10 +1,10 @@
-section(data-bind='visible: $root.isCurrentPage("gameover")')
+section(data-bind='visible: $root.nav().isCurrentPage("gameover")')
   h2
     span(data-bind='text: game().winnerType')
     | &nbsp;guys won
   
   dl.dl-horizontal.wide-dl(data-bind='foreach: game().current().players')
-    dt(data-bind='text: $root.player().characterFor($data.character)')
+    dt(data-bind='text: $root.character().for_($data.character)')
     dd(data-bind='text: name')
   
   button.btn-link(type='button', data-bind='click: game().reload') Play again

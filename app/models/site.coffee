@@ -9,8 +9,8 @@ module.exports = (models) ->
         models.Quest.statsFor game, (err, questStats) ->
           return done err if err
           
-          models.Quest.findOne({ game: data.gameId, state: "playing" })
-            .populate("players king")
+          models.Quest.findOne { game: data.gameId, state: "playing" }
+            .populate "players king"
             .exec (err, quest) ->
               done err,
                 currentPlayer: player

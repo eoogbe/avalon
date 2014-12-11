@@ -1,38 +1,29 @@
-mixin characterCheckbox(id, name)
-  input(type='checkbox', id='character-#{id}')
-  label.media(for=id)
-    img.media-left(src='#{id}_thumb.jpg', alt=name, aria-hidden='true')
-    span.media-body
-      span.media-heading= name
-
-section(data-bind='visible: $root.isCurrentPage("new_characters")')
+section(data-bind='visible: $root.nav().isCurrentPage("new_characters")')
   h2 Choose characters
   
   .row
     section.col-sm-6
       h3
-        span(data-bind='text: game().numBad')
+        span(data-bind='text: character().numBad')
         | &nbsp;bad guys
       
-      +characterCheckbox('bad1', 'a Minion of Mordred')
-      +characterCheckbox('bad2', 'a Minion of Mordred')
-      +characterCheckbox('bad3', 'a Minion of Mordred')
-      +characterCheckbox('assassin', 'Assassin')
+      ul.character-list.list-group
+        - for (var i = 0; i < 3; ++i)
+          +characterCheckbox('bad' + (i + 1), 'bad', true)
+        +characterCheckbox('assassin', 'bad', false)
     
     section.col-sm-6
       h3
-        span(data-bind='text: game().numGood')
+        span(data-bind='text: character().numGood')
         | &nbsp;good guys
       
-      +characterCheckbox('good1', 'a Loyal Servant of Arthur')
-      +characterCheckbox('good2', 'a Loyal Servant of Arthur')
-      +characterCheckbox('good3', 'a Loyal Servant of Arthur')
-      +characterCheckbox('good4', 'a Loyal Servant of Arthur')
-      +characterCheckbox('good5', 'a Loyal Servant of Arthur')
-      +characterCheckbox('merlin', 'Merlin')
+      ul.character-list.list-group
+        - for (var i = 0; i < 5; ++i)
+          +characterCheckbox('good' + (i + 1), 'good', true)
+        +characterCheckbox('merlin', 'good', false)
   
-  button.btn.btn-default(
+  button.btn.btn-default#create-characters-btn(
     type='button'
-    data-bind='click: game().createCharacters,\
-    enable: game().hasEnoughCharactersSelected'
-  )
+    data-bind='click: character().create'
+    disabled
+  ) Start

@@ -26,10 +26,14 @@ Avalon.Game = (socket, root) ->
     self.current().state is "playing"
   ), self)
   
+  self.isOver = ko.pureComputed((->
+    self.current().state in ["good_won", "bad_won"]
+  ), self)
+  
   self.shouldShowStats = ko.pureComputed((->
     self.hasCurrent() and
       self.current().state isnt "unstarted" and
-      not (root.currentPage() in ["new_game", "players", "games"])
+      not (root.nav().currentPage() in ["new_game", "players", "games"])
   ), self)
   
   self.creatorName = ko.pureComputed((->
@@ -102,10 +106,14 @@ Avalon.Game = (socket, root) ->
     $("#confirm-dialog").modal "hide"
     socket.emit "game_started", self.currentId()
   
+  self.killMerlin = ->
+    socket.emit "merlin_selected",
+      gameId: self.currentId()
+      merlinId: $("#good-characters").val()
+  
   self.reload = ->
     $("#action-dialog").modal "hide"
     root.alert null
-    self.current {}
-    socket.emit "game_reloaded"
+    socket.emit "game_reloaded", self.current().name
   
   self

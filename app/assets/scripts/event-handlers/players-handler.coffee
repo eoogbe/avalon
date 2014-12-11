@@ -2,7 +2,7 @@
 Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.Players = (socket, viewModel) ->
   socket.on "show_edit_player", ->
-    viewModel.currentPage "edit_player"
+    viewModel.nav().currentPage "edit_player"
   
   socket.on "edit_player_error", (playerError) ->
     viewModel.player().error playerError
@@ -10,7 +10,8 @@ Avalon.EventHandlers.Players = (socket, viewModel) ->
   socket.on "show_players", (data) ->
     viewModel.game().current data.currentGame
     viewModel.game().canStart data.canStartGame
-    viewModel.currentPage "players"
+    viewModel.quest().reset()
+    viewModel.nav().currentPage "players"
     
     if not data.canStartGame
       viewModel.alert
@@ -29,4 +30,4 @@ Avalon.EventHandlers.Players = (socket, viewModel) ->
   
   socket.on "show_player", (currentGame) ->
     viewModel.game().current currentGame
-    viewModel.goToPlayer()
+    viewModel.nav().goToPlayer()

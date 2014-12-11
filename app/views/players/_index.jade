@@ -1,4 +1,4 @@
-section(data-bind='visible: $root.isCurrentPage("players")')
+section(data-bind='visible: $root.nav().isCurrentPage("players")')
   h2(data-bind='text: game().current().name')
   
   // ko if: player().isGameCreator
@@ -23,5 +23,5 @@ section(data-bind='visible: $root.isCurrentPage("players")')
   button.btn.btn-default(
     type='button',
     data-bind='click: game().confirmStart, enable: game().canStart'
-  ) Start
+  ) Choose characters &raquo;
   // /ko

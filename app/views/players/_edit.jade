@@ -1,4 +1,4 @@
-section.center-block(data-bind='visible: $root.isCurrentPage("edit_player")')
+section.center-block(data-bind='visible: $root.nav().isCurrentPage("edit_player")')
   h2.font-effect-outline.text-center Avalon
   
   form.row(data-bind='submit: player().update')
@@ -6,7 +6,7 @@ section.center-block(data-bind='visible: $root.isCurrentPage("edit_player")')
       label(for='player-name') Enter your name
       input.form-control#player-name(
         type='text'
-        data-bind='hasFocus: $root.isCurrentPage("edit_player")'
+        data-bind='hasFocus: $root.nav().isCurrentPage("edit_player")'
       )
       // ko if: player().hasError
       .help-block(data-bind='text: player().error().name.message')

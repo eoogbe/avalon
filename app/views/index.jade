@@ -1,5 +1,6 @@
 include ./players/_known_players.jade
-include ./questors/_vote_radio_group.jade
+include ./characters/_checkbox.jade
+include ./quest_votes/_radio_group.jade
 
 doctype html
 html(lang='en')
@@ -20,13 +21,16 @@ html(lang='en')
     script(src='//cdn.socket.io/socket.io-1.2.0.js')
     
     script(src='/javascripts/avalon.js')
+    script(src='/javascripts/viewmodels/navigation.js')
     script(src='/javascripts/viewmodels/player.js')
+    script(src='/javascripts/viewmodels/character.js')
     script(src='/javascripts/viewmodels/game.js')
     script(src='/javascripts/viewmodels/quest.js')
     script(src='/javascripts/viewmodels/quest-vote.js')
     script(src='/javascripts/viewmodels/quest-outcome.js')
     script(src='/javascripts/event-handlers.js')
     script(src='/javascripts/event-handlers/players-handler.js')
+    script(src='/javascripts/event-handlers/characters-handler.js')
     script(src='/javascripts/event-handlers/games-handler.js')
     script(src='/javascripts/event-handlers/quests-handler.js')
     script(src='/javascripts/event-handlers/quest-votes-handler.js')
@@ -34,14 +38,14 @@ html(lang='en')
     script(src='/javascripts/main.js')
   body
     header.navbar.navbar-inverse(
-      data-bind='visible: !$root.isCurrentPage("edit_player")'
+      data-bind='visible: !$root.nav().isCurrentPage("edit_player")'
     )
       .container-fluid
         .navbar-header
           h1 Avalon
         dl.no-js.navbar-right(data-bind='visible: game().shouldShowStats')
           dt Character
-          dd(data-bind='text: player().character')
+          dd(data-bind='text: character().current')
           dt Rejected Quests
           dd(data-bind='text: game().current().numRejectedQuests')
           dt King
@@ -52,7 +56,7 @@ html(lang='en')
     
     main.no-js.container-fluid(
       role='main'
-      data-bind='css: { "splash-screen": isCurrentPage("edit_player") }'
+      data-bind='css: { "splash-screen": nav().isCurrentPage("edit_player") }'
     )
       // ko if: hasAlert
       .alert(role='alert', data-bind='html: alert().message, css: alert().type')
@@ -60,13 +64,15 @@ html(lang='en')
       
       include ./players/_edit.jade
       
-      .row(data-bind='visible: !$root.isCurrentPage("edit_player")')
+      .row(data-bind='visible: !$root.nav().isCurrentPage("edit_player")')
         include ./_sidebar.jade
         .col-sm-9
           include ./players/_show.jade
           include ./players/_index.jade
+          include ./characters/_new.jade
           include ./games/_new.jade
           include ./games/_index.jade
+          include ./games/_merlin_selection.jade
           include ./games/_gameover.jade
           include ./quests/_show.jade
           include ./questors/_new.jade

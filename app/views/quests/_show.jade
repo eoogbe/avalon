@@ -1,4 +1,4 @@
-section(data-bind='visible: $root.isCurrentPage("quest")')
+section(data-bind='visible: $root.nav().isCurrentPage("quest")')
   h2 The quest 
     span(data-bind='text: quest().current().state')
   
@@ -13,4 +13,9 @@ section(data-bind='visible: $root.isCurrentPage("quest")')
   
   include ./_score.jade
   
+  // ko if: game().isPlaying
   button.btn-link(type='button', data-bind='click: quest().update') Next quest
+  // /ko
+  // ko ifnot: game().isPlaying
+  button.btn-link(type='button', data-bind='click: nav().goToGameover') See game results
+  // /ko

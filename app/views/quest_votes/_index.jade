@@ -1,4 +1,4 @@
-section(data-bind='visible: $root.isCurrentPage("quest_votes")')
+section(data-bind='visible: $root.nav().isCurrentPage("quest_votes")')
   h2 The quest was 
     span(data-bind='text: questVote().result')
   
@@ -33,6 +33,6 @@ section(data-bind='visible: $root.isCurrentPage("quest_votes")')
   p.spacer-top You are on the quest 
     button.btn.btn-default(
       type='button'
-      data-bind='click: goToNewQuestOutcome'
+      data-bind='click: nav().goToNewQuestOutcome'
     ) Go
   // /ko

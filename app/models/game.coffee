@@ -15,7 +15,7 @@ GameSchema = mongoose.Schema
     required: true
   state:
     type: String
-    enum: ["unstarted", "playing", "good_won", "bad_won", "discontinued"]
+    enum: ["unstarted", "setup", "playing", "assassinating", "good_won", "bad_won", "discontinued"]
     default: "unstarted"
     required: true
   players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Player' }]
@@ -48,8 +48,38 @@ GameSchema.statics.MAX_REJECTED_QUESTS = 5
 GameSchema.statics.unstarted = ->
   @find({ state: "unstarted" }).sort("-createdAt")
 
+GameSchema.statics.findByIdAndStart = (id, done) ->
+  @findByIdAndUpdate id, { state: "setup" }, (err, game) ->
+    done err, game, Rules.getCharacterStats game?.players?.length
+
+GameSchema.statics.findByIdAndSetup = (id, characters, done) ->
+  changes = { state: "playing" }
+  @findByIdAndUpdate(id, changes).populate("players").exec (err, game) ->
+    return done err if err
+    
+    game.kingIdx = Random.nextIdx(game.players)
+    game.save (err) ->
+      return done err if err
+      
+      characterSelection = new CharacterSelection characters
+      
+      async.eachLimit game.players, 1, ((player, eachDone) ->
+        player.character = characterSelection.assignCharacter()
+        player.save eachDone
+      ), (err) -> done err, game
+
 GameSchema.statics.findByIdAndRemovePlayer = (id, player, done) ->
   @findByIdAndUpdate id, { $pull: { players: player }}, done
+
+GameSchema.statics.findByIdAndSelectMerlin = (id, merlinId, done) ->
+  Player = @model "Player"
+  Game = this
+  
+  Player.findById merlinId, (err, merlin) ->
+    return done err if err
+    
+    winnerType = if merlin.character is "merlin" then "bad" else "good"
+    Game.findByIdAndUpdate id, { state: "#{winnerType}_won" }, done
 
 GameSchema.methods.addPlayer = (player, done) ->
   unless @players.some((p) -> p.equals player)
@@ -57,21 +87,6 @@ GameSchema.methods.addPlayer = (player, done) ->
     @save done
   else
     done null, this
-
-GameSchema.methods.start = (done) ->
-  game = this
-  
-  game.kingIdx = Random.nextIdx(game.players)
-  game.state = "playing"
-  game.save (err, game) ->
-    return done err if err
-    
-    characterSelection = new CharacterSelection game.players.length
-    
-    async.eachLimit game.players, 1, ((player, eachDone) ->
-      player.character = characterSelection.assignCharacter()
-      player.save eachDone
-    ), done
 
 GameSchema.methods.nextKing = (done) ->
   @kingIdx = (@kingIdx + 1) % @players.length
@@ -84,31 +99,26 @@ GameSchema.methods.checkGameover = (done) ->
   @model("Quest").statsFor game, (err, questStats) ->
     return done err if err
     
-    gameover = (winnerType) ->
-      game.state = "#{winnerType}_won"
+    gameover = (state) ->
+      game.state = state
       game.save (err) ->
-        done err,
-          isGameover: true
-          questStats: questStats
-          game: game
+        done err, { questStats: questStats, game: game }
     
     if questStats.numSucceeded >= NUM_QUESTS_TO_WIN
-      gameover "good"
+      gameover "assassinating"
     else if questStats.numFailed >= NUM_QUESTS_TO_WIN
-      gameover "bad"
+      gameover "bad_won"
     else
-      done null,
-        isGameover: false
-        questStats: questStats
-        game: game
+      done null, { questStats: questStats, game: game }
 
 GameSchema.methods.canStart = ->
   @players.length >= Rules.MIN_PLAYERS
 
 GameSchema.methods.playersKnownTo = (player) ->
-  return [] if player.character is "Good"
-  if player.character is "Bad"
-    @players.filter (p) -> p.character is "Bad" and not p.equals player
+  return [] if player.character is "good"
+  if player.character in ["bad", "assassin", "merlin"]
+    @players.filter (p) ->
+      p.character in ["bad", "assassin"] and not p.equals player
 
 GameSchema.methods.isOnLastRejectableQuest = ->
   @numRejectedQuests is @model("Game").MAX_REJECTED_QUESTS - 1

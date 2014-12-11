@@ -1,0 +1,19 @@
+mixin characterCheckbox(id, type, isNormal)
+  - var val = isNormal ? type : id
+  - var classes = 'character-' + type + (isNormal ? ' character-normal' : '')
+  li.list-group-item
+    input.character-type(
+      type='checkbox'
+      class=classes
+      id='character-#{id}'
+      value=val
+    )
+    label(for='character-#{id}')
+      img.character-thumbnail(
+        src='/images/#{id}_thumb.jpg'
+        width='47'
+        height='75'
+        aria-hidden='true'
+        data-bind='attr: { alt: character().for_("#{val}") }'
+      )
+      span(data-bind='text: character().for_("#{val}")')

@@ -7,7 +7,7 @@ PlayerSchema = mongoose.Schema
     unique: true
   character:
     type: String
-    enum: ["Good", "Bad"]
+    enum: ["good", "bad", "assassin", "merlin"]
   createdAt:
     type: Date
     default: Date.now

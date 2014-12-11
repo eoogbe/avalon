@@ -1,8 +1,5 @@
 @Avalon ?= {}
 Avalon.Player = (socket, root) ->
-  NUM_GOOD_IMGS = 5
-  NUM_BAD_IMGS = 3
-  
   self = this
   
   self.current = ko.observable({})
@@ -11,14 +8,14 @@ Avalon.Player = (socket, root) ->
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
-  self.character = ko.pureComputed((->
-    self.characterFor self.current().character
-  ), self)
-  
   self.vote = ko.pureComputed((->
     voteObj = _.find root.questVote().list(), (vote) ->
       vote.player.name is self.current().name
     if voteObj.isApprove then "approve" else "reject"
+  ), self)
+  
+  self.hasCurrent = ko.pureComputed((->
+    self.current()? and not $.isEmptyObject self.current()
   ), self)
   
   self.hasError = ko.pureComputed((->
@@ -34,7 +31,7 @@ Avalon.Player = (socket, root) ->
   ), self)
   
   self.isGood = ko.pureComputed((->
-    self.current().character is "Good"
+    root.character().isGood self.current()
   ), self)
   
   self.isKing = ko.pureComputed((->
@@ -49,20 +46,6 @@ Avalon.Player = (socket, root) ->
   self.isQuestor = ko.pureComputed((->
     root.quest().isPlaying() and root.quest().hasQuestor self.current()
   ), self)
-  
-  self.characterImg = ->
-    if self.current().character is "Good"
-      num = Math.floor Math.random() * NUM_GOOD_IMGS + 1
-      "/images/good#{num}_small.jpg"
-    else if self.current().character is "Bad"
-      num = Math.floor Math.random() * NUM_BAD_IMGS + 1
-      "/images/bad#{num}_small.jpg"
-  
-  self.characterFor = (character) ->
-    if character is "Good"
-      "a Loyal Servant of Arthur"
-    else if character is "Bad"
-      "a Minion of Mordred"
   
   self.update = ->
     name = $("#player-name").val()

@@ -5,7 +5,8 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
     viewModel.game().list data.games
     viewModel.player().current data.currentPlayer if data.currentPlayer?
     viewModel.game().current data.currentGame if data.currentGame?
-    viewModel.currentPage "games"
+    viewModel.quest().reset()
+    viewModel.nav().currentPage "games"
     viewModel.alert null
   
   socket.on "new_game_error", (gameError) ->
@@ -38,18 +39,14 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
             id="start-game-btn"
             type="button"
             class="btn-link alert-link"
-            data-bind="click: goToPlayer"
+            data-bind="click: nav().goToPlayer"
         >
           start
         </button>!'
       type: "alert-success"
     ko.applyBindings viewModel, $("#start-game-btn")[0]
   
-  socket.on "show_gameover", (data) ->
-    viewModel.game().current data.currentGame
-    viewModel.quest().stats data.questStats
-    viewModel.currentPage "gameover"
-    viewModel.alert null
-    viewModel.waitingDialog
-      message: "All questors have finished"
-      isDone: true
+  socket.on "show_gameover", (currentGame) ->
+    viewModel.game().current currentGame
+    viewModel.nav().currentPage "gameover"
+    $("#waiting-dialog").modal "hide"

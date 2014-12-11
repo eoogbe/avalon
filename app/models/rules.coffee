@@ -1,5 +1,8 @@
 Random = require "./random"
 
+NUM_GOOD = [3, 4, 4, 5, 6, 6]
+NUM_BAD = [2, 2, 3, 3, 3, 4]
+
 NUM_PLAYERS_NEEDED = [
   [2, 3, 2, 3, 3],
   [2, 3, 3, 3, 4],
@@ -14,23 +17,14 @@ MAX_QUESTS = 5
 FAIL_WEIRDNESS_QUEST_NO = 4
 MIN_FAIL_WEIRDNESS_PLAYERS = 7
 
+getPlayerIdx = (numPlayers) -> numPlayers - MIN_PLAYERS
+
 getValueAt = (num, arr) ->
   idx = Math.min Math.max(0, num), arr.length - 1
   arr[idx]
 
 class CharacterSelection
-  CHARACTERS_PER_PLAYERS = [
-    ["Good", "Good", "Good", "Bad", "Bad"],
-    ["Good", "Good", "Good", "Good", "Bad", "Bad"],
-    ["Good", "Good", "Good", "Good", "Bad", "Bad", "Bad"],
-    ["Good", "Good", "Good", "Good", "Good", "Bad", "Bad", "Bad"],
-    ["Good", "Good", "Good", "Good", "Good", "Good", "Bad", "Bad", "Bad"],
-    ["Good", "Good", "Good", "Good", "Good", "Good", "Bad", "Bad", "Bad", "Bad"]
-  ]
-  
-  constructor: (numPlayers) ->
-    @characters =
-      getValueAt(numPlayers - MIN_PLAYERS, CHARACTERS_PER_PLAYERS).slice 0
+  constructor: (@characters) ->
   
   assignCharacter: ->
     if @characters.length > 0
@@ -39,13 +33,19 @@ class CharacterSelection
       @characters.splice removeIdx, 1
       character
     else
-      Random.nextChoice ["Good", "Bad"]
+      Random.nextChoice ["good", "bad"]
 
 module.exports =
   MIN_PLAYERS: MIN_PLAYERS
   CharacterSelection: CharacterSelection
+  getCharacterStats: (numPlayers) ->
+    return null unless numPlayers?
+    
+    playerIdx = getPlayerIdx numPlayers
+    numGood: getValueAt playerIdx, NUM_GOOD
+    numBad: getValueAt playerIdx, NUM_BAD
   getNumPlayersNeeded: (numPlayers, numQuests) ->
-    perQuest = getValueAt numPlayers - MIN_PLAYERS, NUM_PLAYERS_NEEDED
+    perQuest = getValueAt getPlayerIdx(numPlayers), NUM_PLAYERS_NEEDED
     getValueAt numQuests, perQuest
   getNumFailsRequired: (numPlayers, numQuests) ->
     hasFailWeirdness = numQuests + 1 is FAIL_WEIRDNESS_QUEST_NO and  # add current quest

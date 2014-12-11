@@ -1,8 +1,8 @@
 reqHandler = (handlerName) ->
   require "./games/#{handlerName}_handler"
 
-[createdHandler, joinedHandler, leftHandler, startedHandler, deletedHandler, continuedHandler] =
-  (reqHandler h for h in ["created", "joined", "left", "started", "deleted", "continued"])
+[createdHandler, joinedHandler, leftHandler, startedHandler, deletedHandler, continuedHandler, merlinSelectedHandler] =
+  (reqHandler h for h in ["created", "joined", "left", "started", "deleted", "continued", "merlin_selected"])
 
 exports.created = (eventCtx) ->
   createdHandler eventCtx
@@ -22,5 +22,14 @@ exports.deleted = (eventCtx) ->
 exports.continued = (eventCtx) ->
   continuedHandler eventCtx
 
+exports.merlinSelected = (eventCtx) ->
+  merlinSelectedHandler eventCtx
+
 exports.reloaded = (eventCtx) ->
-  eventCtx.showGames
+  showGames = eventCtx.showGames
+  
+  (gameName) ->
+    for id, conn of io.of("/").connected when gameName in conn.rooms
+      conn.leave gameName
+    
+    showGames()

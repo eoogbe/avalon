@@ -45,8 +45,8 @@ exports.updated = (eventCtx) ->
         Game.findById(gameId).populate("players").exec (err, game) ->
           return console.error err if err
           
-          QuestVote.find({ quest: quest })
-            .populate("player")
+          QuestVote.find quest: quest
+            .populate "player"
             .exec (err, votes) ->
               return console.error err if err
               

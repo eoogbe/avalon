@@ -22,8 +22,8 @@ module.exports = (eventCtx) ->
           Quest.populate quest, populatedFields, (err, quest) ->
             return console.error err if err
             
-            QuestVote.find({ quest: quest })
-              .populate("player")
+            QuestVote.find quest: quest
+              .populate "player"
               .exec (err, votes) ->
                 return console.error err if err
                 

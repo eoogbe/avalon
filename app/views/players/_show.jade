@@ -1,12 +1,12 @@
-section(data-bind='visible: $root.isCurrentPage("player")')
+section(data-bind='visible: $root.nav().isCurrentPage("player")')
   h2 You are
-    strong(data-bind='text: player().character')
+    strong(data-bind='text: character().current')
   
   img.img-responsive(
     width='125'
     height='200'
     aria-hidden='true'
-    data-bind='attr: { src: $root.player().characterImg(), alt: player().character }'
+    data-bind='attr: { src: $root.character().img(), alt: character().current }'
   )
   
   +knownPlayers('dl-horizontal wide-dl')
