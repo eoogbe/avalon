@@ -29,5 +29,4 @@ Avalon.EventHandlers.Players = (socket, viewModel) ->
   
   socket.on "show_player", (currentGame) ->
     viewModel.game().current currentGame
-    viewModel.quest().reset()
     viewModel.goToPlayer()

@@ -1,4 +1,4 @@
-handleStateChange = (eventCtx, quest, nonvoters, noChangeFn) ->
+handleStateChange = (eventCtx, quest, noChangeFn) ->
   io = eventCtx.io
   Game = eventCtx.models.Game
   Quest = eventCtx.models.Quest
@@ -32,6 +32,7 @@ exports.updated = (eventCtx) ->
   session = socket.request.session
   Game = eventCtx.models.Game
   Quest = eventCtx.models.Quest
+  QuestVote = eventCtx.models.QuestVote
   
   (gameId) ->
     Quest.upsert gameId, (err, quest) ->
@@ -44,24 +45,37 @@ exports.updated = (eventCtx) ->
         Game.findById(gameId).populate("players").exec (err, game) ->
           return console.error err if err
           
-          isKing = quest.king.name is session.user
-          page = if isKing then "new_questors" else "questors"
-          
-          socket.emit "show_#{page}",
-            currentQuest: quest
-            currentGame: game
+          QuestVote.find({ quest: quest })
+            .populate("player")
+            .exec (err, votes) ->
+              return console.error err if err
+              
+              isKing = quest.king.name is session.user
+              page = if isKing then "new_questors" else "questors"
+              
+              socket.emit "show_#{page}",
+                currentQuest: quest
+                currentGame: game
+                votes: votes
 
 exports.votedOn = (eventCtx) ->
+  io = eventCtx.io
   socket = eventCtx.socket
   Quest = eventCtx.models.Quest
+  QuestVote = eventCtx.models.QuestVote
   
   (data) ->
     Quest.findByIdAndCreateVote data.questId, data.playerId, data.vote,
       (err, quest, nonvoters) ->
         return console.error err if err
         
-        handleStateChange eventCtx, quest, nonvoters, (quest) ->
-          socket.emit "wait_on_voters" if quest.state is "voting"
+        handleStateChange eventCtx, quest, (quest) ->
+          if quest.state is "unstarted"
+            QuestVote.find { quest: quest }, (err, votes) ->
+              for id, conn of io.of("/").connected when quest.king.name is conn.request.session.user
+                conn.emit "set_votes", votes
+          else
+            socket.emit "wait_on_voters"
 
 exports.started = (eventCtx) ->
   io = eventCtx.io
@@ -76,7 +90,7 @@ exports.started = (eventCtx) ->
         quest.checkApproved (err, quest, nonvoters) ->
           return console.error err if err
           
-          handleStateChange eventCtx, quest, nonvoters, (quest) ->
+          handleStateChange eventCtx, quest, (quest) ->
             for id, conn of io.of("/").connected when quest.game.name in conn.rooms
               currentPlayer = conn.request.session.user
               if nonvoters.some((player) -> player.name is currentPlayer)

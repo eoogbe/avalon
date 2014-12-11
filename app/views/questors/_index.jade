@@ -15,7 +15,7 @@ section(data-bind='visible: $root.isCurrentPage("questors")')
         width='54'
         height='30'
         alt='King'
-        data-bind='visible: $root.quest().isKing($data)'
+        data-bind='visible: $root.quest().hasKing($data)'
       )
   
   +voteRadioGroup('nonking')

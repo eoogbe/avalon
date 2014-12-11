@@ -1,6 +1,11 @@
 @Avalon ?= {}
 Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.QuestVotes = (socket, viewModel) ->
+  socket.on "set_votes", (votes) ->
+    if viewModel.currentPage() is "new_questors"
+      viewModel.questVote().list votes
+      viewModel.questVote().alertNeeded()
+  
   socket.on "alert_vote", ->
     viewModel.alertVote() if viewModel.isCurrentPage "questors"
   
@@ -15,7 +20,7 @@ Avalon.EventHandlers.QuestVotes = (socket, viewModel) ->
     viewModel.game().current data.currentGame
     viewModel.quest().current data.currentQuest
     viewModel.quest().isLastRejectableQuest data.isLastRejectableQuest
-    viewModel.quest().votes data.votes
+    viewModel.questVote().list data.votes
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     
     viewModel.currentPage "quest_votes"

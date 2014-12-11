@@ -3,7 +3,7 @@ section(data-bind='visible: $root.isCurrentPage("new_quest_outcome")')
   
   button.quest-outcome-btn(
     type='button'
-    data-bind='click: quest().createSuccessOutcome'
+    data-bind='click: questOutcome().createSuccess'
   )
     img.img-responsive(
       src='/images/success.jpg'
@@ -15,13 +15,13 @@ section(data-bind='visible: $root.isCurrentPage("new_quest_outcome")')
     span.sr-only Success
   button.quest-outcome-btn(
     type='button'
-    data-bind='click: quest().createFailOutcome, disable: player().isGood'
+    data-bind='click: questOutcome().createFail, disable: player().isGood'
   )
     img.img-responsive(
       alt='Fail'
       width='187'
       height='289'
       aria-hidden='true'
-      data-bind='attr: { src: $root.quest().failOutcomeImg() }'
+      data-bind='attr: { src: $root.questOutcome().failImg() }'
     )
     span.sr-only Fail

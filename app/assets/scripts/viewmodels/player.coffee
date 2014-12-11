@@ -15,6 +15,12 @@ Avalon.Player = (socket, root) ->
     self.characterFor self.current().character
   ), self)
   
+  self.vote = ko.pureComputed((->
+    voteObj = _.find root.questVote().list(), (vote) ->
+      vote.player.name is self.current().name
+    if voteObj.isApprove then "approve" else "reject"
+  ), self)
+  
   self.hasError = ko.pureComputed((->
     self.error()? and not $.isEmptyObject self.error()
   ), self)
@@ -29,6 +35,15 @@ Avalon.Player = (socket, root) ->
   
   self.isGood = ko.pureComputed((->
     self.current().character is "Good"
+  ), self)
+  
+  self.isKing = ko.pureComputed((->
+    root.quest().hasKing self.current()
+  ), self)
+  
+  self.hasVoted = ko.pureComputed((->
+    _.any root.questVote().list(), (vote) ->
+      vote.player.name is self.current().name
   ), self)
   
   self.isQuestor = ko.pureComputed((->

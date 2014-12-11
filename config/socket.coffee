@@ -1,11 +1,8 @@
 reqController = (controllerName) ->
   require "../app/controllers/#{controllerName}_controller"
 
-playersController = reqController "players"
-gamesController = reqController "games"
-questsController = reqController "quests"
-questOutcomesController = reqController "quest_outcomes"
-questorsController = reqController "questors"
+[playersController, gamesController, questsController, questOutcomesController, questorsController] =
+  (reqController c for c in ["players", "games", "quests", "quest_outcomes", "questors"])
 
 module.exports = (io, sessionMiddleware, models) ->
   io.use (socket, next) ->

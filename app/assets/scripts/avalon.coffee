@@ -12,10 +12,16 @@ Avalon.Main = (socket) ->
   player = null
   game = null
   quest = null
+  questVote = null
+  questOutcome = null
   
-  self.player = -> player = player || new Avalon.Player socket, self
-  self.game = -> game = game || new Avalon.Game socket, self
-  self.quest = -> quest = quest || new Avalon.Quest socket, self
+  self.player = -> player = player or new Avalon.Player socket, self
+  self.game = -> game = game or new Avalon.Game socket, self
+  self.quest = -> quest = quest or new Avalon.Quest socket, self
+  self.questVote = ->
+    questVote = questVote or new Avalon.QuestVote socket, self
+  self.questOutcome = ->
+    questOutcome = questOutcome or new Avalon.QuestOutcome socket, self
   
   self.currentPage = ko.observable()
   self.alert = ko.observable()
@@ -69,6 +75,7 @@ Avalon.Main = (socket) ->
     self.currentPage "games"
   
   self.goToPlayer = ->
+    self.quest().reset()
     self.currentPage "player"
     self.alert null
   

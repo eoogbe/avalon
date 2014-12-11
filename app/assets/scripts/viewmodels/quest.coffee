@@ -6,7 +6,6 @@ Avalon.Quest = (socket, root) ->
   self.error = ko.observable()
   self.isLastRejectableQuest = ko.observable()
   self.stats = ko.observable { numSucceeded: 0, numFailed: 0 }
-  self.votes = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
@@ -34,44 +33,11 @@ Avalon.Quest = (socket, root) ->
     self.current().state is "playing"
   ), self)
   
-  self.hasApprovers = ko.pureComputed((->
-    _.any self.votes(), "isApprove"
-  ), self)
-  
-  self.hasRejectors = ko.pureComputed((->
-    _.any self.votes(), isApprove: false
-  ), self)
-  
   self.needsTwoFails = ko.pureComputed((->
     self.current().numFailsRequired is 2
   ), self)
   
-  self.voteResult = ko.pureComputed((->
-    if self.isRejected() then "rejected" else "approved"
-  ), self)
-  
-  self.approvers = ko.pureComputed((->
-    _.map _.filter(self.votes(), "isApprove"), "player"
-  ), self)
-  
-  self.rejectors = ko.pureComputed((->
-    _.map _.reject(self.votes(), "isApprove"), "player"
-  ), self)
-  
-  self.outcomes = ko.pureComputed((->
-    _.shuffle(self.current().outcomes ? [])
-  ), self)
-  
-  self.failOutcomeImg = ->
-    if root.player().isGood() then "/images/fail_disabled.jpg" else "/images/fail.jpg"
-  
-  self.outcomeImgAttrs = (isSuccess) ->
-    if isSuccess
-      { src: "/images/success.jpg", alt: "Success" }
-    else
-      { src: "/images/fail.jpg", alt: "Fail" }
-  
-  self.isKing = (player) ->
+  self.hasKing = (player) ->
     self.kingName() is player.name
   
   self.hasQuestor = (player) ->
@@ -81,17 +47,6 @@ Avalon.Quest = (socket, root) ->
     self.current {}
     self.stats { numSucceeded: 0, numFailed: 0 }
     self.isLastRejectableQuest false
-  
-  createOutcome = (isSuccess) ->
-    socket.emit "quest_outcome_created",
-      outcome: isSuccess
-      questId: self.currentId()
-  
-  self.createSuccessOutcome = ->
-    createOutcome true
-  
-  self.createFailOutcome = ->
-    createOutcome false
   
   self.update = ->
     $("#action-dialog").modal "hide"

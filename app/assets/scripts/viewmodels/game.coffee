@@ -7,6 +7,9 @@ Avalon.Game = (socket, root) ->
   self.canStart = ko.observable()
   self.list = ko.observableArray()
   
+  self.currentId = ko.pureComputed((-> self.current()._id ), self)
+  self.currentPlayers = ko.pureComputed((-> self.current().players ), self)
+  
   self.hasCurrent = ko.pureComputed((->
     self.current()? and not $.isEmptyObject self.current()
   ), self)
@@ -26,10 +29,8 @@ Avalon.Game = (socket, root) ->
   self.shouldShowStats = ko.pureComputed((->
     self.hasCurrent() and
       self.current().state isnt "unstarted" and
-      not (root.currentPage() in ["players", "games"])
+      not (root.currentPage() in ["new_game", "players", "games"])
   ), self)
-  
-  self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
   self.creatorName = ko.pureComputed((->
     if self.hasCurrent() then self.current().creator.name else null

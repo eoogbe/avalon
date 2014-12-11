@@ -1,62 +1,9 @@
 @Avalon ?= {}
 Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.Quests = (socket, viewModel) ->
-  sendQuestVotedOn = ->
-    socket.emit "quest_voted_on",
-      playerId: viewModel.player().currentId()
-      questId: viewModel.quest().currentId()
-      vote: @value
-  
-  registerRadioListener = ->
-    $(".quest-vote")
-      .prop "checked", false
-      .off "change", sendQuestVotedOn
-      .on "change", sendQuestVotedOn
-  
-  socket.on "show_new_questors", (data) ->
-    viewModel.game().current data.currentGame
-    viewModel.quest().current data.currentQuest
-    viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
-    viewModel.quest().stats data.questStats if data.questStats?
-    viewModel.currentPage "new_questors"
-    registerRadioListener()
-    viewModel.infoDialog
-      heading: "King"
-      message: 'You are king 
-        <img
-            src="/images/crown.jpg"
-            alt=""
-            width="54"
-            height="30"
-            aria-hidden="true"
-        >'
-    $("#info-dialog").modal "show"
-  
-  socket.on "show_questors", (data) ->
-    viewModel.game().current data.currentGame
-    viewModel.quest().current data.currentQuest
-    viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
-    viewModel.quest().stats data.questStats if data.questStats?
-    viewModel.currentPage "questors"
-    registerRadioListener()
-    viewModel.alertVote() if data.currentQuest.state is "voting"
-    viewModel.infoDialog
-      heading: "King"
-      message: "#{viewModel.quest().kingName()} is king"
-    $("#info-dialog").modal "show"
-  
   socket.on "set_quest", (currentQuest) ->
     if viewModel.currentPage() in ["questors", "new_questors"]
       viewModel.quest().current currentQuest
-  
-  socket.on "wait_on_questors", (data) ->
-    viewModel.game().current data.currentGame
-    viewModel.quest().current data.currentQuest
-    viewModel.alert null
-    viewModel.waitingDialog
-      message: "Waiting on questors"
-      isDone: false
-    $("#waiting-dialog").modal "show"
   
   socket.on "show_new_quest_outcome", (data) ->
     viewModel.game().current data.currentGame

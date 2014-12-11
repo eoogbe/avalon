@@ -1,24 +1,24 @@
 section(data-bind='visible: $root.isCurrentPage("quest_votes")')
   h2 The quest was 
-    span(data-bind='text: quest().voteResult')
+    span(data-bind='text: questVote().result')
   
   section
     h3 Approvers
-    // ko if: quest().hasApprovers
-    ul.list-group(data-bind='foreach: quest().approvers')
+    // ko if: questVote().hasApprovers
+    ul.list-group(data-bind='foreach: questVote().approvers')
       li.list-group-item(data-bind='text: name')
     // /ko
-    // ko ifnot: quest().hasApprovers
+    // ko ifnot: questVote().hasApprovers
     p No one approved this quest
     // /ko
   
   section
     h3 Rejectors
-    // ko if: quest().hasRejectors
-    ul.list-group(data-bind='foreach: quest().rejectors')
+    // ko if: questVote().hasRejectors
+    ul.list-group(data-bind='foreach: questVote().rejectors')
       li.list-group-item(data-bind='text: name')
     // /ko
-    // ko ifnot: quest().hasRejectors
+    // ko ifnot: questVote().hasRejectors
     p No one rejected this quest
     // /ko
   

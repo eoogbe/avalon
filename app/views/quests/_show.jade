@@ -4,11 +4,11 @@ section(data-bind='visible: $root.isCurrentPage("quest")')
   
   section
     h3.sr-only Outcomes
-    ul.list-inline(data-bind='foreach: quest().outcomes')
+    ul.list-inline(data-bind='foreach: questOutcome().list')
       li: img(
           width='187'
           height='289'
-          data-bind='attr: $root.quest().outcomeImgAttrs($data)'
+          data-bind='attr: $root.questOutcome().imgAttrs($data)'
         )
   
   include ./_score.jade
