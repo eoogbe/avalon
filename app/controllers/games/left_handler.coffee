@@ -12,9 +12,6 @@ module.exports = (eventCtx) ->
         return console.error err if err
         
         socket.leave game.name
-        
-        io.to(game.name).emit "show_players",
-          currentGame: game
-          canStartGame: game.canStart()
+        io.to(game.name).emit "show_players", game
         
         showGames()

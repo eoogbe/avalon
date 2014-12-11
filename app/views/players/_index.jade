@@ -18,10 +18,3 @@ section(data-bind='visible: $root.nav().isCurrentPage("players")')
     h3 Players
     ul.list-group(data-bind='foreach: game().current().players')
       li.list-group-item(data-bind='text: name')
-  
-  // ko if: player().isGameCreator
-  button.btn.btn-default(
-    type='button',
-    data-bind='click: game().confirmStart, enable: game().canStart'
-  ) Choose characters &raquo;
-  // /ko

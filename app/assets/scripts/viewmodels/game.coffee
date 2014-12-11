@@ -4,7 +4,6 @@ Avalon.Game = (socket, root) ->
   
   self.current = ko.observable({})
   self.error = ko.observable()
-  self.canStart = ko.observable()
   self.list = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
@@ -31,13 +30,16 @@ Avalon.Game = (socket, root) ->
   ), self)
   
   self.shouldShowStats = ko.pureComputed((->
-    self.hasCurrent() and
-      self.current().state isnt "unstarted" and
-      not (root.nav().currentPage() in ["new_game", "players", "games"])
+    self.current().state in ["playing", "assassinating", "good_won", "bad_won"] and
+      not (root.nav().currentPage() in ["new_game", "games"])
   ), self)
   
   self.creatorName = ko.pureComputed((->
     if self.hasCurrent() then self.current().creator.name else null
+  ), self)
+  
+  self.numPlayers = ko.pureComputed((->
+    self.currentPlayers()?.length
   ), self)
   
   self.nonquestors = ko.pureComputed((->
@@ -69,9 +71,9 @@ Avalon.Game = (socket, root) ->
   
   self.create = ->
     $("#confirm-dialog").modal "hide"
-    name = $("#game-name").val()
     socket.emit "game_created",
-      name: name
+      name: $("#game-name").val()
+      numPlayers: $("#game-num-players").val()
       playerId: root.player().currentId()
   
   self.confirmDelete = ->
@@ -93,18 +95,10 @@ Avalon.Game = (socket, root) ->
       playerId: root.player().currentId()
       gameId: self.currentId()
   
-  self.confirmStart = ->
-    root.confirmDialog
-      type: "panel-warning"
-      message: "No additional players will be able to join the game. Continue?"
-      action: self.start
-      positiveBtnText: "Yes, let's start"
-      negativeBtnText: "No, wait for more players"
-    $("#confirm-dialog").modal "show"
-  
   self.start = ->
-    $("#confirm-dialog").modal "hide"
-    socket.emit "game_started", self.currentId()
+    socket.emit "game_started",
+      playerId: root.player().currentId()
+      gameId: self.currentId()
   
   self.killMerlin = ->
     socket.emit "merlin_selected",

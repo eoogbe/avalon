@@ -44,6 +44,12 @@ module.exports =
     playerIdx = getPlayerIdx numPlayers
     numGood: getValueAt playerIdx, NUM_GOOD
     numBad: getValueAt playerIdx, NUM_BAD
+  getPlayersKnown: (player, players) ->
+    return [] if player.character is "good"
+    
+    if player.character in ["bad", "assassin", "merlin"]
+      players.filter (p) ->
+        p.character in ["bad", "assassin"] and not p.equals player
   getNumPlayersNeeded: (numPlayers, numQuests) ->
     perQuest = getValueAt getPlayerIdx(numPlayers), NUM_PLAYERS_NEEDED
     getValueAt numQuests, perQuest

@@ -19,7 +19,7 @@ module.exports = (io, sessionMiddleware, models) ->
       socket: socket
       models: models
       showGames: (data) ->
-        models.Game.unstarted().lean().exec (err, games) ->
+        models.Game.findUnstarted().lean().exec (err, games) ->
           return console.error err if err
           
           data ?= {}

@@ -8,11 +8,11 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_questors")')
   // /ko
   
   .row
-    section.col-sm-3
-      h3 Not going
-      select#nonquestors(
-        size='10'
-        data-bind='options: game().nonquestors,\
+    .form-group.col-sm-3
+      label(for='nonquestors') Not going
+      select.form-control#nonquestors(
+        data-bind='attr: { size: game().numPlayers },\
+          options: game().nonquestors,\
           optionsText: "name",\
           optionsValue: "_id"'
       )
@@ -33,11 +33,11 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_questors")')
         span.glyphicon.glyphicon-arrow-left(aria-hidden='true')
         span.sr-only Remove questor
     
-    section.col-sm-offset-1.col-sm-3
-      h3 Going
-      select#questors(
-        size='10'
-        data-bind='options: quest().current().players,\
+    .form-group.col-sm-3
+      label(for='questors') Going
+      select.form-control#questors(
+        data-bind='attr: { size: game().numPlayers },\
+          options: quest().current().players,\
           optionsText: "name",\
           optionsValue: "_id"'
       )

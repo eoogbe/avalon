@@ -17,3 +17,4 @@ module.exports = (models) ->
                 currentGame: game
                 currentQuest: quest
                 questStats: questStats
+                characterStats: models.Rules.getCharacterStats game.players.length

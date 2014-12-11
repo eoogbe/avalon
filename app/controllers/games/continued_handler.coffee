@@ -4,6 +4,7 @@ module.exports = (eventCtx) ->
   Site = eventCtx.models.Site
   Quest = eventCtx.models.Quest
   QuestVote = eventCtx.models.QuestVote
+  Rules = eventCtx.models.Rules
   
   (data) ->
     Site.current data, (err, siteData) ->
@@ -13,6 +14,7 @@ module.exports = (eventCtx) ->
       game = siteData.currentGame
       quest = siteData.currentQuest
       questStats = siteData.questStats
+      characterStats = siteData.characterStats
       
       if not quest
         Quest.upsert data.gameId, (err, quest) ->
@@ -35,16 +37,18 @@ module.exports = (eventCtx) ->
                   currentQuest: quest
                   currentGame: game
                   votes: votes
-                  knownPlayers: game.playersKnownTo player
+                  knownPlayers: Rules.getPlayersKnown player, game.players
                   questStats: questStats
+                  characterStats: characterStats
       else if quest.players.some((p) -> p._id.equals data.playerId)
         socket.join game.name
         
         socket.emit "show_new_quest_outcome",
           currentGame: game
           currentQuest: quest
-          knownPlayers: game.playersKnownTo player
+          knownPlayers: Rules.getPlayersKnown player, game.players
           questStats: questStats
+          characterStats: characterStats
       else
         QuestVote.find({ quest: quest }).populate("player").exec (err, votes) ->
           return console.error err if err
@@ -55,6 +59,7 @@ module.exports = (eventCtx) ->
             currentGame: game
             currentQuest: quest
             isLastRejectableQuest: game.isOnLastRejectableQuest()
-            knownPlayers: game.playersKnownTo player
+            knownPlayers: Rules.getPlayersKnown player, game.players
             questStats: questStats
+            characterStats: characterStats
             votes: votes

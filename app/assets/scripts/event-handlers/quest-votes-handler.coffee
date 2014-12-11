@@ -22,6 +22,7 @@ Avalon.EventHandlers.QuestVotes = (socket, viewModel) ->
     viewModel.quest().isLastRejectableQuest data.isLastRejectableQuest
     viewModel.questVote().list data.votes
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
+    viewModel.character().characterStats data.characterStats if data.characterStats?
     
     viewModel.nav().currentPage "quest_votes"
     

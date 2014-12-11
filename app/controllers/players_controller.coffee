@@ -12,8 +12,7 @@ exports.updated = (eventCtx) ->
         session.save (err) ->
           return console.error err if err
           
-          conditions = { players: player, state: "playing" }
-          Game.findOne(conditions).populate("players").exec (err, game) ->
+          Game.findCurrent(player).populate("players").exec (err, game) ->
             return console.error err if err
             
             showGames

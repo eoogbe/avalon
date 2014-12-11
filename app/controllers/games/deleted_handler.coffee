@@ -2,7 +2,6 @@ module.exports = (eventCtx) ->
   io = eventCtx.io
   socket = eventCtx.socket
   Game = eventCtx.models.Game
-  showGames = eventCtx.showGames
   
   (gameId) ->
     Game.findByIdAndRemove gameId, (err, game) ->
@@ -13,4 +12,8 @@ module.exports = (eventCtx) ->
       for id, conn of io.of("/").connected when game.name in conn.rooms
         conn.leave game.name
       
-      showGames()
+      Game.findUnstarted().lean().exec (err, games) ->
+        return console.error err if err
+        
+        io.emit "refresh_games", games
+        socket.emit "show_games", games: games

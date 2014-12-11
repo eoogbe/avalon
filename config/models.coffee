@@ -17,6 +17,7 @@ module.exports = (app) ->
     Game: mongoose.model "Game"
     Quest: mongoose.model "Quest"
     QuestVote: mongoose.model "QuestVote"
+    Rules: reqModel "rules"
   
   models.Site = reqModel("site")(models)
   

@@ -23,6 +23,7 @@ Avalon.EventHandlers.Questors = (socket, viewModel) ->
     viewModel.questVote().list data.votes
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     viewModel.quest().stats data.questStats if data.questStats?
+    viewModel.character().characterStats data.characterStats if data.characterStats?
     viewModel.nav().currentPage "new_questors"
     registerRadioListener()
     viewModel.questVote().alertNeeded()
@@ -44,6 +45,7 @@ Avalon.EventHandlers.Questors = (socket, viewModel) ->
     viewModel.questVote().list data.votes
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     viewModel.quest().stats data.questStats if data.questStats?
+    viewModel.character().characterStats data.characterStats if data.characterStats?
     viewModel.nav().currentPage "questors"
     registerRadioListener()
     viewModel.alertVote() if data.currentQuest.state is "voting"

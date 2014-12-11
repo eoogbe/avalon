@@ -26,6 +26,7 @@ exports.merlinSelected = (eventCtx) ->
   merlinSelectedHandler eventCtx
 
 exports.reloaded = (eventCtx) ->
+  io = eventCtx.io
   showGames = eventCtx.showGames
   
   (gameName) ->

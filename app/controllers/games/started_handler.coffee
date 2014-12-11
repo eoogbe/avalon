@@ -1,13 +1,17 @@
 module.exports = (eventCtx) ->
-  io = eventCtx.io
   socket = eventCtx.socket
+  Player = eventCtx.models.Player
   Game = eventCtx.models.Game
+  Rules = eventCtx.models.Rules
   
-  (gameId) ->
-    Game.findByIdAndStart gameId, (err, game, characterStats) ->
+  (data) ->
+    Game.findByIdAndStart data.gameId, (err, game) ->
       return console.error err if err
       
-      socket.emit "show_new_characters",
-        currentGame: game
-        numGood: characterStats.numGood
-        numBad: characterStats.numBad
+      Player.findById data.playerId, (err, player) ->
+        return console.error err if err
+        
+        socket.emit "show_player",
+          currentGame: game
+          currentPlayer: player
+          knownPlayers: Rules.getPlayersKnown player, game.players

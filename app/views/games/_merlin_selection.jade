@@ -1,12 +1,15 @@
 section(data-bind='visible: $root.nav().isCurrentPage("merlin_selection")')
   h2 Choose Merlin
   
-  form(data-bind='submit: game().killMerlin')
-    select#good-characters(
-      data-bind='attr: { size: character().numGood },\
-        options: character().goodList,\
-        optionsText: "name",\
-        optionsValue: "_id"'
-    )
+  form.merlin-selection(data-bind='submit: game().killMerlin')
+    .form-group
+      label.sr-only(for='good-characters') Good characters
+      
+      select.form-control#good-characters(
+        data-bind='attr: { size: character().numGood },\
+          options: character().goodList,\
+          optionsText: "name",\
+          optionsValue: "_id"'
+      )
     
     button.btn.btn-default(type='submit') Stab!

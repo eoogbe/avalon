@@ -9,15 +9,12 @@ Avalon.Navigation = (socket, root) ->
   
   self.goToNewGame = ->
     root.game().error null
-    root.quest().reset()
     self.currentPage "new_game"
   
   self.goToGames = ->
-    root.quest().reset()
     self.currentPage "games"
   
   self.goToPlayer = ->
-    root.quest().reset()
     self.currentPage "player"
     root.alert null
   

@@ -5,7 +5,6 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
     viewModel.game().list data.games
     viewModel.player().current data.currentPlayer if data.currentPlayer?
     viewModel.game().current data.currentGame if data.currentGame?
-    viewModel.quest().reset()
     viewModel.nav().currentPage "games"
     viewModel.alert null
   

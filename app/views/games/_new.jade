@@ -12,6 +12,18 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_game")')
       .help-block(data-bind='text: game().error().name.message')
       // /ko
     
-    button.btn.btn-default(type='submit') Create game
-  
-  button.pull-right.btn-link(type='button', data-bind='click: nav().goToGames') back
+    .form-group
+      label(for='game-num-players') How many players?
+      input.form-control#game-num-players(
+        type='number'
+        min='5'
+        max='10'
+        value='5'
+      )
+    
+    button.btn.btn-default(type='submit') Choose characters &raquo;
+
+  button.pull-right.btn-link(
+    type='button'
+    data-bind='click: nav().goToGames'
+  ) back
