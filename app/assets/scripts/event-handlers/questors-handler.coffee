@@ -58,8 +58,6 @@ Avalon.EventHandlers.Questors = (socket, viewModel) ->
     viewModel.game().current data.currentGame
     viewModel.quest().current data.currentQuest
     viewModel.alert null
-    viewModel.waitingDialog
-      message: "Waiting on questors"
-      isDone: false
+    viewModel.waitingDialogMsg "Waiting on questors"
     $("#waiting-dialog").modal "show"
   

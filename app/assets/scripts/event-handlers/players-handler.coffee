@@ -17,21 +17,12 @@ Avalon.EventHandlers.Players = (socket, viewModel) ->
         message: "Waiting for more players..."
         type: "alert-warning"
     else
-      viewModel.alert
-        message: 'The game can
-          <button
-              id="start-game-btn"
-              type="button"
-              class="btn-link alert-link"
-              data-bind="click: game().start"
-          >
-            start
-          </button>!'
-        type: "alert-success"
-      ko.applyBindings viewModel, $("#start-game-btn")[0]
+      viewModel.game().start()
   
   socket.on "show_player", (data) ->
     viewModel.game().current data.currentGame
     viewModel.player().current data.currentPlayer
     viewModel.player().knownPlayers data.knownPlayers
-    viewModel.nav().goToPlayer()
+    viewModel.character().characterStats data.characterStats
+    viewModel.nav().currentPage "player"
+    viewModel.alert null

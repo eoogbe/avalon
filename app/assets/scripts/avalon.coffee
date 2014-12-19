@@ -32,29 +32,22 @@ Avalon.Main = (socket) ->
   self.confirmDialog = ko.observable({})
   self.actionDialog = ko.observable({})
   self.infoDialog = ko.observable({})
-  self._waitingDialog = ko.observable({})
+  self._waitingDialogMsg = ko.observable()
   
   self.hasAlert = ko.pureComputed((->
     self.alert()? and not $.isEmptyObject self.alert()
   ), self)
   
-  self.waitingSignalId = null
-  
   changeWaitingSignal = ->
     $("#waiting-signal").text "#{_.sample WAITING_SIGNALS}..."
   
-  self.waitingDialog = ko.pureComputed
-    read: self._waitingDialog
+  self.waitingDialogMsg = ko.pureComputed
+    read: self._waitingDialogMsg
     write: (value) ->
-      self._waitingDialog value
+      self._waitingDialogMsg value
       
-      unless value.isDone
-        changeWaitingSignal()
-        self.waitingSignalId =
-          setInterval changeWaitingSignal, WAITING_SIGNAL_DELAY
-      else
-        clearInterval self.waitingSignalId
-        $("#waiting-signal").text ""
+      changeWaitingSignal()
+      setInterval changeWaitingSignal, WAITING_SIGNAL_DELAY
     owner: self
   
   self.alertVote = ->

@@ -12,7 +12,6 @@ Avalon.Character = (socket, root) ->
   ), self)
   
   self.numGood = ko.pureComputed((->
-    console.log self.characterStats().numGood
     self.characterStats().numGood
   ), self)
   

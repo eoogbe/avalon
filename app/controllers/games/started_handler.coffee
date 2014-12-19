@@ -15,3 +15,4 @@ module.exports = (eventCtx) ->
           currentGame: game
           currentPlayer: player
           knownPlayers: Rules.getPlayersKnown player, game.players
+          characterStats: Rules.getCharacterStats game.players.length

@@ -67,10 +67,8 @@
       .modal-header.panel-heading
         h4.modal-title.panel-title#waiting-dialog-heading Waiting
       .modal-body.panel-body
-        p(data-bind='text: waitingDialog().message')
+        p(data-bind='text: waitingDialogMsg')
         p#waiting-signal
-      .modal-footer.panel-footer(data-bind='if: waitingDialog().isDone')
-        button.btn.btn-default(type='button', data-dismiss='modal') See results
 
 .modal.fade#info-dialog(
   role='dialog'

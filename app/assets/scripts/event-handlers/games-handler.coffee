@@ -15,6 +15,7 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
     viewModel.game().list games
   
   socket.on "warn_game_discontinued", ->
+    viewModel.game().current {}
     viewModel.actionDialog
       type: "panel-danger"
       heading: "Game discontinued"
@@ -29,21 +30,6 @@ Avalon.EventHandlers.Games = (socket, viewModel) ->
       message: "This game has been deleted by its owner"
       action: viewModel.game().reload
     $("#action-dialog").modal "show"
-  
-  socket.on "stop_waiting_on_game_start", (currentGame) ->
-    viewModel.game().current currentGame
-    viewModel.alert
-      message: 'The game can
-        <button
-            id="start-game-btn"
-            type="button"
-            class="btn-link alert-link"
-            data-bind="click: nav().goToPlayer"
-        >
-          start
-        </button>!'
-      type: "alert-success"
-    ko.applyBindings viewModel, $("#start-game-btn")[0]
   
   socket.on "show_gameover", (currentGame) ->
     viewModel.game().current currentGame
