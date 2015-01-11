@@ -4,13 +4,27 @@ Avalon.Quest = (socket, root) ->
   
   self.current = ko.observable({})
   self.error = ko.observable()
+  self.king = ko.observable()
   self.isLastRejectableQuest = ko.observable()
-  self.stats = ko.observable { numSucceeded: 0, numFailed: 0 }
+  self.stats = ko.observable()
+  self.players = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
   
+  self.kingId = ko.pureComputed((->
+    self.king()?._id
+  ), self)
+  
   self.kingName = ko.pureComputed((->
-    self.current().king?.name
+    if self.king()? then self.king().user.name else "none"
+  ), self)
+  
+  self.numSucceeded = ko.pureComputed((->
+    if self.stats()? then self.stats().numSucceeded else 0
+  ), self)
+  
+  self.numFailed = ko.pureComputed((->
+    if self.stats()? then self.stats().numFailed else 0
   ), self)
   
   self.hasCurrent = ko.pureComputed((->
@@ -22,7 +36,7 @@ Avalon.Quest = (socket, root) ->
   ), self)
   
   self.hasEnoughQuestors = ko.pureComputed((->
-    self.current().players?.length >= self.current().numPlayersNeeded
+    self.players().length >= self.current().numPlayersNeeded
   ), self)
   
   self.isRejected = ko.pureComputed((->
@@ -38,14 +52,16 @@ Avalon.Quest = (socket, root) ->
   ), self)
   
   self.hasKing = (player) ->
-    self.kingName() is player.name
+    _.isEqual self.kingId(), player._id
   
   self.hasQuestor = (player) ->
-    _.any self.current().players, name: player.name
+    _.any self.players(), (p) -> _.isEqual p._id, player._id
   
   self.reset = ->
     self.current {}
-    self.stats { numSucceeded: 0, numFailed: 0 }
+    self.king null
+    self.stats null
+    self.players.removeAll() 
     self.isLastRejectableQuest false
   
   self.update = ->
@@ -65,7 +81,7 @@ Avalon.Quest = (socket, root) ->
   self.confirmStart = ->
     if not self.hasEnoughQuestors()
       additionalQuestorsNeeded =
-        self.current().numPlayersNeeded - self.current().players.length
+        self.current().numPlayersNeeded - self.players().length
       pluralizePlayers = if additionalQuestorsNeeded is 1 then "player" else "players"
       self.error "You must select #{additionalQuestorsNeeded} more #{pluralizePlayers} to go on the quest. (You can select yourself.)"
     else if $("input[name='king-quest-vote']:checked").length is 0

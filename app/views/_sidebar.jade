@@ -6,8 +6,8 @@ aside.col-sm-3(data-bind='if: game().shouldShowStats')
   section
     h3 Questors
     // ko if: quest().hasCurrent
-    ul.list-group(data-bind='foreach: quest().current().players')
-      li.list-group-item(data-bind='text: name')
+    ul.list-group(data-bind='foreach: quest().players')
+      li.list-group-item(data-bind='text: user.name')
     // /ko
     // ko ifnot: quest().hasCurrent
     p No current quest

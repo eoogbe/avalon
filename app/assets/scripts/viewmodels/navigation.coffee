@@ -18,13 +18,17 @@ Avalon.Navigation = (socket, root) ->
     self.currentPage "new_quest_outcome"
     root.alert null
   
-  self.goToGameover = ->
-    if root.game().isOver()
-      self.currentPage "gameover"
-    else if root.character().isAssassin()
+  self.goToMerlinSelection = ->
+    if root.character().isAssassin()
       self.currentPage "merlin_selection"
     else
       root.waitingDialogMsg "Waiting on Assassin"
       $("#waiting-dialog").modal "show"
+  
+  self.goToGameover = ->
+    if root.game().isOver()
+      self.currentPage "gameover"
+    else
+      self.goToMerlinSelection()
   
   self

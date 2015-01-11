@@ -3,21 +3,23 @@ Avalon.QuestVote = (socket, root) ->
   self = this
   
   self.list = ko.observableArray()
+  self.approvers = ko.observableArray()
+  self.rejectors = ko.observableArray()
   
   self.needsAdditional = ko.pureComputed((->
     self.numNeeded() > 0
   ), self)
   
   self.hasApprovers = ko.pureComputed((->
-    _.any self.list(), "isApprove"
+    self.approvers().length > 0
   ), self)
   
   self.hasRejectors = ko.pureComputed((->
-    _.any self.list(), isApprove: false
+    self.rejectors().length > 0
   ), self)
   
   self.numNeeded = ko.pureComputed((->
-    root.game().currentPlayers().length - self.list().length
+    root.game().players().length - self.list().length
   ), self)
   
   self.pluralizeNumNeeded = ko.pureComputed((->
@@ -26,14 +28,6 @@ Avalon.QuestVote = (socket, root) ->
   
   self.result = ko.pureComputed((->
     if root.quest().isRejected() then "rejected" else "approved"
-  ), self)
-  
-  self.approvers = ko.pureComputed((->
-    _.map _.filter(self.list(), "isApprove"), "player"
-  ), self)
-  
-  self.rejectors = ko.pureComputed((->
-    _.map _.reject(self.list(), "isApprove"), "player"
   ), self)
   
   self.alertNeeded = ->

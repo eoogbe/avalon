@@ -3,23 +3,23 @@ section
   dl.dl-horizontal.thin-dl
     dt Good guys
     dd
-      span.sr-only(data-bind='text: quest().stats().numSucceeded')
-      div(data-bind='foreach: new Array(quest().stats().numSucceeded)')
+      span.sr-only(data-bind='text: quest().numSucceeded')
+      div(data-bind='foreach: new Array(quest().numSucceeded())')
         img(
           src='/images/good_token_small.jpg'
+          alt=''
           width='25'
           height='25'
           aria-hidden='true'
-          data-bind='attr: { alt: $index }'
         )
     dt Bad guys
     dd
-      span.sr-only(data-bind='text: quest().stats().numFailed')
-      div(data-bind='foreach: new Array(quest().stats().numFailed)')
+      span.sr-only(data-bind='text: quest().numFailed')
+      div(data-bind='foreach: new Array(quest().numFailed())')
         img(
           src='/images/bad_token_small.jpg'
+          alt=''
           width='25'
           height='25'
           aria-hidden='true'
-          data-bind='attr: { alt: $index }'
         )

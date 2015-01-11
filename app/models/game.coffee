@@ -12,17 +12,17 @@ GameSchema = mongoose.Schema
   creator:
     type: mongoose.Schema.Types.ObjectId
     ref: "Player"
-    required: true
   state:
     type: String
     enum: ["setup", "unstarted", "playing", "assassinating", "good_won", "bad_won", "discontinued"]
     default: "setup"
     required: true
   characters: [String]
-  players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Player' }]
+  players: [{ type: mongoose.Schema.Types.ObjectId, ref: "Player" }]
   kingIdx:
     type: Number
     min: 0
+    max: 10
   numRejectedQuests:
     type: Number
     min: 0
@@ -49,12 +49,14 @@ GameSchema.statics.MAX_REJECTED_QUESTS = 5
 GameSchema.statics.findUnstarted = ->
   @find({ state: "unstarted" }).sort("-createdAt")
 
-GameSchema.statics.findCurrent = (player) ->
-  @findOne { players: player, state: "playing" }
-
-GameSchema.statics.findOneAndDiscontinue = (player, done) ->
-  @findOneAndUpdate { players: player, state: "playing" },
-    { state: "discontinued" }, done
+GameSchema.statics.findOneAndDiscontinue = (user, done) ->
+  Game = this
+  Player = @model "Player"
+  
+  Player.findCurrent user, (err, player) ->
+    return done err, null if err or not player # need to return null if no game
+    
+    Game.findByIdAndUpdate player.game, { state: "discontinued" }, done
 
 GameSchema.statics.findByIdAndSetup = (id, characters, done) ->
   @findByIdAndUpdate id, { state: "unstarted", characters: characters }
@@ -62,25 +64,14 @@ GameSchema.statics.findByIdAndSetup = (id, characters, done) ->
 GameSchema.statics.findByIdAndAddPlayer = (id, player) ->
   @findByIdAndUpdate id, $addToSet: { players: player }
 
-GameSchema.statics.findByIdAndRemovePlayer = (id, player, done) ->
-  @findByIdAndUpdate id, { $pull: { players: player }}, done
-
-GameSchema.statics.findByIdAndStart = (id, done) ->
-  @findById(id).populate("players").exec (err, game) ->
+GameSchema.statics.findByIdAndRemovePlayer = (id, user, done) ->
+  Game = this
+  Player = @model "Player"
+  
+  Player.findOneAndRemove { game: id, user: user }, (err, player) ->
     return done err if err
-    return done null, game if game.state is "playing"
     
-    game.state = "playing"
-    game.kingIdx = Random.nextIdx(game.players)
-    game.save (err) ->
-      return done err if err
-      
-      characterSelection = new CharacterSelection game.characters
-      
-      async.eachLimit game.players, 1, ((player, eachDone) ->
-        player.character = characterSelection.assignCharacter()
-        player.save eachDone
-      ), (err) -> done err, game
+    Game.findByIdAndUpdate id, { $pull: { players: player._id }}, done
 
 GameSchema.statics.findByIdAndSelectMerlin = (id, merlinId, done) ->
   Player = @model "Player"
@@ -92,6 +83,20 @@ GameSchema.statics.findByIdAndSelectMerlin = (id, merlinId, done) ->
     winnerType = if merlin.character is "merlin" then "bad" else "good"
     Game.findByIdAndUpdate id, { state: "#{winnerType}_won" }, done
 
+GameSchema.methods.start = (done) ->
+  @state = "playing"
+  @kingIdx = Random.nextIdx(@players)
+  
+  @save (err, game) ->
+    return done err if err
+    
+    characterSelection = new CharacterSelection game.characters
+    
+    async.eachSeries game.players, ((player, next) ->
+      player.character = characterSelection.assignCharacter()
+      player.save next
+    ), (err) -> done err, game
+
 GameSchema.methods.nextKing = (done) ->
   @kingIdx = (@kingIdx + 1) % @players.length
   @save (err, game) ->
@@ -99,8 +104,10 @@ GameSchema.methods.nextKing = (done) ->
 
 GameSchema.methods.checkGameover = (done) ->
   game = this
+  Game = @model "Game"
+  Quest = @model "Quest"
   
-  @model("Quest").statsFor game, (err, questStats) ->
+  Quest.statsFor game, (err, questStats) ->
     return done err if err
     
     gameover = (state) ->
@@ -109,11 +116,17 @@ GameSchema.methods.checkGameover = (done) ->
         done err, { questStats: questStats, game: game }
     
     if questStats.numSucceeded >= NUM_QUESTS_TO_WIN
-      gameover "assassinating"
+      Game.populate game, { path: "players" }, (err, game) ->
+        return done err if err
+        
+        gameover if game.hasAssassin() then "assassinating" else "good_won"
     else if questStats.numFailed >= NUM_QUESTS_TO_WIN
       gameover "bad_won"
     else
       done null, { questStats: questStats, game: game }
+
+GameSchema.methods.hasAssassin = ->
+  @players.some (player) -> player.character is "assassin"
 
 GameSchema.methods.isOnLastRejectableQuest = ->
   @numRejectedQuests is @model("Game").MAX_REJECTED_QUESTS - 1

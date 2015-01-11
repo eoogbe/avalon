@@ -8,7 +8,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("merlin_selection")')
       select.form-control#good-characters(
         data-bind='attr: { size: character().numGood },\
           options: character().goodList,\
-          optionsText: "name",\
+          optionsText: function(player) { return player.user.name; },\
           optionsValue: "_id"'
       )
     

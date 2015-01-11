@@ -10,9 +10,10 @@ module.exports = (app) ->
   mongoose.Error.messages.general.required = "can't be blank"
   
   reqModel = (filename) -> require "../app/models/#{filename}"
-  reqModel model for model in ["player", "game", "quest", "quest_vote"]
+  reqModel model for model in ["user", "player", "game", "quest", "quest_vote"]
 
   models =
+    User: mongoose.model "User"
     Player: mongoose.model "Player"
     Game: mongoose.model "Game"
     Quest: mongoose.model "Quest"

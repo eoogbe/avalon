@@ -10,11 +10,11 @@ section(data-bind='visible: $root.nav().isCurrentPage("players")')
   // ko ifnot: player().isGameCreator
   button.btn-link.pull-right(
     type='button'
-    data-bind='click: player().leaveGame, visible: !$root.game().isPlaying()'
+    data-bind='click: user().leaveGame, visible: !$root.game().isPlaying()'
   ) Leave game
   // /ko
   
   section
     h3 Players
-    ul.list-group(data-bind='foreach: game().current().players')
-      li.list-group-item(data-bind='text: name')
+    ul.list-group(data-bind='foreach: game().players')
+      li.list-group-item(data-bind='text: user.name')

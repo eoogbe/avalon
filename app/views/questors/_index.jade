@@ -7,9 +7,9 @@ section(data-bind='visible: $root.nav().isCurrentPage("questors")')
   p Note: Two fails are required to fail this quest
   // /ko
   
-  ul.list-group(data-bind='foreach: quest().current().players')
+  ul.list-group(data-bind='foreach: quest().players')
     li.list-group-item
-      span(data-bind='text: name') 
+      span(data-bind='text: user.name') 
       img(
         src='/images/crown.jpg'
         width='54'

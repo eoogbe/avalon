@@ -19,11 +19,17 @@ Avalon.EventHandlers.Questors = (socket, viewModel) ->
   
   socket.on "show_new_questors", (data) ->
     viewModel.game().current data.currentGame
+    viewModel.game().players data.gamePlayers
     viewModel.quest().current data.currentQuest
+    viewModel.quest().king data.king
+    viewModel.quest().players data.questPlayers
     viewModel.questVote().list data.votes
+    viewModel.questVote().approvers data.approvers
+    viewModel.questVote().rejectors data.rejectors
+    viewModel.player().current data.currentPlayer if data.currentPlayer?
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     viewModel.quest().stats data.questStats if data.questStats?
-    viewModel.character().characterStats data.characterStats if data.characterStats?
+    viewModel.character().stats data.characterStats if data.characterStats?
     viewModel.nav().currentPage "new_questors"
     registerRadioListener()
     viewModel.questVote().alertNeeded()
@@ -41,11 +47,17 @@ Avalon.EventHandlers.Questors = (socket, viewModel) ->
   
   socket.on "show_questors", (data) ->
     viewModel.game().current data.currentGame
+    viewModel.game().players data.gamePlayers
     viewModel.quest().current data.currentQuest
+    viewModel.quest().king data.king
+    viewModel.quest().players data.questPlayers
     viewModel.questVote().list data.votes
+    viewModel.questVote().approvers data.approvers
+    viewModel.questVote().rejectors data.rejectors
+    viewModel.player().current data.currentPlayer if data.currentPlayer?
     viewModel.player().knownPlayers data.knownPlayers if data.knownPlayers?
     viewModel.quest().stats data.questStats if data.questStats?
-    viewModel.character().characterStats data.characterStats if data.characterStats?
+    viewModel.character().stats data.characterStats if data.characterStats?
     viewModel.nav().currentPage "questors"
     registerRadioListener()
     viewModel.alertVote() if data.currentQuest.state is "voting"
@@ -56,7 +68,10 @@ Avalon.EventHandlers.Questors = (socket, viewModel) ->
   
   socket.on "wait_on_questors", (data) ->
     viewModel.game().current data.currentGame
+    viewModel.game().players data.gamePlayers
     viewModel.quest().current data.currentQuest
+    viewModel.quest().king data.king
+    viewModel.quest().players data.questPlayers
     viewModel.alert null
     viewModel.waitingDialogMsg "Waiting on questors"
     $("#waiting-dialog").modal "show"

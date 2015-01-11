@@ -5,22 +5,22 @@ Avalon.Character = (socket, root) ->
   
   self = this
   
-  self.characterStats = ko.observable({})
+  self.stats = ko.observable({})
   
   self.current = ko.pureComputed((->
     if root.player().hasCurrent() then self.for_ root.player().current().character else ""
   ), self)
   
   self.numGood = ko.pureComputed((->
-    self.characterStats().numGood
+    self.stats().numGood
   ), self)
   
   self.numBad = ko.pureComputed((->
-    self.characterStats().numBad
+    self.stats().numBad
   ), self)
   
   self.goodList = ko.pureComputed((->
-    _.filter root.game().currentPlayers(), self.isGood
+    _.filter root.game().players(), self.isGood
   ), self)
   
   self.count = ko.pureComputed((->

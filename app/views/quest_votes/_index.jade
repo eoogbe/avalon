@@ -6,7 +6,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("quest_votes")')
     h3 Approvers
     // ko if: questVote().hasApprovers
     ul.list-group(data-bind='foreach: questVote().approvers')
-      li.list-group-item(data-bind='text: name')
+      li.list-group-item(data-bind='text: user.name')
     // /ko
     // ko ifnot: questVote().hasApprovers
     p No one approved this quest
@@ -16,7 +16,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("quest_votes")')
     h3 Rejectors
     // ko if: questVote().hasRejectors
     ul.list-group(data-bind='foreach: questVote().rejectors')
-      li.list-group-item(data-bind='text: name')
+      li.list-group-item(data-bind='text: user.name')
     // /ko
     // ko ifnot: questVote().hasRejectors
     p No one rejected this quest

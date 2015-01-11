@@ -6,7 +6,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("games")')
       type='button'
       data-bind='click: nav().goToNewGame'
     ) New game
-  // ko if: game().isPlaying
+  // ko if: game().isInGame
   .clearfix
     button.btn-link.pull-right(
       type='button'
@@ -27,7 +27,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("games")')
             button.btn-link(
               type='button'
               data-bind='text: name,\
-                click: function() { $root.player().confirmJoinGame($data._id) }'
+                click: function() { $root.user().confirmJoinGame($data._id) }'
             )
           td(data-bind='text: $root.formatDate($data.createdAt)')
           td(data-bind='text: players.length')

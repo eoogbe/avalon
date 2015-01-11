@@ -108,9 +108,6 @@ QuestSchema.statics.findByIdAndCreateVote = (questId, playerId, vote, done) ->
 QuestSchema.methods.hasVoter = (player) ->
   @votes.some (vote) -> vote.player.equals player._id
 
-QuestSchema.methods.hasQuestor = (playerName) ->
-  @players.some (player) -> player.name is playerName
-
 QuestSchema.methods.isApproved = ->
   approves = @votes.filter (vote) -> vote.isApprove
   approves.length > @votes.length / 2

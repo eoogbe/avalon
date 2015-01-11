@@ -3,8 +3,8 @@ section(data-bind='visible: $root.nav().isCurrentPage("gameover")')
     span(data-bind='text: game().winnerType')
     | &nbsp;guys won
   
-  dl.dl-horizontal.wide-dl(data-bind='foreach: game().current().players')
+  dl.dl-horizontal.wide-dl(data-bind='foreach: game().players')
     dt(data-bind='text: $root.character().for_($data.character)')
-    dd(data-bind='text: name')
+    dd(data-bind='text: user.name')
   
   button.btn-link(type='button', data-bind='click: game().reload') Play again

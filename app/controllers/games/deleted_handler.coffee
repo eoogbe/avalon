@@ -5,7 +5,7 @@ module.exports = (eventCtx) ->
   
   (gameId) ->
     Game.findByIdAndRemove gameId, (err, game) ->
-      return console.error err if err
+      throw err if err
       
       socket.broadcast.to(game.name).emit "warn_game_deleted"
       
@@ -13,7 +13,7 @@ module.exports = (eventCtx) ->
         conn.leave game.name
       
       Game.findUnstarted().lean().exec (err, games) ->
-        return console.error err if err
+        throw err if err
         
         io.emit "refresh_games", games
         socket.emit "show_games", games: games

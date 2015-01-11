@@ -4,10 +4,10 @@ Avalon.Game = (socket, root) ->
   
   self.current = ko.observable({})
   self.error = ko.observable()
+  self.players = ko.observableArray()
   self.list = ko.observableArray()
   
   self.currentId = ko.pureComputed((-> self.current()._id ), self)
-  self.currentPlayers = ko.pureComputed((-> self.current().players ), self)
   
   self.hasCurrent = ko.pureComputed((->
     self.current()? and not $.isEmptyObject self.current()
@@ -25,6 +25,10 @@ Avalon.Game = (socket, root) ->
     self.current().state is "playing"
   ), self)
   
+  self.isInGame = ko.pureComputed((->
+    self.current().state in ["playing", "assassinating"]
+  ), self)
+  
   self.isOver = ko.pureComputed((->
     self.current().state in ["good_won", "bad_won"]
   ), self)
@@ -34,16 +38,16 @@ Avalon.Game = (socket, root) ->
       not (root.nav().currentPage() in ["new_game", "games"])
   ), self)
   
-  self.creatorName = ko.pureComputed((->
-    if self.hasCurrent() then self.current().creator.name else null
+  self.creatorId = ko.pureComputed((->
+    if self.hasCurrent() then self.current().creator._id else null
   ), self)
   
   self.numPlayers = ko.pureComputed((->
-    self.currentPlayers()?.length
+    self.players().length
   ), self)
   
   self.nonquestors = ko.pureComputed((->
-    _.reject self.current().players, root.quest().hasQuestor
+    _.reject self.players(), root.quest().hasQuestor
   ), self)
   
   self.numRejectedQuests = ko.pureComputed((->
@@ -58,7 +62,7 @@ Avalon.Game = (socket, root) ->
   ), self)
   
   self.confirmCreate = ->
-    return self.create() unless self.isPlaying()
+    return self.create() unless self.isInGame()
     
     root.confirmDialog
       type: "panel-danger"
@@ -74,7 +78,7 @@ Avalon.Game = (socket, root) ->
     socket.emit "game_created",
       name: $("#game-name").val()
       numPlayers: $("#game-num-players").val()
-      playerId: root.player().currentId()
+      userId: root.user().currentId()
   
   self.confirmDelete = ->
     root.confirmDialog
@@ -95,11 +99,6 @@ Avalon.Game = (socket, root) ->
       playerId: root.player().currentId()
       gameId: self.currentId()
   
-  self.start = ->
-    socket.emit "game_started",
-      playerId: root.player().currentId()
-      gameId: self.currentId()
-  
   self.killMerlin = ->
     socket.emit "merlin_selected",
       gameId: self.currentId()
@@ -108,6 +107,10 @@ Avalon.Game = (socket, root) ->
   self.reload = ->
     $("#action-dialog").modal "hide"
     root.alert null
+    
+    self.players.removeAll()
+    root.quest().reset()
+    
     socket.emit "game_reloaded", self.current().name
   
   self

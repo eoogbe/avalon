@@ -9,6 +9,7 @@ Avalon.Main = (socket) ->
   
   self = this
   
+  user = null
   player = null
   character = null
   game = null
@@ -17,6 +18,7 @@ Avalon.Main = (socket) ->
   questOutcome = null
   nav = null
   
+  self.user = -> user = user or new Avalon.User socket, self
   self.player = -> player = player or new Avalon.Player socket, self
   self.character = ->
     character = character or new Avalon.Character socket, self
@@ -56,8 +58,13 @@ Avalon.Main = (socket) ->
         message: "The king has made their final decision. Vote to approve or reject the proposed quest."
         type: "alert-warning"
   
+  as2Digits = (num) ->
+    if num.toString().length >= 2 then num else "0#{num}"
+  
   self.formatDate = (dateStr) ->
     date = new Date dateStr
-    "#{date.getFullYear()}-#{date.getMonth()}-#{date.getDate()} #{date.getHours()}:#{date.getMinutes()}:#{date.getSeconds()}"
+    ymd = "#{date.getFullYear()}-#{as2Digits date.getMonth()}-#{as2Digits date.getDate()}"
+    hms = " #{as2Digits date.getHours()}:#{as2Digits date.getMinutes()}:#{as2Digits date.getSeconds()}"
+    ymd + hms
   
   self

@@ -23,8 +23,10 @@ Avalon.EventHandlers.Characters = (socket, viewModel) ->
       uncheckAllCharacterOverflow()
   
   socket.on "show_new_characters", (data) ->
+    viewModel.player().current data.currentPlayer
     viewModel.game().current data.currentGame
-    viewModel.character().characterStats data.characterStats
+    viewModel.game().players data.gamePlayers
+    viewModel.character().stats data.characterStats
     viewModel.nav().currentPage "new_characters"
     
     $(".character-normal").change uncheckAllCharacterOverflow

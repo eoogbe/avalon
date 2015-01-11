@@ -4,7 +4,7 @@ mixin knownPlayers(listClass)
     // ko if: player().knowsPlayers
     dl(class=listClass, data-bind='foreach: player().knownPlayers')
       dt Bad guy
-      dd(data-bind='text: name')
+      dd(data-bind='text: user.name')
     // /ko
     // ko ifnot: player().knowsPlayers
     p No one 

@@ -13,7 +13,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_questors")')
       select.form-control#nonquestors(
         data-bind='attr: { size: game().numPlayers },\
           options: game().nonquestors,\
-          optionsText: "name",\
+          optionsText: function(player) { return player.user.name; },\
           optionsValue: "_id"'
       )
     
@@ -37,8 +37,8 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_questors")')
       label(for='questors') Going
       select.form-control#questors(
         data-bind='attr: { size: game().numPlayers },\
-          options: quest().current().players,\
-          optionsText: "name",\
+          options: quest().players,\
+          optionsText: function(player) { return player.user.name; },\
           optionsValue: "_id"'
       )
   
