@@ -3,8 +3,8 @@ mixin knownPlayers(listClass)
     h3 You know
     // ko if: player().knowsPlayers
     dl(class=listClass, data-bind='foreach: player().knownPlayers')
-      dt Bad guy
-      dd(data-bind='text: user.name')
+      dt(data-bind='text: type')
+      dd(data-bind='text: name')
     // /ko
     // ko ifnot: player().knowsPlayers
     p No one 

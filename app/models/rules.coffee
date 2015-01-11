@@ -12,6 +12,9 @@ NUM_PLAYERS_NEEDED = [
   [3, 4, 4, 5, 5]
 ]
 
+BAD_CHARACTERS = ["bad", "assassin", "morgana", "mordred"]
+KNOWN_TO_MERLIN = ["bad", "assassin", "morgana"]
+
 MIN_PLAYERS = 5
 MAX_QUESTS = 5
 FAIL_WEIRDNESS_QUEST_NO = 4
@@ -47,11 +50,15 @@ module.exports =
   getPlayersKnown: (player, players) ->
     if player.character is "good"
       []
-    else if player.character in ["bad", "assassin", "mordred"]
-      players.filter (p) ->
-        p.character in ["bad", "assassin", "mordred"] and not p.equals player
+    else if player.character in BAD_CHARACTERS
+      (for p in players when p.character in BAD_CHARACTERS and not p.equals player
+        {  type: "Bad guy", name: p.user.name })
     else if player.character is "merlin"
-      players.filter (p) -> p.character in ["bad", "assassin"]
+      (for p in players when p.character in KNOWN_TO_MERLIN
+        {  type: "Bad guy", name: p.user.name })
+    else if player.character is "percival"
+      knownToPercival = (p.user.name for p in players when p.character in ["merlin", "morgana"])
+      [{ type: "Merlin/Morgana", name: knownToPercival.join " and " }]
   getNumPlayersNeeded: (numPlayers, numQuests) ->
     perQuest = getValueAt getPlayerIdx(numPlayers), NUM_PLAYERS_NEEDED
     getValueAt numQuests, perQuest

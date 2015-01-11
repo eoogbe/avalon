@@ -37,7 +37,9 @@ handleStateChange = (eventCtx, quest, noChangeFn) ->
                   rejectors: rejectors
                 
                 if game.state is "bad_won"
-                  io.to(game.name).emit "show_gameover", game
+                  io.to(game.name).emit "show_gameover",
+                    currentGame: game
+                    gamePlayers: gamePlayers
 
 exports.updated = (eventCtx) ->
   socket = eventCtx.socket

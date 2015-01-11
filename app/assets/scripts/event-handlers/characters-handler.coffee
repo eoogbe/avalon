@@ -1,23 +1,22 @@
 @Avalon ?= {}
 Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.Characters = (socket, viewModel) ->
-  uncheckCharacters = (type, max) ->
-    characterSelector = ".character-#{type}:checked"
-    specialCharactersSelector = "#character-merlin, #character-assassin, #character-mordred"
-    while $(characterSelector).length > max
-      $character = $(characterSelector).not(specialCharactersSelector).last()
-      $character.prop "checked", false
+  uncheckCharacters = (characterSelector, type, max) ->
+    while $(".character-#{type}:checked").length > max and $(characterSelector).length > 0
+      $(characterSelector).last().prop "checked", false
   
-  uncheckAllCharacterOverflow = ->
-    uncheckCharacters "good", viewModel.character().numGood()
-    uncheckCharacters "bad", viewModel.character().numBad()
+  uncheckNormalCharacterOverflow = ->
+    uncheckCharacters ".character-normal.character-good:checked", "good",
+      viewModel.character().numGood()
+    uncheckCharacters ".character-normal.character-bad:checked", "bad",
+      viewModel.character().numBad()
   
   enableCreateCharacterBtn = ->
     numCharacters = $(".character-type:checked").length
     numPlayers = viewModel.character().count()
     $("#create-characters-btn").prop "disabled", numCharacters isnt numPlayers
   
-  registerDependentCharacterListener = (instigator, dependents) ->
+  registerDependentCharacterListener = (instigator, dependents, changeFn) ->
     $("#character-#{instigator}").change ->
       for dependent, type of dependents
         if $(this).is(":checked")
@@ -25,7 +24,8 @@ Avalon.EventHandlers.Characters = (socket, viewModel) ->
             $("#character-#{dependent}").prop "checked", true
         else if type in ["uncheck", "both"]
           $("#character-#{dependent}").prop "checked", false
-      uncheckAllCharacterOverflow()
+      uncheckNormalCharacterOverflow()
+      changeFn() if changeFn?
   
   socket.on "show_new_characters", (data) ->
     viewModel.player().current data.currentPlayer
@@ -34,11 +34,25 @@ Avalon.EventHandlers.Characters = (socket, viewModel) ->
     viewModel.character().stats data.characterStats
     viewModel.nav().currentPage "new_characters"
     
-    $(".character-normal").change uncheckAllCharacterOverflow
+    $(".character-normal").change uncheckNormalCharacterOverflow
     registerDependentCharacterListener "merlin",
-      { assassin: "both", mordred: "uncheck" }
+      assassin: "both"
+      mordred: "uncheck"
+      morgana: "uncheck"
+      percival: "uncheck"
     registerDependentCharacterListener "assassin",
-      { merlin: "both", mordred: "uncheck" }
+      merlin: "both"
+      mordred: "uncheck"
+      morgana: "uncheck"
+      percival: "uncheck"
     registerDependentCharacterListener "mordred",
-      { merlin: "check", assassin: "check" }
+      { merlin: "check", assassin: "check" }, ->
+        uncheckCharacters "#character-morgana:checked", "bad",
+          viewModel.character().numBad()
+    registerDependentCharacterListener "morgana",
+      { merlin: "check", assassin: "check", percival: "check" }, ->
+        uncheckCharacters "#character-mordred:checked", "bad",
+          viewModel.character().numBad()
+    registerDependentCharacterListener "percival",
+      { merlin: "check", assassin: "check", morgana: "uncheck" }
     $(".character-type").change enableCreateCharacterBtn

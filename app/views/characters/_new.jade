@@ -10,6 +10,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_characters")')
       ul.character-list.list-group
         +characterCheckbox('assassin', 'bad', false)
         +characterCheckbox('mordred', 'bad', false)
+        +characterCheckbox('morgana', 'bad', false)
         - for (var i = 0; i < 3; ++i)
           +characterCheckbox('bad' + (i + 1), 'bad', true)
     
@@ -20,6 +21,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_characters")')
       
       ul.character-list.list-group
         +characterCheckbox('merlin', 'good', false)
+        +characterCheckbox('percival', 'good', false)
         - for (var i = 0; i < 5; ++i)
           +characterCheckbox('good' + (i + 1), 'good', true)
   

@@ -57,7 +57,7 @@ Avalon.Character = (socket, root) ->
       character.charAt(0).toUpperCase() + character.slice(1).toLowerCase()
   
   self.isGood = (player) ->
-    player.character in ["good", "merlin"]
+    player.character in ["good", "merlin", "percival"]
   
   self.create = ->
     socket.emit "characters_created",

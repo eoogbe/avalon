@@ -1,5 +1,6 @@
 @Avalon ?= {}
 Avalon.Game = (socket, root) ->
+  STATS_STATES = ["playing", "assassinating", "good_won", "bad_won"]
   self = this
   
   self.current = ko.observable({})
@@ -34,7 +35,7 @@ Avalon.Game = (socket, root) ->
   ), self)
   
   self.shouldShowStats = ko.pureComputed((->
-    self.current().state in ["playing", "assassinating", "good_won", "bad_won"] and
+    self.current()? and self.current().state in STATS_STATES and
       not (root.nav().currentPage() in ["new_game", "games"])
   ), self)
   
