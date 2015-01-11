@@ -3,7 +3,7 @@ mongoose = require "mongoose"
 PlayerSchema = mongoose.Schema
   character:
     type: String
-    enum: ["good", "bad", "assassin", "merlin"]
+    enum: ["good", "bad", "assassin", "merlin", "mordred"]
   game:
     type: mongoose.Schema.Types.ObjectId
     ref: "Game"

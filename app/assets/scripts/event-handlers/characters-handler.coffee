@@ -3,7 +3,7 @@ Avalon.EventHandlers ?= {}
 Avalon.EventHandlers.Characters = (socket, viewModel) ->
   uncheckCharacters = (type, max) ->
     characterSelector = ".character-#{type}:checked"
-    specialCharactersSelector = "#character-merlin, #character-assassin"
+    specialCharactersSelector = "#character-merlin, #character-assassin, #character-mordred"
     while $(characterSelector).length > max
       $character = $(characterSelector).not(specialCharactersSelector).last()
       $character.prop "checked", false
@@ -17,9 +17,14 @@ Avalon.EventHandlers.Characters = (socket, viewModel) ->
     numPlayers = viewModel.character().count()
     $("#create-characters-btn").prop "disabled", numCharacters isnt numPlayers
   
-  registerDependentCharacterListener = (instigator, dependent) ->
+  registerDependentCharacterListener = (instigator, dependents) ->
     $("#character-#{instigator}").change ->
-      $("#character-#{dependent}").prop "checked", $(this).is(":checked")
+      for dependent, type of dependents
+        if $(this).is(":checked")
+          if type in ["check", "both"]
+            $("#character-#{dependent}").prop "checked", true
+        else if type in ["uncheck", "both"]
+          $("#character-#{dependent}").prop "checked", false
       uncheckAllCharacterOverflow()
   
   socket.on "show_new_characters", (data) ->
@@ -30,6 +35,10 @@ Avalon.EventHandlers.Characters = (socket, viewModel) ->
     viewModel.nav().currentPage "new_characters"
     
     $(".character-normal").change uncheckAllCharacterOverflow
-    registerDependentCharacterListener "assassin", "merlin"
-    registerDependentCharacterListener "merlin", "assassin"
+    registerDependentCharacterListener "merlin",
+      { assassin: "both", mordred: "uncheck" }
+    registerDependentCharacterListener "assassin",
+      { merlin: "both", mordred: "uncheck" }
+    registerDependentCharacterListener "mordred",
+      { merlin: "check", assassin: "check" }
     $(".character-type").change enableCreateCharacterBtn

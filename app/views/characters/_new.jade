@@ -9,6 +9,7 @@ section(data-bind='visible: $root.nav().isCurrentPage("new_characters")')
       
       ul.character-list.list-group
         +characterCheckbox('assassin', 'bad', false)
+        +characterCheckbox('mordred', 'bad', false)
         - for (var i = 0; i < 3; ++i)
           +characterCheckbox('bad' + (i + 1), 'bad', true)
     
