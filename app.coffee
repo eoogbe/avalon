@@ -35,7 +35,11 @@ app.use coffeescript
 app.use express.static path.join(__dirname, "public")
 
 app.get "/", (req, res) ->
-  res.render "index"
+  wsUrl = if app.get("env") is "production"
+    "https://avalon-evao.rhcloud.com"
+  else
+    "http://localhost"
+  res.render "index", wsUrl: wsUrl
 
 app.use errorHandler() if app.get("env") is "development"
 
