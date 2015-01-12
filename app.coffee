@@ -36,7 +36,7 @@ app.use express.static path.join(__dirname, "public")
 
 app.get "/", (req, res) ->
   wsUrl = if app.get("env") is "production"
-    "https://avalon-evao.rhcloud.com"
+    "https://avalon-evao.rhcloud.com:8443"
   else
     "http://localhost"
   res.render "index", wsUrl: wsUrl
