@@ -1,15 +1,16 @@
-section.center-block(data-bind='visible: $root.nav().isCurrentPage("edit_user")')
-  h2.font-effect-outline.text-center Avalon
-  
-  form.row(data-bind='submit: user().update')
-    .form-group.col-sm-10(data-bind='css: { "has-error": user().hasError }')
-      label(for='user-name') Enter your name
-      input.form-control#user-name(
-        type='text'
-        data-bind='hasFocus: $root.nav().isCurrentPage("edit_user")'
-      )
-      // ko if: user().hasError
-      .help-block(data-bind='text: user().error().name.message')
-      // /ko
+section.row(data-bind='visible: $root.nav().isCurrentPage("edit_user")')
+  .col-md-6.col-md-offset-3
+    h2.font-effect-outline.text-center Avalon
     
-    .col-sm-2: button.btn.btn-default.spacer-top(type='submit') Start
+    form.row(data-bind='submit: user().update')
+      .form-group.col-sm-10(data-bind='css: { "has-error": user().hasError }')
+        label(for='user-name') Enter your name
+        input.form-control#user-name(
+          type='text'
+          data-bind='hasFocus: $root.nav().isCurrentPage("edit_user")'
+        )
+        // ko if: user().hasError
+        .help-block(data-bind='text: user().error().name.message')
+        // /ko
+      
+      .col-sm-2: button.btn.btn-default.spacer-top(type='submit') Start
