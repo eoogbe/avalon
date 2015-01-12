@@ -13,7 +13,7 @@ NUM_PLAYERS_NEEDED = [
 ]
 
 BAD_CHARACTERS = ["bad", "assassin", "morgana", "mordred"]
-KNOWN_TO_MERLIN = ["bad", "assassin", "morgana"]
+KNOWN_TO_MERLIN = ["bad", "assassin", "morgana", "oberon"]
 
 MIN_PLAYERS = 5
 MAX_QUESTS = 5
@@ -48,7 +48,7 @@ module.exports =
     numGood: getValueAt playerIdx, NUM_GOOD
     numBad: getValueAt playerIdx, NUM_BAD
   getPlayersKnown: (player, players) ->
-    if player.character is "good"
+    if player.character in ["good", "oberon"]
       []
     else if player.character in BAD_CHARACTERS
       (for p in players when p.character in BAD_CHARACTERS and not p.equals player
